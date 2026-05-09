@@ -1,0 +1,295 @@
+---
+import '../../styles/sections/lead-form.css';
+---
+
+<section class="lead-form" id="lead-form">
+  <div class="lead-form__bg" aria-hidden="true"></div>
+  <div class="lead-form__overlay" aria-hidden="true"></div>
+
+  <div class="container lead-form__container">
+    <div class="lead-form__card">
+      <p class="lead-form__eyebrow">Форма для связи</p>
+
+      <h2 class="lead-form__title">Получите расчёт под ваш объект</h2>
+
+      <p class="lead-form__text">
+        Оставьте контакты — свяжемся в течение рабочего дня, подберём систему и
+        назовём стоимость
+      </p>
+
+      <form class="lead-form__form" action="https://formspree.io/f/mjgpywnr" method="post">
+        <input type="hidden" name="_subject" value="Raluma SPB — новая заявка" />
+
+        <label class="lead-form__field">
+          <span class="lead-form__label">Имя</span>
+          <input
+            class="lead-form__input"
+            id="lead-name-input"
+            type="text"
+            name="name"
+            placeholder="ваше имя"
+            autocomplete="name"
+          />
+        </label>
+
+        <label class="lead-form__field">
+          <span class="lead-form__label">Телефон</span>
+          <input
+            class="lead-form__input"
+            id="lead-phone-input"
+            type="tel"
+            name="phone"
+            placeholder="+7 999 123-45-67"
+            autocomplete="tel"
+          />
+          <span class="lead-form__hint">Укажите не менее 7 цифр в любом формате</span>
+        </label>
+
+        <div class="lead-form__consent-box">
+          <div class="lead-form__consent-row">
+            <input
+              class="lead-form__checkbox"
+              type="checkbox"
+              id="lead-consent-checkbox"
+              name="consent"
+            />
+
+            <label
+              class="lead-form__checkbox-ui"
+              for="lead-consent-checkbox"
+              aria-label="Согласие"
+            ></label>
+
+            <p class="lead-form__consent-text">
+              Я даю
+              <button
+                class="lead-form__inline-link"
+                type="button"
+                data-dialog-open="consent-dialog"
+              >
+                согласие на обработку персональных данных
+              </button>
+              и подтверждаю ознакомление с
+              <button
+                class="lead-form__inline-link"
+                type="button"
+                data-dialog-open="privacy-dialog"
+              >
+                политикой конфиденциальности
+              </button>.
+            </p>
+          </div>
+        </div>
+
+        <button
+          class="lead-form__button"
+          id="lead-submit-button"
+          type="submit"
+          disabled
+        >
+          Рассчитать стоимость
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <dialog class="lead-form__dialog" id="consent-dialog">
+    <div class="lead-form__dialog-inner">
+      <div class="lead-form__dialog-head">
+        <div>
+          <p class="lead-form__dialog-eyebrow">Документ</p>
+          <h3 class="lead-form__dialog-title">Согласие на обработку персональных данных</h3>
+        </div>
+        <button class="lead-form__dialog-close" type="button" data-dialog-close aria-label="Закрыть">×</button>
+      </div>
+
+      <div class="lead-form__dialog-body">
+        <p>
+          Я, заполняя форму на сайте, даю своё согласие на обработку моих персональных
+          данных: имени, телефона, адреса электронной почты, а также иных сведений,
+          указанных в сообщении.
+        </p>
+
+        <p>
+          Обработка персональных данных осуществляется в целях рассмотрения обращения,
+          обратной связи со мной, подготовки ответа на запрос, предложения услуг по
+          заявленной задаче и заключения договора.
+        </p>
+
+        <p>
+          Под обработкой персональных данных понимаются сбор, запись, систематизация,
+          накопление, хранение, уточнение, использование и удаление персональных данных
+          в соответствии с действующим законодательством Российской Федерации.
+        </p>
+
+        <p>
+          Согласие действует до достижения целей обработки персональных данных либо до
+          момента его отзыва субъектом персональных данных.
+        </p>
+
+        <p>
+          Полные правила изложены в Политике конфиденциальности.
+        </p>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="lead-form__dialog" id="privacy-dialog">
+    <div class="lead-form__dialog-inner lead-form__dialog-inner--wide">
+      <div class="lead-form__dialog-head">
+        <div>
+          <p class="lead-form__dialog-eyebrow">Документ</p>
+          <h3 class="lead-form__dialog-title">Политика конфиденциальности</h3>
+        </div>
+        <button class="lead-form__dialog-close" type="button" data-dialog-close aria-label="Закрыть">×</button>
+      </div>
+
+      <div class="lead-form__dialog-body">
+        <pre class="lead-form__policy-text">Политика конфиденциальности
+
+Настоящая Политика конфиденциальности определяет порядок обработки и защиты персональных данных пользователей сайта https://raluma.com.ru (далее — «Сайт»).
+
+Оператор персональных данных (ОГРНИП: 324784700069042 ) принимает необходимые правовые, организационные и технические меры для защиты персональных данных в соответствии с требованиями Федерального закона №152-ФЗ «О персональных данных».
+---
+1. Какие данные мы собираем
+
+Мы можем собирать следующие персональные данные:
+
+    Имя
+    Номер телефона
+    Адрес электронной почты
+    Иные сведения, указанные пользователем в форме на сайте
+    Паспортные данные, ИНН, адрес регистрации (только при заключении договора)
+
+---
+2. Цели обработки персональных данных
+
+    Обработка обращений и обратная связь с пользователем
+    Подготовка и исполнение договоров
+    Информирование о статусе заказа (включая SMS и email)
+    Предоставление услуг и консультаций
+    Исполнение требований законодательства РФ
+    Предоставление специальных предложений (при согласии пользователя)
+
+---
+3. Передача персональных данных третьим лицам
+
+Персональные данные могут передаваться третьим лицам исключительно для достижения указанных целей:
+
+    Сервисам отправки уведомлений (например, SMS и CRM-системам, таким как Битрикс24)
+    Логистическим и монтажным компаниям
+    Информационным системам, используемым для обработки заявок
+
+Все третьи лица обязаны соблюдать конфиденциальность и использовать данные только в рамках заявленных целей.
+---
+4. Правовые основания обработки
+
+Обработка персональных данных осуществляется на основании:
+
+    Федерального закона №152-ФЗ «О персональных данных»
+    Согласия субъекта персональных данных
+    Необходимости исполнения договора
+
+---
+5. Сроки обработки и хранения данных
+
+Персональные данные обрабатываются до достижения целей обработки либо до момента отзыва согласия пользователем, если иное не предусмотрено законодательством Российской Федерации.
+---
+6. Права пользователя
+
+Пользователь имеет право:
+
+    Получить информацию о своих персональных данных
+    Требовать их уточнения, блокировки или удаления
+    Отозвать согласие на обработку персональных данных
+
+Для реализации своих прав пользователь может обратиться по адресу электронной почты: hello@raluma.com.ru
+
+Или по почтовому адресу: 198335, Россия, Санкт-Петербург, Ленинский пр-т, д. 55, корпус 2, литера А.
+---
+7. Защита персональных данных
+
+Оператор принимает необходимые меры для защиты персональных данных:
+
+    Использование защищённых каналов передачи данных (HTTPS)
+    Ограничение доступа к данным
+    Применение технических и организационных мер безопасности
+
+---
+8. Отзыв согласия
+
+Пользователь вправе отозвать согласие на обработку персональных данных, направив запрос на указанный email. Запрос обрабатывается в течение 30 календарных дней.
+---
+9. Заключительные положения
+
+Отправляя данные через формы на сайте, пользователь подтверждает своё согласие с настоящей Политикой конфиденциальности.
+
+Оператор вправе вносить изменения в настоящую Политику без согласия пользователя. Актуальная версия всегда доступна на данной странице.</pre>
+      </div>
+    </div>
+  </dialog>
+
+  <script is:inline>
+    const checkbox = document.getElementById('lead-consent-checkbox');
+    const submitButton = document.getElementById('lead-submit-button');
+    const nameInput = document.getElementById('lead-name-input');
+    const phoneInput = document.getElementById('lead-phone-input');
+
+    const hasValue = (input) => Boolean(input && input.value.trim().length > 0);
+
+    const getDigits = (value) => String(value || '').replace(/\D/g, '');
+    const phoneLooksValid = (input) => getDigits(input?.value).length >= 7;
+
+    const syncSubmitState = () => {
+      const enabled =
+        Boolean(checkbox && checkbox.checked) &&
+        hasValue(nameInput) &&
+        phoneLooksValid(phoneInput);
+
+      if (submitButton) {
+        submitButton.disabled = !enabled;
+        submitButton.setAttribute('aria-disabled', String(!enabled));
+        submitButton.classList.toggle('is-enabled', enabled);
+      }
+    };
+
+    syncSubmitState();
+
+    checkbox?.addEventListener('change', syncSubmitState);
+    nameInput?.addEventListener('input', syncSubmitState);
+    phoneInput?.addEventListener('input', syncSubmitState);
+
+    const dialogs = Array.from(document.querySelectorAll('.lead-form__dialog'));
+
+    document.querySelectorAll('[data-dialog-open]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const targetId = button.getAttribute('data-dialog-open');
+        const dialog = targetId ? document.getElementById(targetId) : null;
+        if (dialog && typeof dialog.showModal === 'function') {
+          dialog.showModal();
+        }
+      });
+    });
+
+    document.querySelectorAll('[data-dialog-close]').forEach((button) => {
+      button.addEventListener('click', () => {
+        button.closest('dialog')?.close();
+      });
+    });
+
+    dialogs.forEach((dialog) => {
+      dialog.addEventListener('click', (event) => {
+        const rect = dialog.getBoundingClientRect();
+        const inside =
+          rect.top <= event.clientY &&
+          event.clientY <= rect.top + rect.height &&
+          rect.left <= event.clientX &&
+          event.clientX <= rect.left + rect.width;
+
+        if (inside === false) {
+          dialog.close();
+        }
+      });
+    });
+  </script>
+</section>
