@@ -1,0 +1,159 @@
+---
+// Schema.org JSON-LD for the homepage.
+// All data matches real visible content — no invented reviews, ratings, or awards.
+---
+
+<script type="application/ld+json" is:inline>
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://raluma.com.ru/#organization",
+      "name": "Raluma",
+      "description": "Проектирование, изготовление и монтаж безрамного остекления для частных домов, террас, веранд, беседок, балконов и коммерческих объектов в Санкт-Петербурге и Ленинградской области.",
+      "url": "https://raluma.com.ru",
+      "telephone": "+78123307415",
+      "email": "hello@raluma.com.ru",
+      "image": "https://raluma.com.ru/images/hero/hero.jpg",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://raluma.com.ru/images/logo/raluma-logo-1.png"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Ленинский пр-т, д. 55, корп. 2",
+        "addressLocality": "Санкт-Петербург",
+        "postalCode": "198335",
+        "addressCountry": "RU"
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Санкт-Петербург"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Ленинградская область"
+        }
+      ],
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday", "Tuesday", "Wednesday", "Thursday",
+          "Friday", "Saturday", "Sunday"
+        ],
+        "opens": "09:00",
+        "closes": "21:00"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Безрамное остекление",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Безрамное остекление террас"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Безрамное остекление веранд"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Безрамное остекление беседок"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Безрамное остекление балконов"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://raluma.com.ru/#website",
+      "url": "https://raluma.com.ru",
+      "name": "Raluma",
+      "publisher": {
+        "@id": "https://raluma.com.ru/#organization"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://raluma.com.ru/#webpage",
+      "url": "https://raluma.com.ru/",
+      "name": "Безрамное остекление в Санкт-Петербурге | Террасы, веранды, беседки — Raluma",
+      "description": "Проектирование, изготовление и монтаж безрамного остекления для террас, веранд, беседок, балконов и коммерческих объектов в Санкт-Петербурге и Ленинградской области.",
+      "isPartOf": {
+        "@id": "https://raluma.com.ru/#website"
+      },
+      "about": {
+        "@id": "https://raluma.com.ru/#organization"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://raluma.com.ru/images/hero/hero.jpg"
+      }
+    },
+    {
+      "@type": "Service",
+      "name": "Безрамное остекление под ключ",
+      "description": "Проектирование, производство и монтаж безрамных стеклянных систем для частных домов, ресторанов и коммерческих объектов. Подбор системы под объект и сценарий использования.",
+      "provider": {
+        "@id": "https://raluma.com.ru/#organization"
+      },
+      "areaServed": "Санкт-Петербург и Ленинградская область",
+      "serviceType": "Безрамное остекление"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Подходит ли безрамное остекление для готового объекта без демонтажа?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Да. Нижнеопорные системы крепятся к полу и потолочной балке — без нагрузки на кровлю и без вскрытия конструктива. Монтируем на готовые дома, рестораны и коммерческие объекты."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Как долго идёт монтаж безрамного остекления?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Стандартный объект — 1–3 рабочих дня. Сложные проёмы или большие площади — скажем точнее на выезде. Работаем аккуратно, без строительного мусора внутри."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Возможен нестандартный размер безрамного остекления?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Да. Производим системы под конкретные размеры, архитектуру и конфигурацию проёма. Расчёт всегда под ваш объект, а не под шаблон."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Какая гарантия даётся на безрамное остекление?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Даём гарантию на профиль, стекло и монтаж. Конкретные сроки зависят от системы и объекта — уточним при подготовке расчёта."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
