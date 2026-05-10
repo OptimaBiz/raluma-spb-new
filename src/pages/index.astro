@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SchemaOrg from '../components/seo/SchemaOrg.astro';
 import HeroSection from '../components/sections/HeroSection.astro';
 import TrustBarSection from '../components/sections/TrustBarSection.astro';
 import BenefitsSection from '../components/sections/BenefitsSection.astro';
@@ -14,7 +15,12 @@ import FooterSection from '../components/sections/FooterSection.astro';
 import DesktopCallPanel from '../components/ui/DesktopCallPanel.astro';
 ---
 
-<BaseLayout title="Raluma SPB">
+<BaseLayout
+  title="Безрамное остекление в Санкт-Петербурге | Террасы, веранды, беседки — Raluma"
+  description="Проектирование, изготовление и монтаж безрамного остекления для террас, веранд, беседок, балконов и коммерческих объектов в Санкт-Петербурге и Ленинградской области."
+  canonical="https://raluma.com.ru/"
+>
+  <SchemaOrg />
   <HeroSection />
   <TrustBarSection />
   <BenefitsSection />
