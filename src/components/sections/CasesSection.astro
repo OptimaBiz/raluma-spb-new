@@ -4,74 +4,141 @@ import '../../styles/sections/cases.css';
 const cases = [
   {
     id: 'case-2022-terrace-moscow',
+    active: true,
     year: '2022',
     type: 'Веранда',
     system: 'Слайд',
     price: '880 000 ₽',
     title: 'Остекление веранды в Подмосковье',
-    task: 'Остеклить веранду безрамной системой с раскрывающимися проёмами.',
-    solution:
-      'Использовали систему «Слайд»: панели перемещаются параллельно друг за другом и позволяют раскрывать проёмы в тёплую погоду.',
+    description:
+      'Система «Слайд» с двумя остеклёнными раскрывающимися проёмами, открыванием дверей от центра в стороны и тонированным стеклом.',
+    task:
+      'Остеклить веранду безрамной системой, сохранить панорамный обзор и возможность раскрывать проёмы в тёплую погоду.',
     result:
-      'Веранда получила защиту от ветра и осадков, сохранив обзор и возможность раскрытия проёмов.',
+      'Веранда получила защиту от ветра и осадков, сохранив ощущение открытого пространства и лёгкий внешний вид.',
     features: [
       '4 проёма',
-      'Высота 256 см',
-      'Длина 305 см',
+      'Высота проёма 256 см',
+      'Длина проёма 305 см',
       'Тонированное стекло',
       'Открывание от центра в стороны',
     ],
-    image: '/images/cases/terrace-moscow.png',
-    imageAlt: 'Остекление веранды в Подмосковье, система Слайд',
+    images: [
+      {
+        src: '/images/cases/terrace-moscow/main.png',
+        alt: 'Остекление веранды в Подмосковье, основной вид',
+      },
+    ],
   },
   {
     id: 'case-2024-wooden-gazebo',
+    active: true,
     year: '2024',
     type: 'Деревянная беседка / зона барбекю',
     system: 'Слайд',
     price: '480 000 ₽',
     title: 'Остекление в деревянной беседке',
+    description:
+      'Раздвижное безрамное остекление деревянной конструкции со встроенной москитной сеткой-плиссе.',
     task:
-      'Остеклить деревянную беседку, которая используется как зона барбекю весной, летом и осенью.',
-    solution:
-      'Смонтировали раздвижную систему «Слайд» и встроили москитную сетку-плиссе в один из проёмов.',
+      'Защитить зону барбекю от ветра, осадков и насекомых, сохранив возможность проветривания и раскрытия проёмов.',
     result:
-      'Беседка стала защищённой от ветра, осадков и насекомых, сохранив возможность проветривания и раскрытия проёмов.',
+      'Беседка стала комфортнее для использования весной, летом и осенью без потери ощущения открытого пространства.',
     features: [
       '4 проёма',
-      'Высота 256 см',
-      'Длина 305 см',
-      'Москитная сетка-плиссе',
+      'Высота проёма 256 см',
+      'Длина проёма 305 см',
+      'Встроенная москитная сетка-плиссе',
       'Раздвижное остекление в деревянной конструкции',
     ],
-    image: '/images/cases/wooden-gazebo.jpg',
-    imageAlt: 'Остекление в деревянной беседке, система Слайд',
+    images: [
+      {
+        src: '/images/cases/wooden-gazebo/main.jpeg',
+        alt: 'Остекление в деревянной беседке, основной вид',
+      },
+      {
+        src: '/images/cases/wooden-gazebo/detail.jpg',
+        alt: 'Остекление в деревянной беседке, дополнительный ракурс',
+      },
+    ],
+  },
+  {
+    id: 'case-2026-placeholder',
+    active: false,
+    year: '2026',
+    type: '',
+    system: '',
+    price: '',
+    title: '',
+    description: '',
+    task: '',
+    result: '',
+    features: [],
+    images: [],
   },
 ];
+
+const visibleCases = cases.filter(
+  (item) => item.active && item.title && item.system && item.price && item.images.length > 0,
+);
 ---
 
 <section class="cases" id="cases" aria-labelledby="cases-title">
   <div class="cases__wrap">
     <div class="cases__head">
       <p class="cases__eyebrow">Реализованные объекты</p>
-      <h2 class="cases__title" id="cases-title">Два реальных кейса с ценой, системой и деталями проекта</h2>
+      <h2 class="cases__title" id="cases-title">Реализованные объекты</h2>
       <p class="cases__lead">
-        Показаны только подтверждённые объекты Raluma: фото, год, система, цена,
-        особенности, решение и результат.
+        Реальные проекты Raluma: задача, выбранная система, стоимость и результат.
       </p>
     </div>
 
     <div class="cases__grid">
-      {cases.map((c) => (
+      {visibleCases.map((c) => (
         <article class="case-card">
-          <div class="case-card__media">
-            <img
-              class="case-card__img"
-              src={c.image}
-              alt={c.imageAlt}
-              loading="lazy"
-              decoding="async"
-            />
+          <div
+            class:list={['case-card__media', { 'case-card__media--multi': c.images.length > 1 }]}
+            data-case-gallery={c.id}
+          >
+            <div class="case-card__stage">
+              <img
+                class="case-card__img"
+                data-case-main-image
+                src={c.images[0].src}
+                alt={c.images[0].alt}
+                loading="lazy"
+                decoding="async"
+              />
+
+              {c.images.length > 1 && (
+                <>
+                  <button class="case-card__nav case-card__nav--prev" type="button" data-case-prev aria-label="Предыдущее фото">
+                    <span aria-hidden="true">‹</span>
+                  </button>
+                  <button class="case-card__nav case-card__nav--next" type="button" data-case-next aria-label="Следующее фото">
+                    <span aria-hidden="true">›</span>
+                  </button>
+                </>
+              )}
+            </div>
+
+            {c.images.length > 1 && (
+              <div class="case-card__thumbs" aria-label="Мини-галерея проекта">
+                {c.images.map((image, index) => (
+                  <button
+                    class:list={['case-card__thumb', { 'is-active': index === 0 }]}
+                    type="button"
+                    data-case-thumb
+                    data-src={image.src}
+                    data-alt={image.alt}
+                    aria-label={`Показать фото ${index + 1}`}
+                  >
+                    <img src={image.src} alt="" loading="lazy" decoding="async" />
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div class="case-card__badges" aria-hidden="true">
               <span class="case-card__year">{c.year}</span>
               <span class="case-card__system">{c.system}</span>
@@ -85,26 +152,24 @@ const cases = [
 
             <h3 class="case-card__name">{c.title}</h3>
 
-            <div class="case-card__price" aria-label={`Цена проекта ${c.price}`}>
-              <span class="case-card__price-label">Цена</span>
+            <div class="case-card__price" aria-label={`Стоимость проекта ${c.price}`}>
+              <span class="case-card__price-label">Стоимость</span>
               <strong class="case-card__price-value">{c.price}</strong>
             </div>
 
-            <div class="case-card__stack">
-              <div class="case-card__copy-block">
-                <span class="case-card__label">Задача</span>
-                <p class="case-card__text">{c.task}</p>
-              </div>
+            <div class="case-card__copy-block">
+              <span class="case-card__label">Описание</span>
+              <p class="case-card__text">{c.description}</p>
+            </div>
 
-              <div class="case-card__copy-block">
-                <span class="case-card__label">Решение</span>
-                <p class="case-card__text">{c.solution}</p>
-              </div>
+            <div class="case-card__copy-block">
+              <span class="case-card__label">Задача</span>
+              <p class="case-card__text">{c.task}</p>
+            </div>
 
-              <div class="case-card__copy-block">
-                <span class="case-card__label">Результат</span>
-                <p class="case-card__text">{c.result}</p>
-              </div>
+            <div class="case-card__copy-block">
+              <span class="case-card__label">Результат</span>
+              <p class="case-card__text">{c.result}</p>
             </div>
 
             <div class="case-card__chips" aria-label="Особенности проекта">
@@ -122,3 +187,44 @@ const cases = [
     </div>
   </div>
 </section>
+
+<script>
+  const initCaseGalleries = () => {
+    const galleries = document.querySelectorAll('[data-case-gallery]');
+
+    galleries.forEach((gallery) => {
+      const mainImage = gallery.querySelector('[data-case-main-image]');
+      const prevButton = gallery.querySelector('[data-case-prev]');
+      const nextButton = gallery.querySelector('[data-case-next]');
+      const thumbs = Array.from(gallery.querySelectorAll('[data-case-thumb]'));
+
+      if (!mainImage || thumbs.length < 2) return;
+
+      let current = 0;
+
+      const setActive = (index) => {
+        current = (index + thumbs.length) % thumbs.length;
+        const thumb = thumbs[current];
+        mainImage.src = thumb.dataset.src;
+        mainImage.alt = thumb.dataset.alt || '';
+
+        thumbs.forEach((button, buttonIndex) => {
+          button.classList.toggle('is-active', buttonIndex === current);
+        });
+      };
+
+      prevButton?.addEventListener('click', () => setActive(current - 1));
+      nextButton?.addEventListener('click', () => setActive(current + 1));
+
+      thumbs.forEach((button, index) => {
+        button.addEventListener('click', () => setActive(index));
+      });
+    });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCaseGalleries, { once: true });
+  } else {
+    initCaseGalleries();
+  }
+</script>
