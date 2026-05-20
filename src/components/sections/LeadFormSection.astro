@@ -286,6 +286,7 @@ import '../../styles/sections/lead-form.css';
         });
       } catch (_) {}
 
+      window.safeReachGoal('lead_form_submit');
       window.location.replace(thankYouUrl);
       return false;
     }, true);
