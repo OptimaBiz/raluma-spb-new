@@ -10,15 +10,32 @@ import '../../styles/sections/lead-form.css';
     <div class="lead-form__card">
       <p class="lead-form__eyebrow">Форма для связи</p>
 
-      <h2 class="lead-form__title">Получите расчёт под ваш объект</h2>
+      <h2 class="lead-form__title">Рассчитаем решение под ваш объект</h2>
 
       <p class="lead-form__text">
-        Оставьте контакты — свяжемся в течение рабочего дня, подберём систему и
-        назовём стоимость
+        Оставьте контакты. Фото или чертёж помогут сделать расчёт точнее.
       </p>
 
-      <form class="lead-form__form" id="lead-form-element" action="https://formspree.io/f/mjgpywnr" method="post" novalidate onsubmit="return false;">
+      <form
+        class="lead-form__form"
+        id="lead-form-element"
+        action="https://formsubmit.co/b74530d73d4edaeff37616f747872cae"
+        method="post"
+        enctype="multipart/form-data"
+        novalidate
+      >
         <input type="hidden" name="_subject" value="Raluma SPB — новая заявка" />
+        <input type="hidden" name="_template" value="table" />
+        <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" name="_url" value="https://raluma.com.ru/#lead-form" />
+        <input
+          type="text"
+          name="_honey"
+          tabindex="-1"
+          autocomplete="off"
+          aria-hidden="true"
+          style="display: none"
+        />
 
         <label class="lead-form__field">
           <span class="lead-form__label">Имя</span>
@@ -44,6 +61,35 @@ import '../../styles/sections/lead-form.css';
           />
           <span class="lead-form__hint">Укажите не менее 7 цифр в любом формате</span>
         </label>
+
+        <div class="lead-form__upload" data-file-upload>
+          <input
+            class="lead-form__file-input"
+            id="lead-files-input"
+            type="file"
+            name="attachment"
+            accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf,.heic,.heif,.pdf"
+            multiple
+            aria-describedby="lead-file-help lead-file-error"
+          />
+
+          <label class="lead-form__file-drop" for="lead-files-input">
+            <span class="lead-form__upload-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+                <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="lead-form__upload-copy">
+              <strong>Добавить фото или чертёж</strong>
+              <small id="lead-file-help">До 5 файлов: JPG, PNG, HEIC, WebP или PDF</small>
+            </span>
+            <span class="lead-form__upload-action">Выбрать</span>
+          </label>
+
+          <ul class="lead-form__file-list" id="lead-file-list" aria-label="Выбранные файлы" hidden></ul>
+          <p class="lead-form__file-error" id="lead-file-error" role="alert" aria-live="polite" hidden></p>
+          <p class="lead-form__upload-safety">Общий размер всех файлов — до 10 МБ. Не прикладывайте конфиденциальные документы.</p>
+        </div>
 
         <div class="lead-form__consent-box">
           <div class="lead-form__consent-row">
@@ -87,8 +133,10 @@ import '../../styles/sections/lead-form.css';
           type="submit"
           disabled
         >
-          Рассчитать стоимость
+          Получить предварительный расчёт
         </button>
+
+        <p class="lead-form__status" id="lead-form-status" role="status" aria-live="polite" hidden></p>
       </form>
     </div>
   </div>
@@ -107,7 +155,7 @@ import '../../styles/sections/lead-form.css';
         <p>
           Я, заполняя форму на сайте, даю своё согласие на обработку моих персональных
           данных: имени, телефона, адреса электронной почты, а также иных сведений,
-          указанных в сообщении.
+          указанных в сообщении и добровольно прикреплённых файлах.
         </p>
 
         <p>
@@ -159,6 +207,7 @@ import '../../styles/sections/lead-form.css';
     Номер телефона
     Адрес электронной почты
     Иные сведения, указанные пользователем в форме на сайте
+    Файлы, добровольно прикреплённые пользователем к форме
     Паспортные данные, ИНН, адрес регистрации (только при заключении договора)
 
 ---
@@ -232,22 +281,108 @@ import '../../styles/sections/lead-form.css';
   <script is:inline>
     const form = document.getElementById('lead-form-element');
     const thankYouUrl = '/thank-you/';
-    const formspreeEndpoint = 'https://formspree.io/f/mjgpywnr';
+    const formSubmitEndpoint = 'https://formsubmit.co/ajax/b74530d73d4edaeff37616f747872cae';
     const checkbox = document.getElementById('lead-consent-checkbox');
     const submitButton = document.getElementById('lead-submit-button');
     const nameInput = document.getElementById('lead-name-input');
     const phoneInput = document.getElementById('lead-phone-input');
+    const fileInput = document.getElementById('lead-files-input');
+    const fileList = document.getElementById('lead-file-list');
+    const fileError = document.getElementById('lead-file-error');
+    const formStatus = document.getElementById('lead-form-status');
+    const defaultButtonText = 'Получить предварительный расчёт';
+    const maxFiles = 5;
+    const maxTotalFileSize = 10 * 1024 * 1024;
+    let filesAreValid = true;
+    let isSubmitting = false;
 
     const hasValue = (input) => Boolean(input && input.value.trim().length > 0);
 
     const getDigits = (value) => String(value || '').replace(/\D/g, '');
     const phoneLooksValid = (input) => getDigits(input?.value).length >= 7;
 
+    const formatFileSize = (bytes) => {
+      if (bytes < 1024 * 1024) return `${Math.ceil(bytes / 1024)} КБ`;
+      return `${(bytes / (1024 * 1024)).toFixed(1).replace('.0', '')} МБ`;
+    };
+
+    const showFileError = (message = '') => {
+      filesAreValid = !message;
+      if (!fileError) return;
+      fileError.textContent = message;
+      fileError.hidden = !message;
+    };
+
+    const showFormStatus = (message = '', type = 'error') => {
+      if (!formStatus) return;
+      formStatus.textContent = message;
+      formStatus.dataset.type = type;
+      formStatus.hidden = !message;
+    };
+
+    const validateFiles = (files) => {
+      if (files.length > maxFiles) {
+        return `Можно прикрепить не более ${maxFiles} файлов.`;
+      }
+
+      const totalFileSize = files.reduce((total, file) => total + file.size, 0);
+      if (totalFileSize > maxTotalFileSize) {
+        return `Общий размер файлов — ${formatFileSize(totalFileSize)}. Допустимо не более 10 МБ.`;
+      }
+
+      const allowedExtensions = /\.(jpe?g|png|webp|heic|heif|pdf)$/i;
+      const unsupportedFile = files.find((file) => !allowedExtensions.test(file.name));
+      if (unsupportedFile) {
+        return `Формат файла «${unsupportedFile.name}» не поддерживается.`;
+      }
+
+      return '';
+    };
+
+    const renderFiles = () => {
+      if (!fileInput || !fileList) return;
+      const files = Array.from(fileInput.files || []);
+      fileList.replaceChildren();
+      fileList.hidden = files.length === 0;
+
+      files.forEach((file, index) => {
+        const item = document.createElement('li');
+        const details = document.createElement('span');
+        const name = document.createElement('strong');
+        const size = document.createElement('small');
+        const removeButton = document.createElement('button');
+
+        name.textContent = file.name;
+        size.textContent = formatFileSize(file.size);
+        details.append(name, size);
+
+        removeButton.type = 'button';
+        removeButton.className = 'lead-form__file-remove';
+        removeButton.setAttribute('aria-label', `Удалить файл ${file.name}`);
+        removeButton.textContent = '×';
+        removeButton.addEventListener('click', () => {
+          const transfer = new DataTransfer();
+          files.forEach((selectedFile, selectedIndex) => {
+            if (selectedIndex !== index) transfer.items.add(selectedFile);
+          });
+          fileInput.files = transfer.files;
+          showFileError(validateFiles(Array.from(fileInput.files)));
+          renderFiles();
+          syncSubmitState();
+        });
+
+        item.append(details, removeButton);
+        fileList.append(item);
+      });
+    };
+
     const syncSubmitState = () => {
       const enabled =
         Boolean(checkbox && checkbox.checked) &&
         hasValue(nameInput) &&
-        phoneLooksValid(phoneInput);
+        phoneLooksValid(phoneInput) &&
+        filesAreValid &&
+        !isSubmitting;
 
       if (submitButton) {
         submitButton.disabled = !enabled;
@@ -261,6 +396,24 @@ import '../../styles/sections/lead-form.css';
     checkbox?.addEventListener('change', syncSubmitState);
     nameInput?.addEventListener('input', syncSubmitState);
     phoneInput?.addEventListener('input', syncSubmitState);
+    fileInput?.addEventListener('change', () => {
+      const files = Array.from(fileInput.files || []);
+      const validationMessage = validateFiles(files);
+
+      if (validationMessage) {
+        fileInput.value = '';
+        showFileError(validationMessage);
+      } else {
+        showFileError();
+      }
+
+      renderFiles();
+      syncSubmitState();
+    });
+
+    [nameInput, phoneInput].forEach((input) => {
+      input?.addEventListener('input', () => showFormStatus());
+    });
 
     form?.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -271,32 +424,61 @@ import '../../styles/sections/lead-form.css';
       const ready =
         Boolean(checkbox && checkbox.checked) &&
         hasValue(nameInput) &&
-        phoneLooksValid(phoneInput);
+        phoneLooksValid(phoneInput) &&
+        filesAreValid;
 
       if (!ready) return;
 
+      isSubmitting = true;
       submitButton.disabled = true;
-      submitButton.textContent = 'Отправляем...';
+      submitButton.textContent = 'Отправляем…';
+      showFormStatus();
 
       try {
-        await fetch(formspreeEndpoint, {
+        const response = await fetch(formSubmitEndpoint, {
           method: 'POST',
           body: new FormData(form),
           headers: { Accept: 'application/json' }
         });
-      } catch (_) {}
 
-      window.safeReachGoal('lead_form_submit');
-      window.location.replace(thankYouUrl);
-      return false;
-    }, true);
+        let result = {};
+        try {
+          result = await response.json();
+        } catch (_) {}
 
-    submitButton?.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      form?.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+        const serviceRejectedSubmission =
+          result.success === false || result.success === 'false';
+
+        if (!response.ok || serviceRejectedSubmission) {
+          if (response.status === 413) {
+            throw new Error('FILES_TOO_BIG');
+          }
+          if (response.status === 429) {
+            throw new Error('RATE_LIMIT');
+          }
+
+          throw new Error('FORM_ERROR');
+        }
+
+        window.safeReachGoal?.('lead_form_submit');
+        window.location.replace(thankYouUrl);
+      } catch (error) {
+        const messages = {
+          FILES_TOO_BIG: 'Общий размер файлов превышает 10 МБ. Уменьшите их размер и попробуйте снова.',
+          RATE_LIMIT: 'Слишком много отправок подряд. Попробуйте ещё раз через минуту.',
+          FORM_ERROR: 'Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.',
+          NETWORK_ERROR: 'Нет связи с сервером. Проверьте интернет и попробуйте снова.'
+        };
+        const errorCode = error instanceof Error ? error.message : 'NETWORK_ERROR';
+        const message = messages[errorCode] || messages.NETWORK_ERROR;
+        showFormStatus(message);
+        isSubmitting = false;
+        submitButton.textContent = defaultButtonText;
+        syncSubmitState();
+      }
+
       return false;
-    }, true);
+    });
 
 
     const dialogs = Array.from(document.querySelectorAll('.lead-form__dialog'));
