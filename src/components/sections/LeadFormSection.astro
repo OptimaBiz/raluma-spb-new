@@ -10,12 +10,18 @@ import '../../styles/sections/lead-form.css';
     <div class="lead-form__card">
       <p class="lead-form__eyebrow">Форма для связи</p>
 
-      <h2 class="lead-form__title">Получите расчёт под ваш объект</h2>
+      <h2 class="lead-form__title">Получите предварительный расчёт под ваш объект</h2>
 
       <p class="lead-form__text">
-        Оставьте контакты — свяжемся в течение рабочего дня, подберём систему и
-        назовём стоимость
+        Свяжемся в течение рабочего дня, уточним размеры и сценарий использования,
+        подберём систему и подготовим расчёт стоимости.
       </p>
+
+      <ul class="lead-form__benefits" aria-label="Что будет после заявки">
+        <li>Без обязательств</li>
+        <li>Можно начать с фото или чертежа</li>
+        <li>Стоимость под ваш объект</li>
+      </ul>
 
       <form class="lead-form__form" id="lead-form-element" action="https://formspree.io/f/mjgpywnr" method="post" novalidate onsubmit="return false;">
         <input type="hidden" name="_subject" value="Raluma SPB — новая заявка" />
@@ -87,7 +93,7 @@ import '../../styles/sections/lead-form.css';
           type="submit"
           disabled
         >
-          Рассчитать стоимость
+          Получить предварительный расчёт
         </button>
       </form>
     </div>

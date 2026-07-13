@@ -1,11 +1,22 @@
 ---
 const phoneHref = 'tel:+78123307415';
+const isHomePage = Astro.url.pathname === '/';
 ---
 
-<div class="mobile-callbar" aria-label="Быстрый звонок">
-  <a class="mobile-callbar__button" href={phoneHref} aria-label="Позвонить">
+<nav
+  class:list={['mobile-actionbar', { 'mobile-actionbar--phone-only': !isHomePage }]}
+  aria-label="Быстрые действия"
+  data-mobile-actionbar
+  data-always-visible={!isHomePage ? '' : undefined}
+>
+  {isHomePage && (
+    <a class="mobile-actionbar__primary" href="#lead-form">
+      Получить расчёт
+    </a>
+  )}
+
+  <a class="mobile-actionbar__phone" href={phoneHref} aria-label="Позвонить в Raluma">
     <svg
-      class="mobile-callbar__icon"
       viewBox="0 0 24 24"
       aria-hidden="true"
       fill="none"
@@ -16,153 +27,123 @@ const phoneHref = 'tel:+78123307415';
     >
       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.86 19.86 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.86 19.86 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.35 1.78.68 2.62a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.46-1.25a2 2 0 0 1 2.11-.45c.84.33 1.72.56 2.62.68A2 2 0 0 1 22 16.92z" />
     </svg>
-    <span class="mobile-callbar__label">Позвонить</span>
   </a>
-</div>
+</nav>
+
+<script>
+  const initMobileActionbar = () => {
+    const actionbar = document.querySelector('[data-mobile-actionbar]');
+    if (!actionbar) return;
+
+    const update = () => {
+      const threshold = Math.min(window.innerHeight * 0.55, 420);
+      const alwaysVisible = actionbar.hasAttribute('data-always-visible');
+      actionbar.classList.toggle('is-visible', alwaysVisible || window.scrollY > threshold);
+    };
+
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileActionbar, { once: true });
+  } else {
+    initMobileActionbar();
+  }
+</script>
 
 <style>
-  .mobile-callbar {
+  .mobile-actionbar {
     display: none;
   }
 
   @media (max-width: 768px) {
     :global(body) {
-      padding-bottom: calc(92px + env(safe-area-inset-bottom));
+      padding-bottom: calc(88px + env(safe-area-inset-bottom));
     }
 
-    .mobile-callbar {
+    .mobile-actionbar {
       position: fixed;
       left: 50%;
-      bottom: calc(14px + env(safe-area-inset-bottom));
+      bottom: calc(12px + env(safe-area-inset-bottom));
       transform: translateX(-50%);
       z-index: 48;
-      display: block;
-      width: auto;
-      max-width: calc(100vw - 136px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translate(-50%, 12px);
       pointer-events: none;
+      transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
     }
 
-    .mobile-callbar__button {
-      position: relative;
-      overflow: hidden;
+    .mobile-actionbar.is-visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, 0);
+    }
+
+    .mobile-actionbar__primary,
+    .mobile-actionbar__phone {
       pointer-events: auto;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 9px;
       min-height: 48px;
-      padding: 0 18px;
       border-radius: 999px;
-      border: 1px solid rgba(17, 17, 17, 0.08);
-      background: rgba(255, 255, 255, 0.94);
-      color: #111111;
       text-decoration: none;
-      white-space: nowrap;
-      box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.92) inset,
-        0 14px 34px rgba(9, 17, 30, 0.14);
+      box-shadow: 0 14px 34px rgba(9, 17, 30, 0.18);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
-      transition:
-        transform 0.22s ease,
-        box-shadow 0.22s ease,
-        background 0.22s ease;
     }
 
-    .mobile-callbar__button::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: -44%;
-      width: 44%;
-      background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.78) 48%,
-        rgba(255, 255, 255, 0) 100%
-      );
-      transform: skewX(-20deg);
-      animation: mobileCallbarShine 3.8s ease-in-out infinite;
-      pointer-events: none;
+    .mobile-actionbar__primary {
+      padding: 0 17px;
+      background: rgba(229, 57, 53, 0.96);
+      color: #ffffff;
+      font-size: 13px;
+      line-height: 1;
+      font-weight: 800;
+      white-space: nowrap;
     }
 
-    .mobile-callbar__button:active {
-      transform: scale(0.992);
-      box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.88) inset,
-        0 10px 24px rgba(9, 17, 30, 0.12);
+    .mobile-actionbar__phone {
+      flex: 0 0 48px;
+      width: 48px;
+      border: 1px solid rgba(17, 17, 17, 0.08);
+      background: rgba(255, 255, 255, 0.96);
+      color: #111111;
     }
 
-    .mobile-callbar__icon {
-      position: relative;
-      z-index: 1;
+    .mobile-actionbar__phone svg {
       width: 18px;
       height: 18px;
-      color: #e44336;
-      flex: 0 0 auto;
     }
 
-    .mobile-callbar__label {
-      position: relative;
-      z-index: 1;
-      font-size: 14px;
-      line-height: 1;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: #111111;
+    .mobile-actionbar__primary:active,
+    .mobile-actionbar__phone:active {
+      transform: scale(0.98);
     }
   }
 
-  @media (max-width: 420px) {
-    .mobile-callbar {
-      max-width: calc(100vw - 138px);
+  @media (max-width: 360px) {
+    .mobile-actionbar__primary {
+      padding: 0 13px;
+      font-size: 12px;
     }
 
-    .mobile-callbar__button {
-      min-height: 46px;
-      padding: 0 16px;
-      gap: 8px;
-    }
-
-    .mobile-callbar__label {
-      font-size: 13px;
-    }
-
-    .mobile-callbar__icon {
-      width: 17px;
-      height: 17px;
+    .mobile-actionbar__phone {
+      flex-basis: 46px;
+      width: 46px;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .mobile-callbar__button::before {
-      animation: none;
-    }
-
-    .mobile-callbar__button {
+    .mobile-actionbar__primary,
+    .mobile-actionbar__phone {
       transition: none;
-    }
-  }
-
-  @keyframes mobileCallbarShine {
-    0% {
-      left: -44%;
-      opacity: 0;
-    }
-    18% {
-      opacity: 0;
-    }
-    34% {
-      opacity: 1;
-    }
-    52% {
-      left: 114%;
-      opacity: 0;
-    }
-    100% {
-      left: 114%;
-      opacity: 0;
     }
   }
 </style>

@@ -68,6 +68,26 @@
   text-align: center;
 }
 
+.lead-form__benefits {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 16px;
+  margin: 18px auto 0;
+  padding: 0;
+  list-style: none;
+  color: #435066;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.lead-form__benefits li::before {
+  content: '✓';
+  margin-right: 7px;
+  color: #d94a43;
+  font-weight: 800;
+}
+
 .lead-form__form {
   display: grid;
   gap: 16px;
@@ -337,6 +357,16 @@
   .lead-form__text {
     font-size: 15px;
     line-height: 1.55;
+  }
+
+  .lead-form__benefits {
+    justify-content: flex-start;
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .lead-form__benefits li {
+    width: 100%;
   }
 
   .lead-form__form {
