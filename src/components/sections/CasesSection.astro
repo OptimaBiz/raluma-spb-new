@@ -56,7 +56,7 @@ const cases = [
     ],
     images: [
       {
-        src: '/images/cases/terrace-moscow/main.png',
+        src: '/images/cases/terrace-moscow/main.webp',
         alt: 'Остекление веранды в Подмосковье, основной вид',
       },
     ],
@@ -82,11 +82,11 @@ const cases = [
     ],
     images: [
       {
-        src: '/images/cases/lenoblast-pavilion-2026/exterior.jpeg',
+        src: '/images/cases/lenoblast-pavilion-2026/exterior.webp',
         alt: 'Панорамное остекление павильона в Ленинградской области, вид снаружи',
       },
       {
-        src: '/images/cases/lenoblast-pavilion-2026/interior.jpeg',
+        src: '/images/cases/lenoblast-pavilion-2026/interior.webp',
         alt: 'Панорамное остекление павильона в Ленинградской области, вид изнутри',
       },
     ],
@@ -216,16 +216,71 @@ const visibleCases = cases.filter(
       if (!mainImage || thumbs.length < 2) return;
 
       let current = 0;
+      let requestId = 0;
+      const imageCache = new Map();
 
-      const setActive = (index) => {
+      const loadImage = (src) => {
+        if (imageCache.has(src)) return imageCache.get(src);
+
+        const request = new Promise((resolve, reject) => {
+          const image = new Image();
+          image.decoding = 'async';
+          image.onload = () => {
+            if (typeof image.decode === 'function') {
+              image.decode().catch(() => {}).finally(() => resolve(src));
+            } else {
+              resolve(src);
+            }
+          };
+          image.onerror = reject;
+          image.src = src;
+        });
+
+        imageCache.set(src, request);
+        request.catch(() => imageCache.delete(src));
+        return request;
+      };
+
+      const warmAdjacent = (index) => {
+        [index - 1, index + 1].forEach((nextIndex) => {
+          const thumb = thumbs[(nextIndex + thumbs.length) % thumbs.length];
+          if (thumb?.dataset.src) loadImage(thumb.dataset.src).catch(() => {});
+        });
+      };
+
+      const setActive = async (index) => {
         current = (index + thumbs.length) % thumbs.length;
         const thumb = thumbs[current];
-        mainImage.src = thumb.dataset.src;
-        mainImage.alt = thumb.dataset.alt || '';
+        const nextSrc = thumb.dataset.src;
+        const thisRequest = ++requestId;
 
         thumbs.forEach((button, buttonIndex) => {
           button.classList.toggle('is-active', buttonIndex === current);
         });
+
+        if (!nextSrc) return;
+        gallery.classList.add('is-loading');
+        gallery.setAttribute('aria-busy', 'true');
+
+        try {
+          await loadImage(nextSrc);
+          if (thisRequest !== requestId) return;
+          mainImage.classList.add('is-changing');
+          await new Promise((resolve) => window.setTimeout(resolve, 80));
+          if (thisRequest !== requestId) return;
+          mainImage.src = nextSrc;
+          mainImage.alt = thumb.dataset.alt || '';
+          if (typeof mainImage.decode === 'function') await mainImage.decode().catch(() => {});
+          window.requestAnimationFrame(() => mainImage.classList.remove('is-changing'));
+          warmAdjacent(current);
+        } catch (error) {
+          console.warn('Не удалось загрузить изображение проекта', error);
+        } finally {
+          if (thisRequest === requestId) {
+            gallery.classList.remove('is-loading');
+            gallery.removeAttribute('aria-busy');
+          }
+        }
       };
 
       prevButton?.addEventListener('click', () => setActive(current - 1));
@@ -234,6 +289,15 @@ const visibleCases = cases.filter(
       thumbs.forEach((button, index) => {
         button.addEventListener('click', () => setActive(index));
       });
+
+      if (typeof IntersectionObserver === 'function') {
+        const observer = new IntersectionObserver((entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          warmAdjacent(current);
+          observer.disconnect();
+        }, { rootMargin: '240px 0px' });
+        observer.observe(gallery);
+      }
     });
   };
 

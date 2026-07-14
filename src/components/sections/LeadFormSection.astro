@@ -10,7 +10,7 @@ import '../../styles/sections/lead-form.css';
     <div class="lead-form__card">
       <p class="lead-form__eyebrow">Форма для связи</p>
 
-      <h2 class="lead-form__title">Рассчитаем решение под ваш объект</h2>
+      <h2 class="lead-form__title">Узнайте стоимость под ваш объект</h2>
 
       <p class="lead-form__text">
         Фото или чертёж помогут сделать расчёт точнее.
@@ -41,7 +41,7 @@ import '../../styles/sections/lead-form.css';
             id="lead-name-input"
             type="text"
             name="name"
-            placeholder="ваше имя"
+            placeholder="Ваше имя"
             autocomplete="name"
           />
         </label>
@@ -288,8 +288,21 @@ import '../../styles/sections/lead-form.css';
     </div>
   </dialog>
 
-  <script is:inline>
+  <script>
     const form = document.getElementById('lead-form-element');
+    const leadFormSection = document.getElementById('lead-form');
+    if (leadFormSection) {
+      if (typeof IntersectionObserver === 'function') {
+        const mediaObserver = new IntersectionObserver((entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          leadFormSection.classList.add('is-media-ready');
+          mediaObserver.disconnect();
+        }, { rootMargin: '600px 0px' });
+        mediaObserver.observe(leadFormSection);
+      } else {
+        leadFormSection.classList.add('is-media-ready');
+      }
+    }
     const thankYouUrl = '/thank-you/';
     const backendEndpoint = 'https://script.google.com/macros/s/AKfycbxcf47z7AnQvhfcGi9CGJ3zowcPNX8nS7157L5RUgymKInR8Rxq8q4PSqjmLjDrW6Re/exec';
     const checkbox = document.getElementById('lead-consent-checkbox');
