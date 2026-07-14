@@ -65,3 +65,43 @@ import '../../styles/sections/faq.css';
     </div>
   </div>
 </section>
+
+<script>
+  const faqItems = Array.from(document.querySelectorAll('.faq__item'));
+  const faqReduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  faqItems.forEach((item) => {
+    const summary = item.querySelector('.faq__summary');
+    if (!(item instanceof HTMLDetailsElement) || !(summary instanceof HTMLElement)) return;
+
+    summary.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (item.dataset.animating === 'true') return;
+
+      const opening = !item.open;
+      if (faqReduceMotion || typeof item.animate !== 'function') {
+        item.open = opening;
+        return;
+      }
+
+      const startHeight = item.offsetHeight;
+      if (opening) item.open = true;
+      const endHeight = opening ? item.scrollHeight : summary.offsetHeight + 2;
+
+      item.dataset.animating = 'true';
+      const animation = item.animate(
+        [{ height: `${startHeight}px` }, { height: `${endHeight}px` }],
+        { duration: 360, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+      );
+
+      animation.onfinish = () => {
+        if (!opening) item.open = false;
+        delete item.dataset.animating;
+      };
+
+      animation.oncancel = () => {
+        delete item.dataset.animating;
+      };
+    });
+  });
+</script>

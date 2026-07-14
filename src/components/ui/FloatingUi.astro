@@ -16,19 +16,21 @@
   <div class="cookie-widget" data-cookie-widget>
     <!-- panel первый в DOM — при bottom-anchor раскрывается ВВЕРХ от кнопки -->
     <div class="cookie-widget__panel">
-      <p class="cookie-widget__title">Использование cookies</p>
-      <p class="cookie-widget__text">
-        Мы используем cookies и технические данные для корректной работы сайта,
-        анализа посещаемости и улучшения сервиса.
-      </p>
+      <div class="cookie-widget__panel-inner">
+        <p class="cookie-widget__title">Использование cookies</p>
+        <p class="cookie-widget__text">
+          Мы используем cookies и технические данные для корректной работы сайта,
+          анализа посещаемости и улучшения сервиса.
+        </p>
 
-      <div class="cookie-widget__actions">
-        <button class="cookie-widget__button cookie-widget__button--primary" type="button" data-cookie-accept>
-          Принять
-        </button>
-        <button class="cookie-widget__button cookie-widget__button--secondary" type="button" data-cookie-more>
-          Подробнее
-        </button>
+        <div class="cookie-widget__actions">
+          <button class="cookie-widget__button cookie-widget__button--primary" type="button" data-cookie-accept>
+            Принять
+          </button>
+          <button class="cookie-widget__button cookie-widget__button--secondary" type="button" data-cookie-more>
+            Подробнее
+          </button>
+        </div>
       </div>
     </div>
 
@@ -115,11 +117,11 @@
     visibility: hidden;
     transform: translateY(10px);
     transition:
-      opacity 0.22s ease,
-      visibility 0.22s ease,
-      transform 0.22s ease,
-      background-color 0.22s ease,
-      border-color 0.22s ease;
+      opacity var(--motion-base) var(--motion-ease-productive),
+      visibility var(--motion-base) var(--motion-ease-productive),
+      transform var(--motion-page) var(--motion-ease),
+      background-color var(--motion-base) var(--motion-ease-productive),
+      border-color var(--motion-base) var(--motion-ease-productive);
   }
 
   .floating-ui__scroll-top.is-visible {
@@ -151,9 +153,9 @@
     visibility: hidden;
     transform: translateY(12px);
     transition:
-      opacity 0.22s ease,
-      visibility 0.22s ease,
-      transform 0.22s ease;
+      opacity var(--motion-base) var(--motion-ease-productive),
+      visibility var(--motion-base) var(--motion-ease-productive),
+      transform var(--motion-page) var(--motion-ease);
   }
 
   .cookie-widget.is-visible {
@@ -178,8 +180,8 @@
       0 8px 22px rgba(9, 17, 30, 0.14);
     cursor: pointer;
     transition:
-      transform 0.2s ease,
-      box-shadow 0.2s ease;
+      transform var(--motion-base) var(--motion-ease),
+      box-shadow var(--motion-base) var(--motion-ease-productive);
   }
 
   .cookie-widget__trigger:hover {
@@ -198,20 +200,48 @@
 
   /* ── Cookie panel (opens above trigger) ── */
   .cookie-widget__panel {
-    display: none;
+    display: grid;
+    grid-template-rows: 0fr;
     width: min(340px, calc(100vw - 44px));
-    margin-bottom: 10px;
-    padding: 18px;
+    margin-bottom: 0;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 20px;
     background: rgba(16, 24, 39, 0.96);
     color: #ffffff;
     box-shadow: 0 16px 48px rgba(5, 10, 20, 0.32);
     backdrop-filter: blur(16px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px) scale(0.985);
+    pointer-events: none;
+    overflow: hidden;
+    transition:
+      grid-template-rows var(--motion-page) var(--motion-ease),
+      margin-bottom var(--motion-page) var(--motion-ease),
+      opacity var(--motion-base) var(--motion-ease-productive),
+      transform var(--motion-page) var(--motion-ease),
+      visibility var(--motion-base) var(--motion-ease-productive);
   }
 
   .cookie-widget.is-open .cookie-widget__panel {
-    display: block;
+    grid-template-rows: 1fr;
+    margin-bottom: 10px;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  .cookie-widget__panel-inner {
+    min-height: 0;
+    overflow: hidden;
+    padding: 0 18px;
+    transition: padding var(--motion-page) var(--motion-ease);
+  }
+
+  .cookie-widget.is-open .cookie-widget__panel-inner {
+    padding-top: 18px;
+    padding-bottom: 18px;
   }
 
   .cookie-widget__title {
@@ -379,8 +409,17 @@
 
     .cookie-widget__panel {
       width: min(320px, calc(100vw - 28px));
-      padding: 16px;
       border-radius: 18px;
+    }
+
+    .cookie-widget__panel-inner {
+      padding-right: 16px;
+      padding-left: 16px;
+    }
+
+    .cookie-widget.is-open .cookie-widget__panel-inner {
+      padding-top: 16px;
+      padding-bottom: 16px;
     }
 
     .cookie-widget__actions {
@@ -508,6 +547,16 @@
   });
 
   updateFloatingUi();
-  window.addEventListener('scroll', updateFloatingUi, { passive: true });
-  window.addEventListener('resize', updateFloatingUi);
+  let floatingUpdateScheduled = false;
+  const scheduleFloatingUiUpdate = () => {
+    if (floatingUpdateScheduled) return;
+    floatingUpdateScheduled = true;
+    window.requestAnimationFrame(() => {
+      floatingUpdateScheduled = false;
+      updateFloatingUi();
+    });
+  };
+
+  window.addEventListener('scroll', scheduleFloatingUiUpdate, { passive: true });
+  window.addEventListener('resize', scheduleFloatingUiUpdate);
 </script>
