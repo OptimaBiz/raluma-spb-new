@@ -304,6 +304,11 @@
   color: #38506f;
 }
 
+.lead-form__status[data-type='success'] {
+  background: #edf8f1;
+  color: #2f6a46;
+}
+
 .lead-form__status[hidden] {
   display: none;
 }
