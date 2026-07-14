@@ -20,6 +20,7 @@ const {
 } = Astro.props;
 
 const ogImageAbsolute = ogImage.startsWith('http') ? ogImage : `https://raluma.com.ru${ogImage}`;
+const isHomePage = Astro.url.pathname === '/';
 ---
 
 <!doctype html>
@@ -39,6 +40,9 @@ const ogImageAbsolute = ogImage.startsWith('http') ? ogImage : `https://raluma.c
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/images/logo/raluma-logo-1.png" />
     <link rel="apple-touch-icon" href="/images/logo/raluma-logo-1.png" />
+    {isHomePage && (
+      <link rel="preload" as="image" href="/images/hero/hero.webp" type="image/webp" fetchpriority="high" />
+    )}
 
     <!-- OpenGraph -->
     <meta property="og:type" content="website" />

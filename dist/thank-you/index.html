@@ -33,7 +33,7 @@
 Принять
 </button> <button class="cookie-widget__button cookie-widget__button--secondary" type="button" data-cookie-more>
 Подробнее
-</button> </div> </div> </div> <!-- trigger второй в DOM — остаётся внизу при bottom-anchor --> <button class="cookie-widget__trigger" type="button" data-cookie-trigger aria-label="Управление cookies"> <img class="cookie-widget__icon" src="/images/icons/cookies.png" alt="" aria-hidden="true" width="26" height="26"> </button> </div> <dialog class="floating-ui__dialog" id="cookie-info-dialog"> <div class="floating-ui__dialog-inner"> <div class="floating-ui__dialog-head"> <div> <p class="floating-ui__dialog-eyebrow">Cookies</p> <h3 class="floating-ui__dialog-title">Использование cookies</h3> </div> <button class="floating-ui__dialog-close" type="button" aria-label="Закрыть" data-cookie-dialog-close>
+</button> </div> </div> </div> <!-- trigger второй в DOM — остаётся внизу при bottom-anchor --> <button class="cookie-widget__trigger" type="button" data-cookie-trigger aria-label="Управление cookies"> <img class="cookie-widget__icon" src="/images/icons/cookies.webp" alt="" aria-hidden="true" width="26" height="26" loading="lazy" decoding="async"> </button> </div> <dialog class="floating-ui__dialog" id="cookie-info-dialog"> <div class="floating-ui__dialog-inner"> <div class="floating-ui__dialog-head"> <div> <p class="floating-ui__dialog-eyebrow">Cookies</p> <h3 class="floating-ui__dialog-title">Использование cookies</h3> </div> <button class="floating-ui__dialog-close" type="button" aria-label="Закрыть" data-cookie-dialog-close>
 ×
 </button> </div> <div class="floating-ui__dialog-body"> <p>
 Мы используем cookies и технические данные для корректной работы сайта,
@@ -46,118 +46,7 @@
 <button class="floating-ui__policy-link" type="button" data-cookie-open-privacy>
 в Политике конфиденциальности
 </button>.
-</p> </div> </div> </dialog> </div>  <script>
-  const cookieStorageKey = 'raluma-cookie-consent';
-  const scrollTopButton = document.querySelector('[data-scroll-top]');
-  const cookieWidget = document.querySelector('[data-cookie-widget]');
-  const cookieTrigger = document.querySelector('[data-cookie-trigger]');
-  const cookieAccept = document.querySelector('[data-cookie-accept]');
-  const cookieMore = document.querySelector('[data-cookie-more]');
-  const cookieDialog = document.getElementById('cookie-info-dialog');
-
-  const getHeroThreshold = () => {
-    const hero = document.querySelector('.hero');
-    if (hero) return hero.offsetHeight * 0.85;
-    return window.innerHeight * 0.85;
-  };
-
-  const updateFloatingUi = () => {
-    const showScrollTop = window.scrollY > getHeroThreshold();
-
-    if (scrollTopButton) {
-      scrollTopButton.classList.toggle('is-visible', showScrollTop);
-    }
-
-    const consentState = window.localStorage.getItem(cookieStorageKey);
-    const showCookieWidget = consentState === 'accepted' ? false : window.scrollY > 24;
-
-    if (cookieWidget) {
-      cookieWidget.classList.toggle('is-visible', showCookieWidget);
-    }
-  };
-
-  if (scrollTopButton) {
-    scrollTopButton.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  }
-
-  if (cookieTrigger && cookieWidget) {
-    cookieTrigger.addEventListener('click', () => {
-      cookieWidget.classList.toggle('is-open');
-    });
-  }
-
-  if (cookieAccept && cookieWidget) {
-    cookieAccept.addEventListener('click', () => {
-      window.localStorage.setItem(cookieStorageKey, 'accepted');
-      cookieWidget.classList.remove('is-open');
-      cookieWidget.classList.remove('is-visible');
-    });
-  }
-
-  if (cookieMore && cookieDialog && typeof cookieDialog.showModal === 'function') {
-    cookieMore.addEventListener('click', () => {
-      cookieDialog.showModal();
-    });
-  }
-
-  document.querySelectorAll('[data-cookie-dialog-close]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const dialog = button.closest('dialog');
-      if (dialog) dialog.close();
-    });
-  });
-
-  const openPrivacyDialog = () => {
-    const privacyDialog = document.getElementById('privacy-dialog');
-    if (cookieDialog) cookieDialog.close();
-    if (privacyDialog && typeof privacyDialog.showModal === 'function') {
-      privacyDialog.showModal();
-    }
-  };
-
-  document.querySelectorAll('[data-cookie-open-privacy]').forEach((button) => {
-    button.addEventListener('click', openPrivacyDialog);
-  });
-
-  if (cookieDialog) {
-    cookieDialog.addEventListener('click', (event) => {
-      const rect = cookieDialog.getBoundingClientRect();
-      const inside =
-        rect.top <= event.clientY &&
-        event.clientY <= rect.top + rect.height &&
-        rect.left <= event.clientX &&
-        event.clientX <= rect.left + rect.width;
-
-      if (inside === false) cookieDialog.close();
-    });
-  }
-
-  document.addEventListener('click', (event) => {
-    if (cookieWidget && cookieWidget.classList.contains('is-open')) {
-      const target = event.target;
-      const clickedInside = target instanceof Node ? cookieWidget.contains(target) : false;
-      if (clickedInside === false) {
-        cookieWidget.classList.remove('is-open');
-      }
-    }
-  });
-
-  updateFloatingUi();
-  let floatingUpdateScheduled = false;
-  const scheduleFloatingUiUpdate = () => {
-    if (floatingUpdateScheduled) return;
-    floatingUpdateScheduled = true;
-    window.requestAnimationFrame(() => {
-      floatingUpdateScheduled = false;
-      updateFloatingUi();
-    });
-  };
-
-  window.addEventListener('scroll', scheduleFloatingUiUpdate, { passive: true });
-  window.addEventListener('resize', scheduleFloatingUiUpdate);
-</script> <!-- Conversion event wiring: phone clicks, CTA clicks, form start, scroll to form --> <script>
+</p> </div> </div> </dialog> </div>  <script type="module">const r="raluma-cookie-consent",c=document.querySelector("[data-scroll-top]"),t=document.querySelector("[data-cookie-widget]"),l=document.querySelector("[data-cookie-trigger]"),a=document.querySelector("[data-cookie-accept]"),d=document.querySelector("[data-cookie-more]"),i=document.getElementById("cookie-info-dialog"),u=()=>{const e=document.querySelector(".hero");return e?e.offsetHeight*.85:window.innerHeight*.85},g=()=>{const e=window.scrollY>u();c&&c.classList.toggle("is-visible",e);const s=window.localStorage.getItem(r)==="accepted"?!1:window.scrollY>24;t&&t.classList.toggle("is-visible",s)};c&&c.addEventListener("click",()=>{window.scrollTo({top:0,behavior:"smooth"})});l&&t&&l.addEventListener("click",()=>{t.classList.toggle("is-open")});a&&t&&a.addEventListener("click",()=>{window.localStorage.setItem(r,"accepted"),t.classList.remove("is-open"),t.classList.remove("is-visible")});d&&i&&typeof i.showModal=="function"&&d.addEventListener("click",()=>{i.showModal()});document.querySelectorAll("[data-cookie-dialog-close]").forEach(e=>{e.addEventListener("click",()=>{const o=e.closest("dialog");o&&o.close()})});const w=()=>{const e=document.getElementById("privacy-dialog");i&&i.close(),e&&typeof e.showModal=="function"&&e.showModal()};document.querySelectorAll("[data-cookie-open-privacy]").forEach(e=>{e.addEventListener("click",w)});i&&i.addEventListener("click",e=>{const o=i.getBoundingClientRect();(o.top<=e.clientY&&e.clientY<=o.top+o.height&&o.left<=e.clientX&&e.clientX<=o.left+o.width)===!1&&i.close()});document.addEventListener("click",e=>{if(t&&t.classList.contains("is-open")){const o=e.target;(o instanceof Node?t.contains(o):!1)===!1&&t.classList.remove("is-open")}});g();let n=!1;const f=()=>{n||(n=!0,window.requestAnimationFrame(()=>{n=!1,g()}))};window.addEventListener("scroll",f,{passive:!0});window.addEventListener("resize",f);</script> <!-- Conversion event wiring: phone clicks, CTA clicks, form start, scroll to form --> <script>
       (function() {
         // Phone click (all tel: links across the page)
         document.addEventListener('click', function(e) {

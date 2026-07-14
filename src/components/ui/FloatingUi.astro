@@ -36,7 +36,7 @@
 
     <!-- trigger второй в DOM — остаётся внизу при bottom-anchor -->
     <button class="cookie-widget__trigger" type="button" data-cookie-trigger aria-label="Управление cookies">
-      <img class="cookie-widget__icon" src="/images/icons/cookies.png" alt="" aria-hidden="true" width="26" height="26" />
+      <img class="cookie-widget__icon" src="/images/icons/cookies.webp" alt="" aria-hidden="true" width="26" height="26" loading="lazy" decoding="async" />
     </button>
   </div>
 
@@ -448,7 +448,7 @@
   }
 </style>
 
-<script is:inline>
+<script>
   const cookieStorageKey = 'raluma-cookie-consent';
   const scrollTopButton = document.querySelector('[data-scroll-top]');
   const cookieWidget = document.querySelector('[data-cookie-widget]');

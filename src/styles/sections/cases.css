@@ -89,6 +89,15 @@
   transition: transform 0.45s ease, opacity 0.2s ease;
 }
 
+.case-card__img.is-changing {
+  opacity: 0.35;
+}
+
+.case-card__media.is-loading .case-card__nav,
+.case-card__media.is-loading .case-card__thumb {
+  cursor: progress;
+}
+
 .case-card__nav {
   position: absolute;
   top: 50%;

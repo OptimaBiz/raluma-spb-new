@@ -5,8 +5,8 @@ const systems = [
     name: 'Слайд',
     short: 'Для широких проёмов',
     selectorText: 'Панорама для широких проёмов.',
-    image: '/images/systems/slide/cover.jpg',
-    schema: '/images/systems/slide/slide-schema.png',
+    image: '/images/systems/slide/cover.webp',
+    schema: '/images/systems/slide/slide-schema.webp',
     schemaAlt: 'Схема вариантов открывания системы Слайд',
     description:
       'Панорамная система для широких проёмов.',
@@ -24,8 +24,8 @@ const systems = [
     name: 'Книжка',
     short: 'Компактное складывание',
     selectorText: 'Панели складываются к краю.',
-    image: '/images/systems/book/cover.jpg',
-    schema: '/images/systems/book/Knizhka-schema.png',
+    image: '/images/systems/book/cover.webp',
+    schema: '/images/systems/book/Knizhka-schema.webp',
     schemaAlt: 'Схема вариантов открывания системы Книжка',
     description:
       'Панели складываются к одной стороне и освобождают проём.',
@@ -43,8 +43,8 @@ const systems = [
     name: 'Лифт',
     short: 'Больше защиты и комфорта',
     selectorText: 'Более защищённый контур.',
-    image: '/images/systems/lift/cover.jpg',
-    schema: '/images/systems/lift/Lift-schema.png',
+    image: '/images/systems/lift/cover.webp',
+    schema: '/images/systems/lift/Lift-schema.webp',
     schemaAlt: 'Схема открывания системы Лифт',
     description:
       'Система с более защищённым контуром и двумя вариантами исполнения.',
@@ -60,7 +60,7 @@ const systems = [
         id: 'standard',
         name: 'Стандарт',
         badge: 'Для сезонного использования',
-        image: '/images/systems/lift/cover.jpg',
+        image: '/images/systems/lift/cover.webp',
         description:
           'Базовое исполнение для комфортного сезонного использования.',
         bullets: [
@@ -74,7 +74,7 @@ const systems = [
         id: 'warm',
         name: 'Тёплый',
         badge: 'Для повышенного комфорта',
-        image: '/images/systems/warm-lift/cover.jpeg',
+        image: '/images/systems/warm-lift/cover.webp',
         description:
           'Исполнение с повышенной герметичностью и защитой.',
         bullets: [
@@ -151,7 +151,8 @@ const systemsJson = JSON.stringify(systems);
             id="system-photo"
             src={initialSystem.image}
             alt={`Фото системы ${initialSystem.name}`}
-            loading="eager"
+            loading="lazy"
+            fetchpriority="low"
           />
         </div>
 
@@ -255,7 +256,7 @@ const systemsJson = JSON.stringify(systems);
       <button class="systems-lightbox__close" type="button" id="schema-close-button" aria-label="Закрыть">
         ×
       </button>
-      <img id="lightbox-schema" src={initialSystem.schema} alt={initialSystem.schemaAlt} />
+      <img id="lightbox-schema" src={initialSystem.schema} alt={initialSystem.schemaAlt} loading="lazy" decoding="async" />
       <p class="systems-lightbox__caption" id="lightbox-schema-caption">{initialSystem.schemaCaption}</p>
     </div>
   </dialog>
@@ -292,6 +293,30 @@ const systemsJson = JSON.stringify(systems);
 
     let activeSystemId = systems[0]?.id ?? 'slide';
     let activeLiftVariantId = 'standard';
+    let renderRequest = 0;
+    const mediaCache = new Map();
+
+    function loadMedia(src) {
+      if (mediaCache.has(src)) return mediaCache.get(src);
+
+      const request = new Promise((resolve, reject) => {
+        const image = new Image();
+        image.decoding = 'async';
+        image.onload = () => {
+          if (typeof image.decode === 'function') {
+            image.decode().catch(() => {}).finally(() => resolve(src));
+          } else {
+            resolve(src);
+          }
+        };
+        image.onerror = reject;
+        image.src = src;
+      });
+
+      mediaCache.set(src, request);
+      request.catch(() => mediaCache.delete(src));
+      return request;
+    }
 
     function renderBullets(items = []) {
       bulletsEl.innerHTML = '';
@@ -330,7 +355,7 @@ const systemsJson = JSON.stringify(systems);
       const activeBtn = tabButtons.find((btn) => btn.dataset.systemTab === activeSystemId);
       if (!activeBtn) return;
       activeBtn.scrollIntoView({
-        behavior: 'smooth',
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
         block: 'nearest',
         inline: 'center'
       });
@@ -382,23 +407,55 @@ const systemsJson = JSON.stringify(systems);
       };
     }
 
-    function renderSystem() {
+    async function renderSystem() {
       const payload = getActivePayload();
+      const request = ++renderRequest;
 
-      photo.src = payload.image;
-      photo.alt = 'Фото системы ' + payload.name;
       nameEl.textContent = payload.name;
       badgeEl.textContent = payload.badge;
       descriptionEl.textContent = payload.description;
       renderBullets(payload.bullets);
       ctaEl.textContent = payload.cta;
-      schemaEl.src = payload.schema;
-      schemaEl.alt = payload.schemaAlt;
       schemaCaptionEl.textContent = payload.schemaCaption;
-      lightboxSchema.src = payload.schema;
-      lightboxSchema.alt = payload.schemaAlt;
       lightboxCaption.textContent = payload.schemaCaption;
       variantWrap.hidden = payload.system.id !== 'lift';
+
+      detailEl?.classList.add('is-loading');
+      detailEl?.setAttribute('aria-busy', 'true');
+
+      try {
+        await Promise.all([loadMedia(payload.image), loadMedia(payload.schema)]);
+        if (request !== renderRequest) return;
+
+        photo.classList.add('is-changing');
+        schemaEl.classList.add('is-changing');
+        await new Promise((resolve) => window.setTimeout(resolve, 80));
+        if (request !== renderRequest) return;
+
+        photo.src = payload.image;
+        photo.alt = 'Фото системы ' + payload.name;
+        schemaEl.src = payload.schema;
+        schemaEl.alt = payload.schemaAlt;
+        lightboxSchema.src = payload.schema;
+        lightboxSchema.alt = payload.schemaAlt;
+
+        await Promise.all([
+          typeof photo.decode === 'function' ? photo.decode().catch(() => {}) : Promise.resolve(),
+          typeof schemaEl.decode === 'function' ? schemaEl.decode().catch(() => {}) : Promise.resolve(),
+        ]);
+
+        window.requestAnimationFrame(() => {
+          photo.classList.remove('is-changing');
+          schemaEl.classList.remove('is-changing');
+        });
+      } catch (error) {
+        console.warn('Не удалось загрузить изображение системы', error);
+      } finally {
+        if (request === renderRequest) {
+          detailEl?.classList.remove('is-loading');
+          detailEl?.removeAttribute('aria-busy');
+        }
+      }
     }
 
     function activate(id) {
@@ -539,10 +596,29 @@ const systemsJson = JSON.stringify(systems);
     closeButton?.addEventListener('click', closeDialog);
     dialog?.addEventListener('click', (e) => { if (e.target === dialog) closeDialog(); });
 
+    if (typeof IntersectionObserver === 'function') {
+      const preloadObserver = new IntersectionObserver((entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        const warmMedia = () => {
+          systems.forEach((system) => {
+            loadMedia(system.image).catch(() => {});
+            loadMedia(system.schema).catch(() => {});
+            system.variants?.forEach((variant) => loadMedia(variant.image).catch(() => {}));
+          });
+        };
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(warmMedia, { timeout: 1200 });
+        } else {
+          window.setTimeout(warmMedia, 160);
+        }
+        preloadObserver.disconnect();
+      }, { rootMargin: '240px 0px' });
+      preloadObserver.observe(section);
+    }
+
     // инициализация
     setSystemButtons(activeSystemId);
     setVariantButtons(activeLiftVariantId);
-    renderSystem();
     updateHint();
   }
 </script>
@@ -816,6 +892,7 @@ const systemsJson = JSON.stringify(systems);
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: opacity var(--motion-base) var(--motion-ease-productive);
   }
 
   .systems-detail__text {
@@ -1011,6 +1088,16 @@ const systemsJson = JSON.stringify(systems);
     height: auto;
     object-fit: contain;
     border-radius: 14px;
+    transition: opacity var(--motion-base) var(--motion-ease-productive);
+  }
+
+  .systems-detail__photo-frame img.is-changing,
+  .systems-detail__schema-frame img.is-changing {
+    opacity: 0.35;
+  }
+
+  .systems-detail.is-loading :is(.systems-detail__zoom, .systems-detail__schema-frame) {
+    cursor: progress;
   }
 
   .systems-detail__schema-caption {

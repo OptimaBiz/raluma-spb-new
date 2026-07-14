@@ -15,7 +15,7 @@
 }
 
 .hero__bg {
-  background-image: url('/images/hero/hero.jpg');
+  background-image: url('/images/hero/hero.webp');
   background-size: cover;
   background-position: 49% center;
   transform: scale(1.62);

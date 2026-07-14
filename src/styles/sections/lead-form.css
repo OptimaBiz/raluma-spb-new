@@ -11,10 +11,13 @@
 }
 
 .lead-form__bg {
-  background-image: url('/images/gallery/verandy/slide-verandy-8.jpg');
   background-size: cover;
   background-position: center center;
   transform: scale(1.03);
+}
+
+.lead-form.is-media-ready .lead-form__bg {
+  background-image: url('/images/gallery/verandy/slide-verandy-8.webp');
 }
 
 .lead-form__overlay {
