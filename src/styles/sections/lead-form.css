@@ -100,8 +100,12 @@
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.92);
   color: #152033;
-  font: inherit;
+  font-family: var(--font-sans);
   font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.5;
   outline: none;
   transition:
     border-color 0.2s ease,
@@ -111,6 +115,13 @@
 
 .lead-form__input::placeholder {
   color: #98a3b3;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.5;
+  opacity: 1;
 }
 
 .lead-form__input:focus {
