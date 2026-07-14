@@ -62,7 +62,7 @@ const images = [
 </section>
 
 <!-- Lightbox -->
-<div class="lb" id="lb" hidden role="dialog" aria-modal="true">
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Просмотр фотографии">
   <button class="lb__close" id="lbClose" aria-label="Закрыть">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
          stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
@@ -163,7 +163,9 @@ const images = [
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform .5s ease, opacity .22s ease;
+    transition:
+      transform 520ms var(--motion-ease),
+      opacity var(--motion-base) var(--motion-ease-productive);
   }
 
   .gs__feat-img.fade { opacity: 0; }
@@ -245,9 +247,19 @@ const images = [
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--motion-base) var(--motion-ease-productive),
+      visibility var(--motion-base) var(--motion-ease-productive);
   }
 
   .lb[hidden] { display: none; }
+
+  .lb.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
 
   .lb__stage {
     width: calc(100% - 130px);
@@ -255,6 +267,16 @@ const images = [
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transform: translateY(10px) scale(.985);
+    transition:
+      opacity var(--motion-base) var(--motion-ease-productive),
+      transform var(--motion-page) var(--motion-ease);
+  }
+
+  .lb.is-open .lb__stage {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 
   .lb__img {
@@ -371,6 +393,8 @@ const images = [
   var featPointerDown = false;
   var suppressFeaturedClick = false;
   var wheelLock = false;
+  var lbCloseTimer = 0;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ── Выбор превью ── */
   function selectThumb(i) {
@@ -410,16 +434,25 @@ const images = [
 
   function lbOpen(i) {
     cur = i;
+    window.clearTimeout(lbCloseTimer);
     lb.removeAttribute('hidden');
     document.body.style.overflow = 'hidden';
     lbImg.src = srcs[cur];
     lbImg.alt = alts[cur];
     lbCount.textContent = (cur + 1) + ' / ' + total;
+    window.requestAnimationFrame(function(){
+      lb.classList.add('is-open');
+      lbClose.focus({ preventScroll: true });
+    });
   }
 
   function lbClose2() {
-    lb.setAttribute('hidden', '');
+    lb.classList.remove('is-open');
     document.body.style.overflow = '';
+    lbCloseTimer = window.setTimeout(function(){
+      lb.setAttribute('hidden', '');
+      featBtn.focus({ preventScroll: true });
+    }, reduceMotion ? 0 : 260);
   }
 
   featBtn.addEventListener('click', function(e){
