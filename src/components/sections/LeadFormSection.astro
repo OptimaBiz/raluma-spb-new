@@ -62,6 +62,19 @@ import '../../styles/sections/lead-form.css';
           <span class="lead-form__hint">Укажите не менее 7 цифр в любом формате</span>
         </label>
 
+        <label class="lead-form__field">
+          <span class="lead-form__label">
+            Комментарий <small>необязательно</small>
+          </span>
+          <textarea
+            class="lead-form__input lead-form__textarea"
+            name="comment"
+            rows="3"
+            maxlength="600"
+            placeholder="Адрес объекта, дополнительные пожелания"
+          ></textarea>
+        </label>
+
         <div class="lead-form__upload" data-file-upload>
           <input
             class="lead-form__file-input"
@@ -69,7 +82,6 @@ import '../../styles/sections/lead-form.css';
             type="file"
             name="attachment"
             accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf,.heic,.heif,.pdf"
-            multiple
             aria-describedby="lead-file-help lead-file-error"
           />
 
@@ -81,14 +93,14 @@ import '../../styles/sections/lead-form.css';
             </span>
             <span class="lead-form__upload-copy">
               <strong>Добавить фото или чертёж</strong>
-              <small id="lead-file-help">До 5 файлов: JPG, PNG, HEIC, WebP или PDF</small>
+              <small id="lead-file-help">1 файл: JPG, PNG, HEIC, WebP или PDF</small>
             </span>
             <span class="lead-form__upload-action">Выбрать</span>
           </label>
 
-          <ul class="lead-form__file-list" id="lead-file-list" aria-label="Выбранные файлы" hidden></ul>
+          <ul class="lead-form__file-list" id="lead-file-list" aria-label="Выбранный файл" hidden></ul>
           <p class="lead-form__file-error" id="lead-file-error" role="alert" aria-live="polite" hidden></p>
-          <p class="lead-form__upload-safety">Общий размер всех файлов — до 10 МБ. Не прикладывайте конфиденциальные документы.</p>
+          <p class="lead-form__upload-safety">До 10 МБ. Тяжёлые фотографии уменьшим перед отправкой.</p>
         </div>
 
         <div class="lead-form__consent-box">
@@ -281,7 +293,8 @@ import '../../styles/sections/lead-form.css';
   <script is:inline>
     const form = document.getElementById('lead-form-element');
     const thankYouUrl = '/thank-you/';
-    const formSubmitEndpoint = 'https://formsubmit.co/ajax/b74530d73d4edaeff37616f747872cae';
+    const recipientParts = ['anton.karapetian', 'gmail.com'];
+    const formSubmitEndpoint = `https://formsubmit.co/ajax/${recipientParts.join('@')}`;
     const checkbox = document.getElementById('lead-consent-checkbox');
     const submitButton = document.getElementById('lead-submit-button');
     const nameInput = document.getElementById('lead-name-input');
@@ -291,8 +304,10 @@ import '../../styles/sections/lead-form.css';
     const fileError = document.getElementById('lead-file-error');
     const formStatus = document.getElementById('lead-form-status');
     const defaultButtonText = 'Получить предварительный расчёт';
-    const maxFiles = 5;
+    const maxFiles = 1;
     const maxTotalFileSize = 10 * 1024 * 1024;
+    const imageOptimizationThreshold = 1.5 * 1024 * 1024;
+    const optimizedImageMaxSide = 2400;
     let filesAreValid = true;
     let isSubmitting = false;
 
@@ -322,12 +337,12 @@ import '../../styles/sections/lead-form.css';
 
     const validateFiles = (files) => {
       if (files.length > maxFiles) {
-        return `Можно прикрепить не более ${maxFiles} файлов.`;
+        return 'Можно прикрепить только один файл.';
       }
 
       const totalFileSize = files.reduce((total, file) => total + file.size, 0);
       if (totalFileSize > maxTotalFileSize) {
-        return `Общий размер файлов — ${formatFileSize(totalFileSize)}. Допустимо не более 10 МБ.`;
+        return `Размер файла — ${formatFileSize(totalFileSize)}. Допустимо не более 10 МБ.`;
       }
 
       const allowedExtensions = /\.(jpe?g|png|webp|heic|heif|pdf)$/i;
@@ -337,6 +352,61 @@ import '../../styles/sections/lead-form.css';
       }
 
       return '';
+    };
+
+    const optimizeImageForUpload = async (file) => {
+      const canOptimize =
+        file.size > imageOptimizationThreshold &&
+        /^image\/(jpeg|png|webp)$/i.test(file.type) &&
+        typeof createImageBitmap === 'function';
+
+      if (!canOptimize) return file;
+
+      try {
+        const bitmap = await createImageBitmap(file);
+        const scale = Math.min(1, optimizedImageMaxSide / Math.max(bitmap.width, bitmap.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+        canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+
+        const context = canvas.getContext('2d');
+        if (!context) {
+          bitmap.close();
+          return file;
+        }
+
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+        bitmap.close();
+
+        const blob = await new Promise((resolve) => {
+          canvas.toBlob(resolve, 'image/jpeg', 0.84);
+        });
+
+        if (!blob || blob.size >= file.size) return file;
+
+        const optimizedName = file.name.replace(/\.[^.]+$/, '') + '-optimized.jpg';
+        return new File([blob], optimizedName, {
+          type: 'image/jpeg',
+          lastModified: file.lastModified,
+        });
+      } catch (_) {
+        return file;
+      }
+    };
+
+    const createSubmissionData = async () => {
+      const data = new FormData(form);
+      const selectedFile = fileInput?.files?.[0];
+      data.delete('attachment');
+
+      if (selectedFile) {
+        const preparedFile = await optimizeImageForUpload(selectedFile);
+        data.append('attachment', preparedFile, preparedFile.name);
+      }
+
+      return data;
     };
 
     const renderFiles = () => {
@@ -431,13 +501,20 @@ import '../../styles/sections/lead-form.css';
 
       isSubmitting = true;
       submitButton.disabled = true;
-      submitButton.textContent = 'Отправляем…';
-      showFormStatus();
+      const hasAttachment = Boolean(fileInput?.files?.length);
+      submitButton.textContent = hasAttachment ? 'Загружаем файл…' : 'Отправляем…';
+      showFormStatus(
+        hasAttachment
+          ? 'Подготавливаем и загружаем файл. Это может занять до 30 секунд — не закрывайте страницу.'
+          : '',
+        'progress',
+      );
 
       try {
+        const submissionData = await createSubmissionData();
         const response = await fetch(formSubmitEndpoint, {
           method: 'POST',
-          body: new FormData(form),
+          body: submissionData,
           headers: { Accept: 'application/json' }
         });
 
@@ -464,7 +541,7 @@ import '../../styles/sections/lead-form.css';
         window.location.replace(thankYouUrl);
       } catch (error) {
         const messages = {
-          FILES_TOO_BIG: 'Общий размер файлов превышает 10 МБ. Уменьшите их размер и попробуйте снова.',
+          FILES_TOO_BIG: 'Размер файла превышает 10 МБ. Уменьшите его и попробуйте снова.',
           RATE_LIMIT: 'Слишком много отправок подряд. Попробуйте ещё раз через минуту.',
           FORM_ERROR: 'Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.',
           NETWORK_ERROR: 'Нет связи с сервером. Проверьте интернет и попробуйте снова.'

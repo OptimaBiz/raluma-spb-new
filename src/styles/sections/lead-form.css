@@ -86,6 +86,12 @@
   line-height: 1.2;
 }
 
+.lead-form__label small {
+  color: #7a8697;
+  font-size: 12px;
+  font-weight: 500;
+}
+
 .lead-form__input {
   width: 100%;
   min-height: 56px;
@@ -111,6 +117,13 @@
   border-color: rgba(21, 32, 51, 0.38);
   box-shadow: 0 0 0 4px rgba(21, 32, 51, 0.08);
   background: #ffffff;
+}
+
+.lead-form__textarea {
+  min-height: 96px;
+  padding: 15px 18px;
+  line-height: 1.5;
+  resize: vertical;
 }
 
 .lead-form__upload {
@@ -284,6 +297,11 @@
   border-radius: 12px;
   background: #fff1f0;
   text-align: center;
+}
+
+.lead-form__status[data-type='progress'] {
+  background: #eef4fb;
+  color: #38506f;
 }
 
 .lead-form__status[hidden] {
