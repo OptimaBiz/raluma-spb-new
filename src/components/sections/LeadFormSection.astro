@@ -43,7 +43,9 @@ import '../../styles/sections/lead-form.css';
             name="name"
             placeholder="Ваше имя"
             autocomplete="name"
+            aria-describedby="lead-name-error"
           />
+          <p class="lead-form__error" id="lead-name-error" role="alert" aria-live="polite" hidden></p>
         </label>
 
         <label class="lead-form__field">
@@ -55,8 +57,10 @@ import '../../styles/sections/lead-form.css';
             name="phone"
             placeholder="+7 999 123-45-67"
             autocomplete="tel"
+            aria-describedby="lead-phone-hint lead-phone-error"
           />
-          <span class="lead-form__hint">Укажите не менее 7 цифр в любом формате</span>
+          <span class="lead-form__hint" id="lead-phone-hint">Укажите не менее 7 цифр в любом формате</span>
+          <p class="lead-form__error" id="lead-phone-error" role="alert" aria-live="polite" hidden></p>
         </label>
 
         <label class="lead-form__field">
@@ -135,19 +139,42 @@ import '../../styles/sections/lead-form.css';
               </button>.
             </p>
           </div>
+
+          <p class="lead-form__error" id="lead-consent-error" role="alert" aria-live="polite" hidden></p>
         </div>
 
         <button
-          class="lead-form__button"
+          class="lead-form__button is-enabled"
           id="lead-submit-button"
           type="submit"
-          disabled
         >
           Получить предварительный расчёт
         </button>
 
         <p class="lead-form__status" id="lead-form-status" role="status" aria-live="polite" hidden></p>
       </form>
+
+      <div class="lead-form__success" id="lead-form-success" role="status" aria-live="polite" tabindex="-1" hidden>
+        <span class="lead-form__success-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none">
+            <path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+
+        <h3 class="lead-form__success-title">Заявка принята</h3>
+
+        <p class="lead-form__success-text">
+          Перезвоним в течение рабочего дня на номер
+          <strong id="lead-success-phone"></strong>.
+        </p>
+
+        <p class="lead-form__success-text">
+          Если нужно срочно — позвоните нам:
+          <a class="lead-form__success-phone" href="tel:+78123307415" data-goal="phone_click_form">
+            +7 (812) 330-74-15
+          </a>
+        </p>
+      </div>
     </div>
   </div>
 
@@ -343,11 +370,27 @@ import '../../styles/sections/lead-form.css';
       fileError.hidden = !message;
     };
 
+    const phoneNumber = '+7 (812) 330-74-15';
+
+    // Any status text that mentions the phone gets it as a real tel: link, so a
+    // failed submit still has a working way out.
     const showFormStatus = (message = '', type = 'error') => {
       if (!formStatus) return;
-      formStatus.textContent = message;
       formStatus.dataset.type = type;
       formStatus.hidden = !message;
+
+      if (message.includes(phoneNumber)) {
+        formStatus.replaceChildren(document.createTextNode(message.replace(phoneNumber, '')));
+        const link = document.createElement('a');
+        link.href = 'tel:+78123307415';
+        link.className = 'lead-form__status-phone';
+        link.dataset.goal = 'phone_click_form';
+        link.textContent = phoneNumber;
+        formStatus.append(link);
+        return;
+      }
+
+      formStatus.textContent = message;
     };
 
     const validateFiles = (files) => {
@@ -614,27 +657,102 @@ import '../../styles/sections/lead-form.css';
       });
     };
 
-    const syncSubmitState = () => {
-      const enabled =
-        Boolean(checkbox && checkbox.checked) &&
-        hasValue(nameInput) &&
-        phoneLooksValid(phoneInput) &&
-        filesAreValid &&
-        !['preparing', 'uploading', 'error'].includes(uploadState) &&
-        !isSubmitting;
+    // The submit button stays clickable at all times: a disabled button gives no
+    // feedback, so an incomplete form looked like a broken page. Validation runs
+    // on blur and on submit, and reports what is missing instead.
+    const nameError = document.getElementById('lead-name-error');
+    const phoneError = document.getElementById('lead-phone-error');
+    const consentError = document.getElementById('lead-consent-error');
+    const successPanel = document.getElementById('lead-form-success');
+    const successPhone = document.getElementById('lead-success-phone');
 
+    const setFieldError = (input, errorNode, message) => {
+      if (errorNode) {
+        errorNode.textContent = message;
+        errorNode.hidden = !message;
+      }
+      if (input) {
+        input.classList.toggle('is-invalid', Boolean(message));
+        if (message) input.setAttribute('aria-invalid', 'true');
+        else input.removeAttribute('aria-invalid');
+      }
+      return !message;
+    };
+
+    const validateName = () => {
+      if (hasValue(nameInput)) return setFieldError(nameInput, nameError, '');
+      return setFieldError(nameInput, nameError, 'Укажите, как к вам обращаться');
+    };
+
+    const validatePhone = () => {
+      if (!hasValue(phoneInput)) {
+        return setFieldError(phoneInput, phoneError, 'Без телефона мы не сможем перезвонить');
+      }
+      if (!phoneLooksValid(phoneInput)) {
+        return setFieldError(phoneInput, phoneError, 'Проверьте номер — кажется, не хватает цифр');
+      }
+      return setFieldError(phoneInput, phoneError, '');
+    };
+
+    const validateConsent = () => {
+      const checked = Boolean(checkbox && checkbox.checked);
+      if (consentError) {
+        consentError.textContent = checked ? '' : 'Отметьте согласие, чтобы мы могли обработать заявку';
+        consentError.hidden = checked;
+      }
+      checkbox?.setAttribute('aria-invalid', String(!checked));
+      return checked;
+    };
+
+    const focusInvalid = (target) => {
+      if (!target) return;
+      const row = target.closest('.lead-form__field, .lead-form__consent-box, .lead-form__upload') || target;
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      window.setTimeout(() => target.focus({ preventScroll: true }), 320);
+    };
+
+    // Returns the first invalid element so submit can scroll to it.
+    const validateAll = () => {
+      const nameOk = validateName();
+      const phoneOk = validatePhone();
+      const consentOk = validateConsent();
+
+      if (!nameOk) return nameInput;
+      if (!phoneOk) return phoneInput;
+      if (!filesAreValid) return fileInput;
+      if (!consentOk) return checkbox;
+      return null;
+    };
+
+    const syncSubmitState = () => {
+      const busy = isSubmitting || ['preparing', 'uploading'].includes(uploadState);
       if (submitButton) {
-        submitButton.disabled = !enabled;
-        submitButton.setAttribute('aria-disabled', String(!enabled));
-        submitButton.classList.toggle('is-enabled', enabled);
+        submitButton.disabled = busy;
+        submitButton.setAttribute('aria-disabled', String(busy));
+        submitButton.classList.toggle('is-enabled', !busy);
       }
     };
 
     syncSubmitState();
 
-    checkbox?.addEventListener('change', syncSubmitState);
-    nameInput?.addEventListener('input', syncSubmitState);
-    phoneInput?.addEventListener('input', syncSubmitState);
+    // Validate on blur; once a field has been flagged, clear the error as soon as
+    // the input becomes valid so the correction is acknowledged immediately.
+    nameInput?.addEventListener('blur', validateName);
+    phoneInput?.addEventListener('blur', validatePhone);
+    checkbox?.addEventListener('change', () => {
+      validateConsent();
+      syncSubmitState();
+    });
+
+    nameInput?.addEventListener('input', () => {
+      if (nameInput.classList.contains('is-invalid')) validateName();
+      syncSubmitState();
+    });
+
+    phoneInput?.addEventListener('input', () => {
+      if (phoneInput.classList.contains('is-invalid')) validatePhone();
+      syncSubmitState();
+    });
     fileInput?.addEventListener('change', () => {
       const files = Array.from(fileInput.files || []);
       const validationMessage = validateFiles(files);
@@ -670,14 +788,17 @@ import '../../styles/sections/lead-form.css';
 
       if (!form || !submitButton) return;
 
-      const ready =
-        Boolean(checkbox && checkbox.checked) &&
-        hasValue(nameInput) &&
-        phoneLooksValid(phoneInput) &&
-        filesAreValid &&
-        !['preparing', 'uploading', 'error'].includes(uploadState);
+      const firstInvalid = validateAll();
+      if (firstInvalid) {
+        showFormStatus('Проверьте отмеченные поля — без них мы не сможем перезвонить.');
+        focusInvalid(firstInvalid);
+        return;
+      }
 
-      if (!ready) return;
+      if (['preparing', 'uploading'].includes(uploadState)) {
+        showFormStatus('Файл ещё загружается — подождите пару секунд.', 'progress');
+        return;
+      }
 
       isSubmitting = true;
       submitButton.disabled = true;
@@ -701,16 +822,26 @@ import '../../styles/sections/lead-form.css';
           website: form.querySelector('[name="website"]')?.value || '',
         });
 
+        window.safeReachGoal?.('form_success');
         window.safeReachGoal?.('lead_form_submit');
-        window.location.replace(thankYouUrl);
+
+        if (successPanel) {
+          if (successPhone) successPhone.textContent = phoneInput?.value.trim() || '';
+          form.hidden = true;
+          successPanel.hidden = false;
+          successPanel.focus({ preventScroll: true });
+          successPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          window.location.replace(thankYouUrl);
+        }
       } catch (error) {
         const messages = {
           UPLOAD_NOT_READY: 'Файл ещё не загружен. Выберите его повторно или отправьте заявку без файла.',
           INVALID_FORM: 'Проверьте имя, телефон и согласие на обработку данных.',
           UPLOAD_NOT_FOUND: 'Файл не найден. Выберите его повторно.',
           REQUEST_TIMEOUT: 'Сервер отвечает слишком долго. Попробуйте ещё раз.',
-          SERVER_ERROR: 'Не удалось отправить заявку. Попробуйте ещё раз или позвоните нам.',
-          NETWORK_ERROR: 'Нет связи с сервером. Проверьте интернет и попробуйте снова.'
+          SERVER_ERROR: 'Не удалось отправить заявку. Позвоните нам: +7 (812) 330-74-15',
+          NETWORK_ERROR: 'Не удалось отправить заявку. Позвоните нам: +7 (812) 330-74-15'
         };
         const errorCode = error instanceof Error ? error.message : 'NETWORK_ERROR';
         const message = messages[errorCode] || messages.NETWORK_ERROR;
