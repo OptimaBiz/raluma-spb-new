@@ -89,9 +89,10 @@ const cases = [
   },
 ];
 
-const visibleCases = cases.filter(
-  (item) => item.active && item.title && item.system && item.price && item.images.length > 0,
-);
+// Newest object first: the most recent work is the strongest proof.
+const visibleCases = cases
+  .filter((item) => item.active && item.title && item.system && item.price && item.images.length > 0)
+  .sort((a, b) => Number(b.year) - Number(a.year));
 ---
 
 <section class="cases seams" id="cases" aria-labelledby="cases-title">
@@ -106,7 +107,7 @@ const visibleCases = cases.filter(
     </header>
 
     <div class="cases__list">
-      {visibleCases.map((c, caseIndex) => (
+      {visibleCases.map((c) => (
         <article class="passport rise">
           <div
             class:list={['passport__media', { 'passport__media--multi': c.images.length > 1 }]}
@@ -153,8 +154,6 @@ const visibleCases = cases.filter(
           </div>
 
           <div class="passport__sheet">
-            <p class="passport__index figure">{String(caseIndex + 1).padStart(2, '0')} / {String(visibleCases.length).padStart(2, '0')}</p>
-
             <h3 class="passport__name">{c.title}</h3>
 
             <dl class="passport__specs figure">

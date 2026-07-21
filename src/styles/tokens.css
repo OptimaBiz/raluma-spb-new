@@ -21,6 +21,9 @@
   /* Accents */
   --c-edge: #2f6d5f; /* торец стекла */
   --c-edge-deep: #24564b;
+  /* The edge green is too dark to label anything on the deep ground (3.1:1);
+     this is the same hue lifted to 5.9:1. */
+  --c-edge-on-deep: #5aa48f;
   --c-warm: #d98e3c; /* свет изнутри */
 
   /* The seam: one hairline, used for the page grid and every divider. */
@@ -100,6 +103,8 @@
 
 /* Shared type roles --------------------------------------------------------- */
 
+/* Aluminium (#8E9997) is a hairline colour, not a text colour: on the light
+   ground it measures 2.5:1. Labels use the soft ink instead, at 4.8:1. */
 .eyebrow {
   margin: 0;
   font-family: var(--f-mono);
@@ -107,7 +112,7 @@
   font-weight: 400;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--c-ink-mute);
+  color: var(--c-ink-soft);
 }
 
 .eyebrow--edge {

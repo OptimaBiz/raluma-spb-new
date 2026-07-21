@@ -95,9 +95,9 @@ const images = [
   /* ── Section ── */
   .gs {
     background:
-      radial-gradient(circle at top left, rgba(228,67,54,.05), transparent 24%),
-      linear-gradient(180deg, #f3f1ef 0%, #efedeb 100%);
-    color: #111;
+      radial-gradient(circle at top left, rgba(47, 109, 95,.05), transparent 24%),
+      linear-gradient(180deg, #ebeeed 0%, #ebeeed 100%);
+    color: #191d1c;
   }
 
   .gs__wrap {
@@ -113,15 +113,20 @@ const images = [
   }
 
   .gs__eyebrow {
+  font-family: var(--f-mono);
+  font-weight: 400;
+  letter-spacing: 0.12em;
     margin: 0 0 12px;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: .16em;
     text-transform: uppercase;
-    color: #e44336;
+    color: #2f6d5f;
   }
 
   .gs__title {
+  font-family: var(--f-display);
+  font-weight: 300;
     margin: 0;
     font-size: clamp(32px, 5vw, 56px);
     line-height: .96;
@@ -133,7 +138,7 @@ const images = [
     margin: 14px auto 0;
     font-size: clamp(15px, 1.3vw, 18px);
     line-height: 1.65;
-    color: #5f6773;
+    color: #5c6564;
   }
 
   /* ── Featured ── */
@@ -143,7 +148,7 @@ const images = [
     aspect-ratio: 16 / 9;
     padding: 0;
     border: none;
-    border-radius: 18px;
+    border-radius: 2px;
     overflow: hidden;
     cursor: zoom-in;
     background: #1c1c1e;
@@ -230,7 +235,7 @@ const images = [
   }
 
   .gs__thumb--active {
-    border-color: #e44336;
+    border-color: #2f6d5f;
     opacity: 1;
   }
 
@@ -355,7 +360,7 @@ const images = [
 
     .gs__featured {
       aspect-ratio: 4 / 3;
-      border-radius: 14px;
+      border-radius: 2px;
     }
 
     .gs__thumb {
@@ -374,7 +379,11 @@ const images = [
     .lb__arr--r { right: 6px; }
     .lb__img { border-radius: 4px; }
   }
-</style>
+
+  .gs__title {
+    font-weight: 300;
+  }
+  </style>
 
 <script>
   var thumbs   = Array.from(document.querySelectorAll('.gs__thumb'));

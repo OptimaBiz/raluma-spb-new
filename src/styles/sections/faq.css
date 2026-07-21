@@ -9,8 +9,11 @@
 }
 
 .faq__eyebrow {
+  font-family: var(--f-mono);
+  font-weight: 400;
+  letter-spacing: 0.12em;
   margin: 0 0 10px;
-  color: #e53935;
+  color: #2f6d5f;
   font-size: 12px;
   font-weight: 700;
   line-height: 2;
@@ -19,11 +22,13 @@
 }
 
 .faq__title {
+  font-family: var(--f-display);
+  font-weight: 300;
   margin: 0;
   font-size: clamp(30px, 4vw, 48px);
   line-height: 1.06;
   letter-spacing: -0.03em;
-  color: #111111;
+  color: #191d1c;
 }
 
 .faq__text {
@@ -31,7 +36,7 @@
   max-width: 680px;
   font-size: 17px;
   line-height: 1.65;
-  color: #616875;
+  color: #5c6564;
 }
 
 .faq__list {
@@ -41,7 +46,7 @@
 
 .faq__item {
   border: 1px solid rgba(17, 17, 17, 0.08);
-  border-radius: 24px;
+  border-radius: 2px;
   background: #ffffff;
   box-shadow: 0 14px 34px rgba(17, 17, 17, 0.05);
   overflow: hidden;
@@ -57,7 +62,7 @@
 }
 
 .faq__item[open] {
-  border-color: rgba(229, 57, 53, 0.16);
+  border-color: rgba(47, 109, 95, 0.16);
 }
 
 .faq__summary {
@@ -80,7 +85,7 @@
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.02em;
-  color: #111111;
+  color: #191d1c;
 }
 
 .faq__icon {
@@ -88,8 +93,8 @@
   flex: 0 0 42px;
   width: 42px;
   height: 42px;
-  border-radius: 999px;
-  background: #f5f5f5;
+  border-radius: 2px;
+  background: #f4f6f5;
   transition:
     background-color var(--motion-base) var(--motion-ease-productive),
     transform var(--motion-base) var(--motion-ease);
@@ -101,8 +106,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  background: #111111;
-  border-radius: 999px;
+  background: #191d1c;
+  border-radius: 2px;
   transform: translate(-50%, -50%);
   transition:
     transform var(--motion-base) var(--motion-ease),
@@ -120,7 +125,7 @@
 }
 
 .faq__item[open] .faq__icon {
-  background: rgba(229, 57, 53, 0.08);
+  background: rgba(47, 109, 95, 0.08);
 }
 
 .faq__item[open] .faq__icon::after {
@@ -137,7 +142,7 @@
   max-width: 900px;
   font-size: 15px;
   line-height: 1.75;
-  color: #616875;
+  color: #5c6564;
 }
 
 @media (max-width: 768px) {
@@ -155,7 +160,7 @@
   }
 
   .faq__item {
-    border-radius: 18px;
+    border-radius: 2px;
   }
 
   .faq__summary {
