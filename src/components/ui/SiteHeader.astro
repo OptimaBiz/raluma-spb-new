@@ -1,11 +1,16 @@
 ---
+import '../../styles/site-header.css';
+
 const phoneHref = 'tel:+78123307415';
 const phoneDisplay = '+7 (812) 330-74-15';
 const isHomePage = Astro.url.pathname === '/';
+const isPergolasPage = Astro.url.pathname === '/pergolas' || Astro.url.pathname === '/pergolas/';
 const base = isHomePage ? '' : '/';
+const leadFormHref = isHomePage || isPergolasPage ? '#lead-form' : '/#lead-form';
 
 const navLinks = [
   { href: `${base}#systems`, label: 'Системы' },
+  { href: '/pergolas/', label: 'Перголы' },
   { href: `${base}#cases`, label: 'Проекты' },
   { href: `${base}#why-raluma`, label: 'О нас' },
   { href: `${base}#faq`, label: 'Вопросы' },
@@ -33,7 +38,7 @@ const navLinks = [
         <span>{phoneDisplay}</span>
       </a>
 
-      <a class="site-header__cta" href={`${base}#lead-form`}>Рассчитать</a>
+      <a class="site-header__cta" href={leadFormHref}>Рассчитать</a>
 
       <button
         class="site-header__burger"
@@ -67,7 +72,6 @@ const navLinks = [
   const menu = document.querySelector('[data-header-menu]');
 
   if (header) {
-    // Compact state after the hero so the header stops competing with it.
     let ticking = false;
     const update = () => {
       header.classList.toggle('is-compact', window.scrollY > 40);
@@ -102,223 +106,3 @@ const navLinks = [
     });
   }
 </script>
-
-<style>
-  .site-header {
-    position: sticky;
-    top: 0;
-    z-index: 60;
-    background: rgba(235, 238, 237, 0.86);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid transparent;
-    transition: background-color var(--motion-base) var(--motion-ease),
-      border-color var(--motion-base) var(--motion-ease);
-  }
-
-  .site-header.is-compact {
-    background: rgba(235, 238, 237, 0.96);
-    border-bottom-color: var(--c-seam);
-  }
-
-  .site-header__inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    min-height: 64px;
-  }
-
-  .site-header__logo {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    flex-shrink: 0;
-    text-decoration: none;
-  }
-
-  .site-header__logo img {
-    width: 30px;
-    height: 30px;
-  }
-
-  .site-header__logo-word {
-    font-family: var(--f-display);
-    font-weight: 300;
-    font-size: 18px;
-    letter-spacing: -0.01em;
-    color: var(--c-ink);
-  }
-
-  .site-header__nav {
-    display: flex;
-    align-items: center;
-    gap: 26px;
-  }
-
-  .site-header__nav-link {
-    color: var(--c-ink-soft);
-    font-size: 14px;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: color var(--motion-fast) ease;
-  }
-
-  .site-header__nav-link:hover {
-    color: var(--c-edge);
-  }
-
-  .site-header__actions {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-
-  .site-header__phone {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--f-mono);
-    font-size: 13px;
-    letter-spacing: -0.01em;
-    color: var(--c-ink);
-    text-decoration: none;
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .site-header__phone:hover {
-    color: var(--c-edge);
-  }
-
-  .site-header__cta {
-    display: inline-flex;
-    align-items: center;
-    min-height: 42px;
-    padding: 0 20px;
-    border-radius: 2px;
-    background: var(--c-graphite);
-    color: var(--c-on-deep);
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: background-color var(--motion-fast) ease;
-  }
-
-  .site-header__cta:hover {
-    background: var(--c-edge-deep);
-  }
-
-  .site-header__burger {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border: 0;
-    border-radius: 12px;
-    background: transparent;
-    cursor: pointer;
-  }
-
-  .site-header__burger span {
-    display: block;
-    width: 20px;
-    height: 2px;
-    margin: 0 auto;
-    border-radius: 2px;
-    background: var(--c-ink);
-    transition: transform var(--motion-fast) var(--motion-ease-productive),
-      opacity var(--motion-fast) var(--motion-ease-productive);
-  }
-
-  .site-header__burger.is-open span:first-child {
-    transform: translateY(3.5px) rotate(45deg);
-  }
-
-  .site-header__burger.is-open span:last-child {
-    transform: translateY(-3.5px) rotate(-45deg);
-  }
-
-  .site-header__menu {
-    padding: 8px 16px 20px;
-    border-top: 1px solid var(--border);
-    background: var(--c-light-raised);
-  }
-
-  .site-header__menu[hidden] {
-    display: none;
-  }
-
-  .site-header__menu-nav {
-    display: grid;
-  }
-
-  .site-header__menu-link {
-    padding: 13px 4px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text);
-    font-size: 16px;
-    text-decoration: none;
-  }
-
-  .site-header__menu-phone {
-    display: inline-block;
-    margin-top: 18px;
-    font-family: var(--f-mono);
-    font-size: 19px;
-    letter-spacing: -0.02em;
-    color: var(--c-ink);
-    text-decoration: none;
-  }
-
-  .site-header__menu-hours {
-    margin: 4px 0 0;
-    font-family: var(--f-mono);
-    color: var(--c-ink-soft);
-    font-size: 12px;
-  }
-
-  :global(body.has-menu-open) {
-    overflow: hidden;
-  }
-
-  @media (max-width: 900px) {
-    .site-header__nav,
-    .site-header__cta {
-      display: none;
-    }
-
-    .site-header__burger {
-      display: flex;
-    }
-
-    .site-header__phone span {
-      display: none;
-    }
-
-    .site-header__phone {
-      width: 44px;
-      height: 44px;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
-      background: rgba(17, 17, 17, 0.05);
-    }
-
-    .site-header__phone svg {
-      width: 19px;
-      height: 19px;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .site-header,
-    .site-header__cta,
-    .site-header__burger span {
-      transition: none;
-    }
-  }
-</style>
