@@ -24,16 +24,20 @@
   letter-spacing: -0.03em;
 }
 
+/* Projects breathe instead of butting together: an even band of space around
+   each one, with a single hairline marking the join. */
 .cases__list {
   display: grid;
-  gap: 1px;
-  background: var(--c-seam);
-  border-block: 1px solid var(--c-seam);
+  gap: 0;
+  border-top: 1px solid var(--c-seam);
 }
 
 .passport {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(20px, 2.4vw, 40px);
+  padding-block: clamp(28px, 3.2vw, 56px);
+  border-bottom: 1px solid var(--c-seam);
   background: var(--c-light);
 }
 
@@ -135,8 +139,7 @@
   display: grid;
   align-content: start;
   gap: 14px;
-  padding: clamp(24px, 2.6vw, 40px);
-  border-left: 1px solid var(--c-seam);
+  padding: 0;
 }
 
 .passport__name {
@@ -253,6 +256,8 @@
 
 .passport--ask {
   grid-template-columns: 1fr;
+  padding-block: 0;
+  border-bottom: 0;
   background: var(--c-graphite);
   color: var(--c-on-deep);
 }
@@ -260,7 +265,7 @@
 .passport__sheet--ask {
   gap: 18px;
   max-width: 62ch;
-  border-left: 0;
+  padding: clamp(28px, 3vw, 48px);
 }
 
 .passport--ask .eyebrow {
@@ -314,8 +319,7 @@
   }
 
   .passport__sheet {
-    border-left: 0;
-    border-top: 1px solid var(--c-seam);
+    border-top: 0;
   }
 
   .passport__nav {
