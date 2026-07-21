@@ -36,7 +36,7 @@ jobs:
       - name: Capture pergolas screenshots
         run: |
           mkdir -p screenshots
-          npx playwright screenshot --device="Desktop Chrome HiDPI" --full-page http://127.0.0.1:4321/pergolas/ screenshots/pergolas-desktop.png
+          npx playwright screenshot --viewport-size="1440,1200" --full-page http://127.0.0.1:4321/pergolas/ screenshots/pergolas-desktop.png
           npx playwright screenshot --device="iPhone 13" --full-page http://127.0.0.1:4321/pergolas/ screenshots/pergolas-mobile.png
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
