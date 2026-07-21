@@ -1,4 +1,4 @@
-name: Verify pergola landing
+name: Verify pergola image rendering
 
 on:
   pull_request:
@@ -11,19 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - name: Install dependencies
-        run: npm ci
-      - name: Build
-        run: npm run build
-      - name: Install Playwright
-        run: |
+      - run: npm ci
+      - run: npm run build
+      - run: |
           npm install --no-save playwright
           npx playwright install --with-deps chromium
       - name: Start preview
@@ -33,52 +28,69 @@ jobs:
             curl -fsS http://127.0.0.1:4321/pergolas/ >/dev/null && break
             sleep 2
           done
-      - name: Capture fully revealed screenshots
+      - name: Assert every landing image renders
         run: |
           mkdir -p screenshots
           node <<'NODE'
           const { chromium, devices } = require('playwright');
-          const reveal = async (page) => {
-            await page.addStyleTag({ content: `
-              .rise, .is-visible, [data-reveal] {
-                opacity: 1 !important;
-                transform: none !important;
-                visibility: visible !important;
-              }
-              *, *::before, *::after {
-                animation-delay: 0s !important;
-                animation-duration: 0s !important;
-                transition-delay: 0s !important;
-                transition-duration: 0s !important;
-              }
-            ` });
+
+          async function prepare(page) {
+            await page.goto('http://127.0.0.1:4321/pergolas/', { waitUntil: 'networkidle', timeout: 120000 });
             await page.evaluate(async () => {
-              for (let y = 0; y < document.body.scrollHeight; y += window.innerHeight * 0.75) {
+              document.querySelectorAll('img').forEach((img) => {
+                img.loading = 'eager';
+                img.style.opacity = '1';
+                img.style.visibility = 'visible';
+              });
+              document.querySelectorAll('.rise').forEach((el) => {
+                el.classList.add('is-visible');
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+                el.style.visibility = 'visible';
+              });
+              for (let y = 0; y < document.body.scrollHeight; y += window.innerHeight * 0.6) {
                 window.scrollTo(0, y);
-                await new Promise(resolve => setTimeout(resolve, 80));
+                await new Promise((resolve) => setTimeout(resolve, 180));
               }
+              await Promise.all([...document.images].map(async (img) => {
+                if (!img.complete) await new Promise((resolve) => {
+                  img.addEventListener('load', resolve, { once: true });
+                  img.addEventListener('error', resolve, { once: true });
+                });
+                try { await img.decode(); } catch {}
+              }));
               window.scrollTo(0, 0);
             });
-            await page.waitForTimeout(500);
-          };
+            await page.waitForTimeout(800);
+            const images = await page.locator('img').evaluateAll((items) => items.map((img) => ({
+              src: img.currentSrc || img.src,
+              complete: img.complete,
+              naturalWidth: img.naturalWidth,
+              naturalHeight: img.naturalHeight,
+              renderedWidth: Math.round(img.getBoundingClientRect().width),
+              renderedHeight: Math.round(img.getBoundingClientRect().height),
+            })));
+            console.log(JSON.stringify(images, null, 2));
+            const broken = images.filter((img) => !img.complete || img.naturalWidth === 0 || img.naturalHeight === 0);
+            if (broken.length) throw new Error(`Broken images: ${JSON.stringify(broken)}`);
+          }
+
           (async () => {
             const browser = await chromium.launch({ headless: true });
-            const desktop = await browser.newPage({ viewport: { width: 1440, height: 1200 }, deviceScaleFactor: 1 });
-            await desktop.goto('http://127.0.0.1:4321/pergolas/', { waitUntil: 'networkidle', timeout: 120000 });
-            await reveal(desktop);
+            const desktop = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+            await prepare(desktop);
             await desktop.screenshot({ path: 'screenshots/pergolas-desktop.png', fullPage: true });
-            const mobileContext = await browser.newContext({ ...devices['iPhone 13'] });
-            const mobile = await mobileContext.newPage();
-            await mobile.goto('http://127.0.0.1:4321/pergolas/', { waitUntil: 'networkidle', timeout: 120000 });
-            await reveal(mobile);
+
+            const context = await browser.newContext({ ...devices['iPhone 13'] });
+            const mobile = await context.newPage();
+            await prepare(mobile);
             await mobile.screenshot({ path: 'screenshots/pergolas-mobile.png', fullPage: true });
-            await mobileContext.close();
+            await context.close();
             await browser.close();
           })();
           NODE
-      - name: Upload screenshots
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: pergolas-revealed-screenshots
+          name: pergolas-rendered-screenshots
           path: screenshots/*.png
           retention-days: 3
