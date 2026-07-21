@@ -1,4 +1,4 @@
-name: Fix pergola images and verify
+name: Localize pergola images and verify
 
 on:
   pull_request:
@@ -18,22 +18,43 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Replace thumbnail URLs with direct images
+      - name: Download official Raluma pergola images
+        run: |
+          set -euo pipefail
+          mkdir -p public/images/pergolas
+
+          download() {
+            local url="$1"
+            local output="$2"
+            curl -fL --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 120 \
+              -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/150 Safari/537.36" \
+              -H "Referer: https://raluma.ru/pergolas" \
+              "$url" -o "$output"
+            test "$(stat -c%s "$output")" -gt 5000
+          }
+
+          download "https://static.tildacdn.com/tild3533-6633-4535-b039-323632373730/1.jpg" "public/images/pergolas/louvered-1.jpg"
+          download "https://static.tildacdn.com/tild3730-3338-4066-b261-626564313738/2.jpg" "public/images/pergolas/glass-2.jpg"
+          download "https://static.tildacdn.com/tild3830-6335-4235-a337-663062393435/3.jpg" "public/images/pergolas/hero-3.jpg"
+          download "https://static.tildacdn.com/tild3230-3532-4638-b336-623064663766/photo.png" "public/images/pergolas/finishes.png"
+          download "https://static.tildacdn.com/tild3266-3031-4862-a333-626433303433/4.png" "public/images/pergolas/glass-options.png"
+          download "https://static.tildacdn.com/tild3430-6261-4338-a630-623431613434/5.png" "public/images/pergolas/comfort-options.png"
+
+          file public/images/pergolas/*
+          ls -lh public/images/pergolas
+
+      - name: Point the landing to local assets
         run: |
           python <<'PY'
           from pathlib import Path
 
           replacements = {
-              "https://thb.tildacdn.com/tild3830-6335-4235-a337-663062393435/-/resize/1900x/3.jpg": "https://static.tildacdn.com/tild3830-6335-4235-a337-663062393435/3.jpg",
-              "https://thb.tildacdn.com/tild3533-6633-4535-b039-323632373730/-/resize/1500x/1.jpg": "https://static.tildacdn.com/tild3533-6633-4535-b039-323632373730/1.jpg",
-              "https://thb.tildacdn.com/tild3730-3338-4066-b261-626564313738/-/resize/1500x/2.jpg": "https://static.tildacdn.com/tild3730-3338-4066-b261-626564313738/2.jpg",
-              "https://thb.tildacdn.com/tild3533-6633-4535-b039-323632373730/-/resize/1000x/1.jpg": "https://static.tildacdn.com/tild3533-6633-4535-b039-323632373730/1.jpg",
-              "https://thb.tildacdn.com/tild3730-3338-4066-b261-626564313738/-/resize/1000x/2.jpg": "https://static.tildacdn.com/tild3730-3338-4066-b261-626564313738/2.jpg",
-              "https://thb.tildacdn.com/tild3830-6335-4235-a337-663062393435/-/resize/1000x/3.jpg": "https://static.tildacdn.com/tild3830-6335-4235-a337-663062393435/3.jpg",
-              "https://thb.tildacdn.com/tild3230-3532-4638-b336-623064663766/-/resize/1100x/photo.png": "https://static.tildacdn.com/tild3230-3532-4638-b336-623064663766/photo.png",
-              "https://thb.tildacdn.com/tild3266-3031-4862-a333-626433303433/-/resize/900x/4.png": "https://static.tildacdn.com/tild3266-3031-4862-a333-626433303433/4.png",
-              "https://thb.tildacdn.com/tild3430-6261-4338-a630-623431613434/-/resize/900x/5.png": "https://static.tildacdn.com/tild3430-6261-4338-a630-623431613434/5.png",
-              "https://thb.tildacdn.com/tild3830-6335-4235-a337-663062393435/-/resize/1800x/3.jpg": "https://static.tildacdn.com/tild3830-6335-4235-a337-663062393435/3.jpg",
+              "https://static.tildacdn.com/tild3830-6335-4235-a337-663062393435/3.jpg": "/images/pergolas/hero-3.jpg",
+              "https://static.tildacdn.com/tild3533-6633-4535-b039-323632373730/1.jpg": "/images/pergolas/louvered-1.jpg",
+              "https://static.tildacdn.com/tild3730-3338-4066-b261-626564313738/2.jpg": "/images/pergolas/glass-2.jpg",
+              "https://static.tildacdn.com/tild3230-3532-4638-b336-623064663766/photo.png": "/images/pergolas/finishes.png",
+              "https://static.tildacdn.com/tild3266-3031-4862-a333-626433303433/4.png": "/images/pergolas/glass-options.png",
+              "https://static.tildacdn.com/tild3430-6261-4338-a630-623431613434/5.png": "/images/pergolas/comfort-options.png",
           }
 
           paths = [
@@ -41,30 +62,22 @@ jobs:
               Path("src/components/sections/PergolasTeaserSection.astro"),
           ]
 
-          replaced = 0
           for path in paths:
               text = path.read_text()
               for old, new in replacements.items():
-                  count = text.count(old)
-                  if count:
-                      text = text.replace(old, new)
-                      replaced += count
+                  text = text.replace(old, new)
               path.write_text(text)
-
-          print(f"Replaced URLs: {replaced}")
-          if replaced == 0:
-              print("Direct image URLs are already applied")
           PY
 
-      - name: Commit image URL fix
+      - name: Commit local image assets
         run: |
-          if git diff --quiet -- src/pages/pergolas.astro src/components/sections/PergolasTeaserSection.astro; then
-            echo "No image URL changes to commit"
+          if git diff --quiet -- src/pages/pergolas.astro src/components/sections/PergolasTeaserSection.astro public/images/pergolas; then
+            echo "Local image assets are already applied"
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add src/pages/pergolas.astro src/components/sections/PergolasTeaserSection.astro
-            git commit -m "fix: use direct pergola image URLs"
+            git add src/pages/pergolas.astro src/components/sections/PergolasTeaserSection.astro public/images/pergolas
+            git commit -m "fix: bundle pergola images locally"
             git push origin HEAD:${{ github.event.pull_request.head.ref }}
           fi
 
@@ -115,6 +128,6 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: pergolas-screenshots-${{ github.run_number }}
+          name: pergolas-local-screenshots-${{ github.run_number }}
           path: screenshots/*.png
           retention-days: 3
