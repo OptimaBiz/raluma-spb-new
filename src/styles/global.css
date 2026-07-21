@@ -183,7 +183,7 @@ img {
   margin: 0 0 12px;
   color: var(--accent);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -230,4 +230,20 @@ img {
   text-align: center !important;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* Browser default for strong/b is 700, which we do not load. */
+strong,
+b {
+  font-weight: 500;
+}
+
+/* Unstyled headings would otherwise inherit the browser's 700. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 500;
 }

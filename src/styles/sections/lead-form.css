@@ -49,7 +49,7 @@
   margin: 0 0 12px;
   color: #2f6d5f;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -96,7 +96,7 @@
 .lead-form__label {
   color: #1f2b40;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1.2;
 }
 
@@ -231,7 +231,7 @@
   box-shadow: 0 1px 0 rgba(15, 34, 63, 0.05);
   color: #2c4e85;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .lead-form__file-list {
@@ -278,7 +278,7 @@
   background: #eef2f7;
   color: #5c6564;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0.04em;
 }
 
@@ -347,7 +347,7 @@
 
 .lead-form__file-item[data-state='uploaded'] .lead-form__file-status {
   color: #2f6a46;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .lead-form__file-item[data-state='error'] .lead-form__file-status {
@@ -368,7 +368,7 @@
   overflow: hidden;
   color: #191d1c;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -440,7 +440,7 @@
 
 .lead-form__status-phone {
   color: inherit;
-  font-weight: 600;
+  font-weight: 500;
   white-space: nowrap;
 }
 
@@ -518,7 +518,7 @@
   display: inline-block;
   margin-top: 2px;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 500;
   color: #191d1c;
   white-space: nowrap;
 }
@@ -614,7 +614,7 @@
   color: #ffffff;
   font: inherit;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: not-allowed;
@@ -677,7 +677,7 @@
   margin: 0 0 10px;
   color: #2f6d5f;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1;
   letter-spacing: 0.12em;
   text-transform: uppercase;

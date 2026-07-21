@@ -15,7 +15,7 @@
   margin: 0 0 10px;
   color: #2f6d5f;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 2;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -82,7 +82,7 @@
 .faq__question {
   display: block;
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1.15;
   letter-spacing: -0.02em;
   color: #191d1c;

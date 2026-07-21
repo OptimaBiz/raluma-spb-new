@@ -20,7 +20,7 @@
   margin: 0 0 12px;
   color: #e53935;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -60,7 +60,7 @@
   background: rgba(255, 255, 255, 0.9);
   color: #222222;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .selection-cta__actions {
@@ -84,7 +84,7 @@
   padding: 0 24px;
   border-radius: 999px;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 500;
   text-decoration: none;
   transition:
     transform 0.2s ease,

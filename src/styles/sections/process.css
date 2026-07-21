@@ -42,7 +42,7 @@
   margin: 0 0 14px;
   color: #ff6b63;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -82,7 +82,7 @@
   margin: 0 0 10px;
   color: #ff6b63;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -153,7 +153,7 @@
   justify-content: flex-start;
   color: rgba(255, 255, 255, 0.14);
   font-size: 54px;
-  font-weight: 800;
+  font-weight: 500;
   line-height: 0.9;
   letter-spacing: -0.05em;
 }

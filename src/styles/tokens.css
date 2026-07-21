@@ -67,12 +67,16 @@
    1px line reads as a rendering artefact, so .seams is never placed on media. */
 .seams {
   position: relative;
+  /* Own stacking context so the grid can sit behind the content but still in
+     front of the section's own background. */
+  isolation: isolate;
 }
 
 .seams.seams::before {
   content: '';
   position: absolute;
   inset: 0;
+  z-index: -1;
   pointer-events: none;
   background-image: repeating-linear-gradient(
     to right,
