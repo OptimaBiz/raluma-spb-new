@@ -3,7 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroSection from '../components/sections/HeroSection.astro';
 import BenefitsSection from '../components/sections/BenefitsSection.astro';
 import SystemsSection from '../components/sections/SystemsSection.astro';
-import SelectionCtaSection from '../components/sections/SelectionCtaSection.astro';
+// Временно не используется — см. закомментированный вызов ниже.
+// import SelectionCtaSection from '../components/sections/SelectionCtaSection.astro';
 import CasesSection from '../components/sections/CasesSection.astro';
 import GallerySection from '../components/sections/GallerySection.astro';
 import WhyRalumaSection from '../components/sections/WhyRalumaSection.astro';
@@ -23,7 +24,9 @@ import FooterSection from '../components/sections/FooterSection.astro';
   <BenefitsSection />
   <WhyRalumaSection />
   <SystemsSection />
-  <SelectionCtaSection />
+  {/* Временно скрыто по решению заказчика: блок дублировал призыв, который
+      уже стоит карточкой в сетке кейсов. Вернуть — раскомментировать строку. */}
+  {/* <SelectionCtaSection /> */}
   <GallerySection />
   <ProcessSection />
   <FaqSection />

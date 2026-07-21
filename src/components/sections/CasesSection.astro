@@ -195,6 +195,31 @@ const visibleCases = cases.filter(
           </div>
         </article>
       ))}
+
+      {/* Fills the trailing grid cell an odd number of cases leaves empty, and
+          puts the ask where the visitor has just seen three real prices.
+          Replace with a fourth case once one is available. */}
+      <article class="case-card case-card--cta">
+        <p class="case-card--cta__eyebrow">Бесплатный подбор решения</p>
+        <h3 class="case-card--cta__title">Сколько выйдет на вашем объекте?</h3>
+        <p class="case-card--cta__text">
+          Пришлите фото или чертёж проёма — подберём систему и посчитаем
+          стоимость под ваш объект.
+        </p>
+
+        <ul class="case-card--cta__list">
+          <li>Расчёт по фото или чертежу</li>
+          <li>Ответим в течение рабочего дня</li>
+          <li>Замер на объекте — бесплатно</li>
+        </ul>
+
+        <div class="case-card--cta__actions">
+          <a class="case-card__cta" href="#lead-form">Получить расчёт</a>
+          <a class="case-card--cta__phone" href="tel:+78123307415" data-goal="phone_click_cases">
+            или позвоните: +7 (812) 330-74-15
+          </a>
+        </div>
+      </article>
     </div>
   </div>
 </section>

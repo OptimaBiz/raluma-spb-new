@@ -630,9 +630,9 @@ const systemsJson = JSON.stringify(systems);
   .systems-section {
     overflow: clip;
     background:
-      radial-gradient(circle at top left, rgba(228, 67, 54, 0.05), transparent 26%),
-      linear-gradient(180deg, #f3f1ef 0%, #efedeb 100%);
-    color: #111111;
+      radial-gradient(circle at top left, rgba(228, 67, 54, 0.13), transparent 30%),
+      linear-gradient(180deg, #141414 0%, #0f0f0f 100%);
+    color: #ffffff;
   }
 
   .systems-section__container {
@@ -677,7 +677,7 @@ const systemsJson = JSON.stringify(systems);
     max-width: 760px;
     font-size: clamp(17px, 1.45vw, 20px);
     line-height: 1.68;
-    color: #5f6773;
+    color: rgba(255, 255, 255, 0.7);
     text-wrap: balance;
   }
 
@@ -690,6 +690,7 @@ const systemsJson = JSON.stringify(systems);
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
+    color: #111111;
   }
 
   .systems-selector__item {
@@ -855,8 +856,11 @@ const systemsJson = JSON.stringify(systems);
     align-items: start;
     padding: 16px;
     border-radius: 32px;
-    border: 1px solid rgba(17, 17, 17, 0.08);
-    background: rgba(255, 255, 255, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    /* Light panel inside a dark section: text has to be reset, otherwise it
+       inherits the section's white and disappears. */
+    color: #111111;
+    background: rgba(255, 255, 255, 0.94);
     box-shadow:
       0 1px 0 rgba(17, 17, 17, 0.04),
       0 24px 72px rgba(17, 17, 17, 0.08);

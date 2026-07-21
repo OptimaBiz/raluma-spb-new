@@ -65,6 +65,101 @@
   background: rgba(255, 255, 255, 0.96);
 }
 
+/* Conversion card sharing the grid with the cases. Quieter than a case card:
+   it must not compete with the evidence it sits next to. */
+.case-card--cta {
+  gap: 14px;
+  padding: 40px 36px;
+  border-style: dashed;
+  border-color: rgba(17, 17, 17, 0.16);
+  background: rgba(255, 255, 255, 0.6);
+  /* Sized to its content rather than stretched to the neighbouring case card,
+     and pinned so it stays in view while that taller card scrolls past. */
+  align-self: start;
+  position: sticky;
+  top: 96px;
+}
+
+.case-card--cta:hover {
+  transform: none;
+  border-color: rgba(228, 67, 54, 0.28);
+}
+
+.case-card--cta__eyebrow {
+  margin: 0;
+  color: #e44336;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.case-card--cta__title {
+  margin: 0;
+  font-size: clamp(24px, 2vw, 30px);
+  line-height: 1.2;
+  color: #111;
+}
+
+.case-card--cta__text {
+  margin: 0;
+  max-width: 38ch;
+  color: #55606f;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.case-card--cta__list {
+  display: grid;
+  gap: 8px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  color: #111;
+  font-size: 14px;
+}
+
+.case-card--cta__list li {
+  position: relative;
+  padding-left: 20px;
+}
+
+.case-card--cta__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e44336;
+}
+
+.case-card--cta__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.case-card--cta__phone {
+  color: #55606f;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.case-card--cta__phone:hover {
+  color: #111;
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .case-card--cta {
+    padding: 30px 22px;
+  }
+}
+
 .case-card__media {
   position: relative;
   display: grid;
