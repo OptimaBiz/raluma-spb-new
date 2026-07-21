@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Audit parent pergolas image URLs
+      - name: Audit parent pergolas image markup
         shell: python
         run: |
           import html
@@ -22,12 +22,13 @@ jobs:
 
           source = urllib.request.urlopen('https://raluma.ru/pergolas', timeout=30).read().decode('utf-8', 'ignore')
           source = html.unescape(source).replace('\\/', '/')
-          urls = sorted(set(re.findall(r'https://(?:static|thb)\\.tildacdn\\.com/[^\"\'<> )]+', source)))
-          print('PARENT_IMAGE_URLS_BEGIN')
-          for url in urls:
-              if re.search(r'\\.(?:avif|webp|png|jpe?g)(?:$|\\?)', url, re.I):
-                  print(url)
-          print('PARENT_IMAGE_URLS_END')
+          print('TILDACDN_COUNT', source.count('tildacdn'))
+          for index, match in enumerate(re.finditer('tildacdn', source)):
+              if index >= 80:
+                  break
+              start = max(0, match.start() - 130)
+              end = min(len(source), match.start() + 260)
+              print('ASSET_CONTEXT', re.sub(r'\\s+', ' ', source[start:end]))
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Node
