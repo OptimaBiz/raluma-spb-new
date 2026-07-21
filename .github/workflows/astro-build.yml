@@ -1,40 +1,164 @@
-name: Collect remaining pergola images
+name: Bundle pergola images and verify
 
 on:
   pull_request:
 
 permissions:
-  contents: read
+  contents: write
+  actions: read
 
 jobs:
-  collect:
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
-      - name: Download remaining images
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download collected official images
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mkdir -p images
-          get() {
-            for attempt in 1 2 3 4 5; do
-              curl -fL --connect-timeout 20 --max-time 120 \
-                -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/150 Safari/537.36" \
-                -H "Referer: https://raluma.ru/pergolas" \
-                "$1" -o "images/$2" && return 0
-              sleep 2
-            done
-            rm -f "images/$2"
-            return 0
-          }
-          get "https://static.tildacdn.com/tild3533-6633-4535-b039-323632373730/1.jpg" "01-louvered.jpg"
-          get "https://static.tildacdn.com/tild3730-3338-4066-b261-626564313738/2.jpg" "02-glass.jpg"
-          get "https://static.tildacdn.com/tild3266-3031-4862-a333-626433303433/4.png" "11-glass-options.png"
-          get "https://static.tildacdn.com/tild3430-6261-4338-a630-623431613434/5.png" "12-comfort-options.png"
-          file images/* || true
-          ls -lh images
-      - name: Upload images
+          set -euo pipefail
+          mkdir -p /tmp/official /tmp/remaining
+          curl -fL \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/8512849390/zip" \
+            -o /tmp/official.zip
+          curl -fL \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/8512920335/zip" \
+            -o /tmp/remaining.zip
+          unzip -o /tmp/official.zip -d /tmp/official
+          unzip -o /tmp/remaining.zip -d /tmp/remaining
+          find /tmp/official /tmp/remaining -maxdepth 2 -type f -print
+
+      - name: Prepare local assets and update image map
+        run: |
+          python -m pip install --quiet pillow
+          python <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          import re
+          import shutil
+
+          target = Path('public/images/pergolas')
+          target.mkdir(parents=True, exist_ok=True)
+
+          shutil.copy('/tmp/remaining/01-louvered.jpg', target / 'louvered.jpg')
+          shutil.copy('/tmp/remaining/02-glass.jpg', target / 'module.jpg')
+          shutil.copy('/tmp/remaining/11-glass-options.png', target / 'glass-clear.png')
+          shutil.copy('/tmp/official/03-hero.webp', target / 'glass-roof.webp')
+
+          project = Image.open('/tmp/official/09-project.jpg').convert('RGB')
+
+          hero = project.crop((0, 180, 1680, 1230)).resize((1280, 800), Image.Resampling.LANCZOS)
+          hero.save(target / 'project-hero.webp', 'WEBP', quality=68, method=6)
+
+          detail = project.crop((0, 0, 1680, 1500)).resize((900, 804), Image.Resampling.LANCZOS)
+          detail.save(target / 'project-detail.webp', 'WEBP', quality=68, method=6)
+
+          comfort = project.crop((260, 420, 1660, 1820)).resize((800, 800), Image.Resampling.LANCZOS)
+          comfort.save(target / 'project-comfort.webp', 'WEBP', quality=68, method=6)
+
+          page = Path('src/pages/pergolas.astro')
+          text = page.read_text()
+          images_block = """const images = {
+            hero: '/images/pergolas/project-hero.webp',
+            louvered: '/images/pergolas/louvered.jpg',
+            glass: '/images/pergolas/glass-roof.webp',
+            size3x3: '/images/pergolas/louvered.jpg',
+            size3x4: '/images/pergolas/module.jpg',
+            size4x5: '/images/pergolas/glass-roof.webp',
+            finish: '/images/pergolas/project-detail.webp',
+            glassSample: '/images/pergolas/glass-clear.png',
+            decor: '/images/pergolas/project-comfort.webp',
+          };"""
+          text, count = re.subn(r'const images = \{.*?\n\};', images_block, text, count=1, flags=re.S)
+          if count != 1:
+              raise RuntimeError('Could not replace pergola image map')
+          page.write_text(text)
+
+          teaser = Path('src/components/sections/PergolasTeaserSection.astro')
+          text = teaser.read_text()
+          text, count = re.subn(
+              r"const teaserImage = ['\"].*?['\"];",
+              "const teaserImage = '/images/pergolas/project-hero.webp';",
+              text,
+              count=1,
+          )
+          if count != 1:
+              raise RuntimeError('Could not replace teaser image')
+          teaser.write_text(text)
+          PY
+          file public/images/pergolas/*
+          ls -lh public/images/pergolas
+
+      - name: Commit local assets
+        run: |
+          if git diff --quiet -- src/pages/pergolas.astro src/components/sections/PergolasTeaserSection.astro public/images/pergolas; then
+            echo "Local assets already committed"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/pages/pergolas.astro src/components/sections/PergolasTeaserSection.astro public/images/pergolas
+            git commit -m "fix: bundle pergola images locally"
+            git push origin HEAD:${{ github.event.pull_request.head.ref }}
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Start preview
+        run: |
+          npm run preview -- --host 127.0.0.1 > /tmp/raluma-preview.log 2>&1 &
+          for i in {1..30}; do
+            curl -fsS http://127.0.0.1:4321/pergolas/ >/dev/null && break
+            sleep 2
+          done
+
+      - name: Capture screenshots
+        run: |
+          mkdir -p screenshots
+          node <<'NODE'
+          const { chromium, devices } = require('playwright');
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const desktop = await browser.newPage({ viewport: { width: 1440, height: 1200 }, deviceScaleFactor: 1 });
+            await desktop.goto('http://127.0.0.1:4321/pergolas/', { waitUntil: 'networkidle', timeout: 120000 });
+            await desktop.screenshot({ path: 'screenshots/pergolas-desktop.png', fullPage: true });
+            const mobileContext = await browser.newContext({ ...devices['iPhone 13'] });
+            const mobile = await mobileContext.newPage();
+            await mobile.goto('http://127.0.0.1:4321/pergolas/', { waitUntil: 'networkidle', timeout: 120000 });
+            await mobile.screenshot({ path: 'screenshots/pergolas-mobile.png', fullPage: true });
+            await mobileContext.close();
+            await browser.close();
+          })();
+          NODE
+
+      - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: remaining-pergola-images
-          path: images/*
-          if-no-files-found: warn
+          name: pergolas-final-screenshots-${{ github.run_number }}
+          path: screenshots/*.png
           retention-days: 3
