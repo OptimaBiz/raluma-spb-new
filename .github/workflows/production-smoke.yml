@@ -1,0 +1,32 @@
+name: Production smoke check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Verify production pergolas page
+        run: |
+          set -euo pipefail
+          url="https://raluma.com.ru/pergolas/"
+          asset="https://raluma.com.ru/images/pergolas/project-hero.webp"
+
+          for attempt in $(seq 1 60); do
+            html="$(curl -fsSL --connect-timeout 15 --max-time 30 "$url" || true)"
+            if grep -q "Биоклиматические перголы под ключ" <<<"$html" \
+              && curl -fsSI --connect-timeout 15 --max-time 30 "$asset" | grep -q "200"; then
+              echo "Production deployment verified: $url"
+              exit 0
+            fi
+            echo "Attempt $attempt: production is not updated yet"
+            sleep 10
+          done
+
+          echo "Production deployment was not verified"
+          exit 1
