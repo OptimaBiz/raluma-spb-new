@@ -382,7 +382,10 @@ const systemsJson = JSON.stringify(systems);
         return {
           system,
           name: system.name,
-          badge: variant.badge,
+          // The badge stays system-level: a variant badge here contradicted the
+          // selector card the visitor just clicked. Variants carry their own
+          // badge inside the variant switch.
+          badge: system.short,
           description: variant.description,
           bullets: variant.bullets,
           image: variant.image || system.image,

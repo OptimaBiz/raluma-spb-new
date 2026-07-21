@@ -77,6 +77,12 @@
   margin-top: 28px;
 }
 
+/* display: grid would otherwise defeat the hidden attribute when the success
+   state replaces the form. */
+.lead-form__form[hidden] {
+  display: none;
+}
+
 .lead-form__field {
   display: grid;
   gap: 10px;
@@ -325,6 +331,84 @@
 
 .lead-form__status[hidden] {
   display: none;
+}
+
+.lead-form__status-phone {
+  color: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Field-level validation */
+.lead-form__error {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #a5302b;
+}
+
+.lead-form__error[hidden] {
+  display: none;
+}
+
+.lead-form__input.is-invalid {
+  border-color: #cf4a44;
+  background: #fffafa;
+}
+
+.lead-form__input.is-invalid:focus {
+  border-color: #a5302b;
+  box-shadow: 0 0 0 3px rgba(207, 74, 68, 0.18);
+}
+
+/* Success state — replaces the form after a confirmed submit */
+.lead-form__success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 20px 32px;
+  text-align: center;
+}
+
+.lead-form__success[hidden] {
+  display: none;
+}
+
+.lead-form__success-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: #edf8f1;
+  color: #2f6a46;
+}
+
+.lead-form__success-title {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.25;
+  color: #152033;
+}
+
+.lead-form__success-text {
+  max-width: 42ch;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #46566e;
+}
+
+.lead-form__success-phone {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #152033;
+  white-space: nowrap;
 }
 
 .lead-form__consent-box {

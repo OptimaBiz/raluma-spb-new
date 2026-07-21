@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import SiteHeader from '../components/ui/SiteHeader.astro';
 import FloatingUi from '../components/ui/FloatingUi.astro';
 import MobileBottomCallBar from '../components/ui/MobileBottomCallBar.astro';
 
@@ -93,6 +94,7 @@ const isHomePage = Astro.url.pathname === '/';
       </div>
     </noscript>
 
+    <SiteHeader />
     <slot />
     <MobileBottomCallBar />
     <FloatingUi />
@@ -100,14 +102,21 @@ const isHomePage = Astro.url.pathname === '/';
     <!-- Conversion event wiring: phone clicks, CTA clicks, form start, scroll to form -->
     <script is:inline>
       (function() {
-        // Phone click (all tel: links across the page)
+        // Phone clicks are split by placement so the ad account can tell which
+        // touchpoint earns calls. data-goal on the link names the placement;
+        // anything unlabelled still reports the generic goal.
         document.addEventListener('click', function(e) {
-          if (e.target.closest('a[href^="tel:"]')) window.safeReachGoal('phone_click');
+          var phoneLink = e.target.closest('a[href^="tel:"]');
+          if (!phoneLink) return;
+          window.safeReachGoal(phoneLink.dataset.goal || 'phone_click');
+          window.safeReachGoal('phone_click');
         });
 
         // CTA → lead form (hero, selection-cta, cases, why-raluma sections)
         document.addEventListener('click', function(e) {
-          if (e.target.closest('a[href="#lead-form"]')) window.safeReachGoal('cta_calculate_click');
+          if (!e.target.closest('a[href="#lead-form"]')) return;
+          window.safeReachGoal('cta_click');
+          window.safeReachGoal('cta_calculate_click');
         });
 
         // Form start — first input interaction, once per page session
@@ -118,9 +127,40 @@ const isHomePage = Astro.url.pathname === '/';
             form.addEventListener('focusin', function() {
               if (!formStartFired) {
                 formStartFired = true;
+                window.safeReachGoal('form_start');
                 window.safeReachGoal('lead_form_start');
               }
             }, { passive: true });
+
+            var fileInput = document.getElementById('lead-files-input');
+            if (fileInput) {
+              fileInput.addEventListener('change', function() {
+                if (fileInput.files && fileInput.files.length) window.safeReachGoal('file_upload');
+              }, { passive: true });
+            }
+          }
+
+          // System selection (Слайд / Книжка / Лифт)
+          document.addEventListener('click', function(e) {
+            if (e.target.closest('[data-system-tab], .systems-selector__item')) {
+              window.safeReachGoal('system_select');
+            }
+          });
+
+          // Cases section viewed
+          var casesSection = document.getElementById('cases');
+          if (casesSection && typeof IntersectionObserver !== 'undefined') {
+            var casesFired = false;
+            var casesObserver = new IntersectionObserver(function(entries) {
+              entries.forEach(function(entry) {
+                if (entry.isIntersecting && !casesFired) {
+                  casesFired = true;
+                  window.safeReachGoal('cases_view');
+                  casesObserver.disconnect();
+                }
+              });
+            }, { threshold: 0.2 });
+            casesObserver.observe(casesSection);
           }
 
           // Scroll to lead form — fires once when section becomes visible

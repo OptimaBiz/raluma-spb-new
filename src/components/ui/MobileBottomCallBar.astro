@@ -15,7 +15,7 @@ const isHomePage = Astro.url.pathname === '/';
     </a>
   )}
 
-  <a class="mobile-actionbar__phone" href={phoneHref} aria-label="Позвонить в Raluma">
+  <a class="mobile-actionbar__phone" href={phoneHref} data-goal="phone_click_float" aria-label="Позвонить в Raluma">
     <svg
       viewBox="0 0 24 24"
       aria-hidden="true"

@@ -395,11 +395,10 @@
 
   /* ── Mobile ── */
   @media (max-width: 768px) {
+    /* The action bar already occupies the bottom edge on mobile; a third
+       floating control there crowded the content it sat on top of. */
     .floating-ui__scroll-top {
-      right: 14px;
-      bottom: 14px;
-      width: 46px;
-      height: 46px;
+      display: none;
     }
 
     .cookie-widget {
