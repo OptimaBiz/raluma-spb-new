@@ -884,6 +884,9 @@ import '../../styles/sections/lead-form.css';
         if (successPanel) {
           if (successPhone) successPhone.textContent = phoneInput?.value.trim() || '';
           form.hidden = true;
+          // The card heading still invites the visitor to request a quote, which
+          // contradicts the confirmation replacing the form.
+          form.closest('.lead-form__card')?.classList.add('is-sent');
           successPanel.hidden = false;
           successPanel.focus({ preventScroll: true });
           successPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });

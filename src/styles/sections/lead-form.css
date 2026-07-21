@@ -461,6 +461,13 @@
   box-shadow: 0 0 0 3px rgba(207, 74, 68, 0.18);
 }
 
+/* Once the request is in, the card is a confirmation, not an invitation. */
+.lead-form__card.is-sent .lead-form__eyebrow,
+.lead-form__card.is-sent .lead-form__title,
+.lead-form__card.is-sent .lead-form__text {
+  display: none;
+}
+
 /* Success state — replaces the form after a confirmed submit */
 .lead-form__success {
   display: flex;
