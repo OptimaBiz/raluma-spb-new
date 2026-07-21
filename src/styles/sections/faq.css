@@ -4,7 +4,8 @@
 
 .faq__head {
   max-width: 760px;
-  margin-bottom: 28px;
+  margin: 0 auto 28px;
+  text-align: center;
 }
 
 .faq__eyebrow {

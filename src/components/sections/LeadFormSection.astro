@@ -566,7 +566,8 @@ import '../../styles/sections/lead-form.css';
     const uploadSelectedFile = async (file, version) => {
       const originalSize = file.size;
       uploadState = 'preparing';
-      showFormStatus('Подготавливаем файл…', 'progress');
+      renderFiles();
+      setUploadUi('preparing', 'Готовим файл…');
       syncSubmitState();
 
       try {
@@ -576,7 +577,7 @@ import '../../styles/sections/lead-form.css';
         replaceSelectedFile(preparedFile);
         renderFiles();
         uploadState = 'uploading';
-        showFormStatus(`Загружаем файл ${formatFileSize(preparedFile.size)}…`, 'progress');
+        setUploadUi('uploading', `Загружаем ${formatFileSize(preparedFile.size)}…`);
         syncSubmitState();
 
         const fileBase64 = await readFileAsDataUrl(preparedFile);
@@ -594,11 +595,11 @@ import '../../styles/sections/lead-form.css';
         if (version !== uploadVersion) return false;
 
         uploadState = 'uploaded';
-        showFormStatus(
+        setUploadUi(
+          'uploaded',
           preparedFile.size < originalSize
-            ? `Файл загружен: ${formatFileSize(originalSize)} → ${formatFileSize(preparedFile.size)}.`
-            : 'Файл загружен и готов к отправке.',
-          'success',
+            ? `Загружен · сжат до ${formatFileSize(preparedFile.size)}`
+            : 'Загружен и готов к отправке',
         );
         syncSubmitState();
         return true;
@@ -613,29 +614,83 @@ import '../../styles/sections/lead-form.css';
           REQUEST_TIMEOUT: 'Загрузка заняла слишком много времени. Попробуйте ещё раз.',
           SERVER_ERROR: 'Не удалось загрузить файл. Попробуйте ещё раз.',
         };
-        showFormStatus(uploadMessages[errorCode] || uploadMessages.SERVER_ERROR);
+        const uploadMessage = uploadMessages[errorCode] || uploadMessages.SERVER_ERROR;
+        setUploadUi('error', uploadMessage);
+        showFormStatus(uploadMessage);
         syncSubmitState();
         return false;
       }
     };
 
+    // The upload posts through a hidden iframe, which reports no byte progress,
+    // so the indicator shows honest stages rather than a fake percentage.
+    let thumbUrl = '';
+
+    const releaseThumb = () => {
+      if (thumbUrl) URL.revokeObjectURL(thumbUrl);
+      thumbUrl = '';
+    };
+
+    const uploadLabels = {
+      ready: 'Готов к отправке',
+      preparing: 'Готовим файл…',
+      uploading: 'Загружаем…',
+      uploaded: 'Загружен и готов к отправке',
+      error: 'Не удалось загрузить',
+    };
+
+    const setUploadUi = (state, label) => {
+      const item = fileList?.querySelector('li');
+      if (!item) return;
+      item.dataset.state = state;
+      const status = item.querySelector('[data-upload-status]');
+      if (status) status.textContent = label;
+    };
+
     const renderFiles = () => {
       if (!fileInput || !fileList) return;
       const files = Array.from(fileInput.files || []);
+      releaseThumb();
       fileList.replaceChildren();
       fileList.hidden = files.length === 0;
 
       files.forEach((file) => {
         const item = document.createElement('li');
+        item.className = 'lead-form__file-item';
+        item.dataset.state = uploadState === 'idle' ? 'ready' : uploadState;
+
+        const thumb = document.createElement('span');
+        thumb.className = 'lead-form__file-thumb';
+        if (/^image\//i.test(file.type)) {
+          thumbUrl = URL.createObjectURL(file);
+          const preview = document.createElement('img');
+          preview.src = thumbUrl;
+          preview.alt = '';
+          thumb.append(preview);
+        } else {
+          thumb.textContent = 'PDF';
+          thumb.classList.add('lead-form__file-thumb--doc');
+        }
+
         const details = document.createElement('span');
+        details.className = 'lead-form__file-details';
         const name = document.createElement('strong');
-        const size = document.createElement('small');
-        const removeButton = document.createElement('button');
+        const meta = document.createElement('small');
+        const status = document.createElement('small');
 
         name.textContent = file.name;
-        size.textContent = formatFileSize(file.size);
-        details.append(name, size);
+        meta.textContent = formatFileSize(file.size);
+        status.className = 'lead-form__file-status';
+        status.dataset.uploadStatus = '';
+        status.textContent = uploadLabels[item.dataset.state] || uploadLabels.ready;
 
+        const track = document.createElement('span');
+        track.className = 'lead-form__file-track';
+        track.append(document.createElement('span'));
+
+        details.append(name, meta, track, status);
+
+        const removeButton = document.createElement('button');
         removeButton.type = 'button';
         removeButton.className = 'lead-form__file-remove';
         removeButton.setAttribute('aria-label', `Удалить файл ${file.name}`);
@@ -646,13 +701,14 @@ import '../../styles/sections/lead-form.css';
           activeUploadId = '';
           uploadState = 'idle';
           uploadPromise = Promise.resolve(true);
+          releaseThumb();
           showFileError();
           showFormStatus();
           renderFiles();
           syncSubmitState();
         });
 
-        item.append(details, removeButton);
+        item.append(thumb, details, removeButton);
         fileList.append(item);
       });
     };
