@@ -24,3 +24,18 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      - name: Audit parent pergolas image URLs
+        shell: python
+        run: |
+          import html
+          import re
+          import urllib.request
+
+          source = urllib.request.urlopen('https://raluma.ru/pergolas', timeout=30).read().decode('utf-8', 'ignore')
+          source = html.unescape(source).replace('\\/', '/')
+          urls = sorted(set(re.findall(r'https://(?:static|thb)\\.tildacdn\\.com/[^\"\'<> )]+', source)))
+          print('PARENT_IMAGE_URLS_BEGIN')
+          for url in urls:
+              if re.search(r'\\.(?:avif|webp|png|jpe?g)(?:$|\\?)', url, re.I):
+                  print(url)
+          print('PARENT_IMAGE_URLS_END')
