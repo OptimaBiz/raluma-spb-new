@@ -1,1 +1,0 @@
-Pergolas landing images are loaded from the official Raluma parent-site Tilda CDN. This file is an implementation note and can be removed after deployment review.
