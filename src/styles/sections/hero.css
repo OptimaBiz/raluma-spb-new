@@ -15,7 +15,17 @@
 }
 
 .hero__bg {
-  background-image: url('/images/hero/hero.webp');
+  /* This is the LCP image. image-set lets AVIF-capable browsers take the
+     lighter file and everyone else the WebP, in a single request — a plain
+     url() fallback alongside it would cost a second download. */
+  background-image: -webkit-image-set(
+    url('/images/hero/hero.avif') type('image/avif'),
+    url('/images/hero/hero.webp') type('image/webp')
+  );
+  background-image: image-set(
+    url('/images/hero/hero.avif') type('image/avif'),
+    url('/images/hero/hero.webp') type('image/webp')
+  );
   background-size: cover;
   background-position: 49% center;
   transform: scale(1.62);
