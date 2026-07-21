@@ -854,17 +854,14 @@ const systemsJson = JSON.stringify(systems);
     grid-template-columns: minmax(0, 1.14fr) minmax(360px, 0.86fr);
     gap: 18px;
     align-items: start;
-    padding: 16px;
-    border-radius: 32px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    /* Light panel inside a dark section: text has to be reset, otherwise it
-       inherits the section's white and disappears. */
+    padding: 0;
+    /* No wrapper surface: the two inner panels are the cards. A translucent
+       white wrapper sat behind them at a slightly different shade, and wherever
+       the shorter column ended it read as a leftover white block. */
+    border: 0;
     color: #111111;
-    background: rgba(255, 255, 255, 0.94);
-    box-shadow:
-      0 1px 0 rgba(17, 17, 17, 0.04),
-      0 24px 72px rgba(17, 17, 17, 0.08);
-    backdrop-filter: blur(8px);
+    background: transparent;
+    box-shadow: none;
     transform: translate3d(var(--swipe-shift), 0, 0);
     transition: transform 0.24s ease;
     will-change: transform;
@@ -1400,8 +1397,7 @@ const systemsJson = JSON.stringify(systems);
     }
 
     .systems-detail {
-      padding: 12px;
-      border-radius: 24px;
+      padding: 0;
     }
 
     .systems-detail__media,
