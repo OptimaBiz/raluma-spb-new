@@ -13,17 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - name: Install dependencies
-        run: npm ci
-      - name: Build
-        run: npm run build
       - name: Audit parent pergolas image URLs
         shell: python
         run: |
@@ -39,3 +28,14 @@ jobs:
               if re.search(r'\\.(?:avif|webp|png|jpe?g)(?:$|\\?)', url, re.I):
                   print(url)
           print('PARENT_IMAGE_URLS_END')
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
