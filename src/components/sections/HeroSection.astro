@@ -1,65 +1,252 @@
 ---
-import '../../styles/sections/hero.css';
+const phoneHref = 'tel:+78123307415';
+const phoneDisplay = '+7 (812) 330-74-15';
+
+// One photograph, cut into four vertical panels with a hairline between them:
+// the only part of a frameless system a visitor ever actually sees.
+const panels = [0, 1, 2, 3];
+
+const facts = [
+  'Санкт-Петербург и область',
+  '12 лет',
+  '4000+ проектов',
+  'от 100 000 ₽',
+];
 ---
 
-<section class="hero">
-  <div class="hero__bg" aria-hidden="true"></div>
-  <div class="hero__overlay" aria-hidden="true"></div>
-
-  <div class="container hero__container">
-    <div class="hero__content">
-      <div class="hero__brand" aria-hidden="true">
-        <img
-          class="hero__brand-logo"
-          src="/images/logo/raluma-logo-1.png"
-          alt=""
-          loading="eager"
-          decoding="async"
-        />
+<section class="hero" id="hero">
+  <div class="hero__glass" aria-hidden="true">
+    {panels.map((index) => (
+      <div class="hero__panel" style={`--panel-index: ${index}`}>
+        <picture>
+          <source srcset="/images/hero/hero.avif" type="image/avif" />
+          <img
+            class="hero__panel-img"
+            src="/images/hero/hero.webp"
+            alt=""
+            fetchpriority="high"
+            decoding="async"
+          />
+        </picture>
       </div>
+    ))}
+  </div>
 
-      <p class="hero__eyebrow">Для частных домов и бизнеса</p>
+  <div class="hero__scrim" aria-hidden="true"></div>
 
-      <h1 class="hero__title">
-        Безрамное остекление террас и веранд под ключ
-        <span>в Санкт-Петербурге и Ленинградской области</span>
-      </h1>
+  <div class="shell hero__inner">
+    <p class="eyebrow hero__eyebrow">Безрамные системы</p>
 
-      <p class="hero__text">
-        Проектируем, производим и монтируем системы, которые защищают от ветра
-        и осадков, сохраняя панорамный обзор.
-      </p>
+    <h1 class="hero__title">
+      Остекление,<br />
+      которого не видно
+    </h1>
 
-      <div class="hero__actions">
-        <div class="hero__primary-action">
-          <a class="hero__button hero__button--primary" href="#lead-form">
-            Получить предварительный расчёт
-          </a>
-          <span class="hero__action-note">Ответим в течение рабочего дня</span>
-        </div>
-        <a class="hero__button hero__button--secondary" href="#cases">
-          Посмотреть проекты с ценами
-        </a>
-      </div>
+    <p class="hero__lead">
+      Панорамные безрамные системы для террас,<br />
+      веранд и пергол.<br />
+      Проектируем, производим и монтируем с гарантией.
+    </p>
 
-      <div class="hero__meta">
-        <div class="hero__meta-item">
-          <strong>12 лет</strong>
-          <span>на рынке</span>
-        </div>
-        <div class="hero__meta-item">
-          <strong>4000+</strong>
-          <span>проектов по России</span>
-        </div>
-        <div class="hero__meta-item">
-          <strong>от 100 000 ₽</strong>
-          <span>стоимость решений под ключ</span>
-        </div>
-        <div class="hero__meta-item">
-          <strong>Бесплатно</strong>
-          <span>предварительный подбор и расчёт</span>
-        </div>
-      </div>
+    <div class="hero__actions">
+      <a class="btn btn--solid" href="#lead-form">Рассчитать проект</a>
+      <a class="btn btn--on-deep" href={phoneHref} data-goal="phone_click_hero">{phoneDisplay}</a>
     </div>
+
+    <ul class="hero__facts figure">
+      {facts.map((fact) => <li>{fact}</li>)}
+    </ul>
   </div>
 </section>
+
+<script>
+  // The panels settle on load. Text is painted at full opacity from the first
+  // frame — the animation must never stand between a visitor and the offer.
+  const hero = document.querySelector('.hero');
+  if (hero) {
+    const settle = () => hero.classList.add('is-settled');
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) settle();
+    else requestAnimationFrame(() => requestAnimationFrame(settle));
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: flex-end;
+    min-height: min(88vh, 860px);
+    padding: calc(var(--section-y) * 0.9) 0 clamp(40px, 5vw, 72px);
+    background: var(--c-deep);
+    overflow: hidden;
+  }
+
+  .hero__glass {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--c-deep);
+  }
+
+  .hero__panel {
+    position: relative;
+    overflow: hidden;
+    transform: translate3d(calc(var(--panel-index) * 8px - 12px), 0, 0);
+    opacity: 0.82;
+    transition: transform var(--dur-open) var(--ease-open),
+      opacity var(--dur-open) var(--ease-open);
+    transition-delay: calc(var(--panel-index) * 60ms);
+  }
+
+  .hero.is-settled .hero__panel {
+    transform: none;
+    opacity: 1;
+  }
+
+  /* Each panel shows its own slice of the same file, so the four of them cost
+     a single request and stay in register once settled. */
+  .hero__panel-img {
+    position: absolute;
+    top: 0;
+    left: calc(var(--panel-index) * -100%);
+    width: 400%;
+    /* The global img rule caps images at their container; a slice has to spill. */
+    max-width: none;
+    height: 100%;
+    object-fit: cover;
+    object-position: 52% center;
+  }
+
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(96deg, rgba(14, 20, 19, 0.92) 4%, rgba(14, 20, 19, 0.58) 46%, rgba(14, 20, 19, 0.12) 84%),
+      linear-gradient(to top, rgba(14, 20, 19, 0.72), transparent 42%);
+  }
+
+  .hero__inner {
+    position: relative;
+    display: grid;
+    justify-items: start;
+    gap: 22px;
+  }
+
+  .hero__eyebrow {
+    color: var(--c-warm);
+  }
+
+  .hero__title {
+    margin: 0;
+    max-width: 15ch;
+    font-family: var(--f-display);
+    font-weight: 300;
+    font-size: var(--t-display);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: var(--c-on-deep);
+  }
+
+  .hero__lead {
+    margin: 0;
+    max-width: 46ch;
+    font-size: var(--t-lead);
+    line-height: 1.6;
+    color: var(--c-on-deep-soft);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+  }
+
+  .hero__actions .btn--solid {
+    background: var(--c-on-deep);
+    color: var(--c-graphite);
+  }
+
+  .hero__actions .btn--solid:hover {
+    background: var(--c-warm);
+    color: var(--c-graphite);
+  }
+
+  .hero__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 26px;
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--t-micro);
+    letter-spacing: 0.04em;
+    color: var(--c-on-deep-soft);
+  }
+
+  .hero__facts li {
+    position: relative;
+  }
+
+  .hero__facts li + li::before {
+    content: '';
+    position: absolute;
+    left: -14px;
+    top: 50%;
+    width: 1px;
+    height: 11px;
+    transform: translateY(-50%);
+    background: var(--c-seam-deep);
+  }
+
+  @media (max-width: 780px) {
+    .hero {
+      min-height: 92vh;
+      align-items: center;
+    }
+
+    /* The desktop scrim runs left-to-right; on a phone the copy sits over the
+       whole frame, so the wash has to be even. */
+    .hero__scrim {
+      background:
+        linear-gradient(180deg, rgba(14, 20, 19, 0.62) 0%, rgba(14, 20, 19, 0.78) 100%);
+    }
+
+    .hero__glass {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Two panels on a phone: the slices are recut, so the offsets change too. */
+    .hero__panel:nth-child(n + 3) {
+      display: none;
+    }
+
+    .hero__panel-img {
+      left: calc(var(--panel-index) * -100%);
+      width: 200%;
+    }
+
+    .hero__title {
+      max-width: 12ch;
+    }
+
+    .hero__actions {
+      width: 100%;
+    }
+
+    .hero__actions .btn {
+      flex: 1 1 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__panel {
+      transition: none;
+    }
+  }
+</style>

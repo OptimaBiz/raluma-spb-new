@@ -4,8 +4,8 @@
   color: #ffffff;
   overflow: hidden;
   background:
-    radial-gradient(circle at 10% 10%, rgba(229, 57, 53, 0.16), transparent 28%),
-    radial-gradient(circle at 90% 80%, rgba(229, 57, 53, 0.1), transparent 24%),
+    radial-gradient(circle at 10% 10%, rgba(47, 109, 95, 0.16), transparent 28%),
+    radial-gradient(circle at 90% 80%, rgba(47, 109, 95, 0.1), transparent 24%),
     linear-gradient(180deg, #0d1016 0%, #121720 100%);
 }
 
@@ -36,16 +36,21 @@
 }
 
 .process__eyebrow {
+  font-family: var(--f-mono);
+  font-weight: 400;
+  letter-spacing: 0.12em;
   margin: 0 0 14px;
   color: #ff6b63;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1;
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
 .process__title {
+  font-family: var(--f-display);
+  font-weight: 300;
   margin: 0;
   max-width: 560px;
   font-size: clamp(34px, 4.6vw, 58px);
@@ -67,7 +72,7 @@
   max-width: 420px;
   padding: 22px 22px 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
+  border-radius: 2px;
   background: rgba(255, 255, 255, 0.05);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
   backdrop-filter: blur(10px);
@@ -77,7 +82,7 @@
   margin: 0 0 10px;
   color: #ff6b63;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -119,7 +124,7 @@
   align-items: start;
   padding: 28px 28px 26px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 28px;
+  border-radius: 2px;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%);
   box-shadow:
@@ -135,7 +140,7 @@
   top: 34px;
   width: 12px;
   height: 12px;
-  border-radius: 999px;
+  border-radius: 2px;
   background: #ff6b63;
   box-shadow:
     0 0 0 6px rgba(255, 107, 99, 0.14),
@@ -148,7 +153,7 @@
   justify-content: flex-start;
   color: rgba(255, 255, 255, 0.14);
   font-size: 54px;
-  font-weight: 800;
+  font-weight: 500;
   line-height: 0.9;
   letter-spacing: -0.05em;
 }
@@ -202,7 +207,7 @@
   .process__aside {
     margin-top: 24px;
     padding: 18px;
-    border-radius: 18px;
+    border-radius: 2px;
   }
 
   .process__timeline {
@@ -218,7 +223,7 @@
     grid-template-columns: 1fr;
     gap: 14px;
     padding: 20px 18px 18px;
-    border-radius: 20px;
+    border-radius: 2px;
   }
 
   .process-step::before {

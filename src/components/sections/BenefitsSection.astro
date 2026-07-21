@@ -2,38 +2,38 @@
 const cards = [
   {
     area: 'panorama',
-    label: '01',
+    label: 'свет',
     title: 'Панорама без лишних стоек',
     text: 'Максимум света и обзора без тяжёлых вертикальных рам и визуального шума.'
   },
   {
     area: 'protection',
-    label: '02',
+    label: 'защита',
     title: 'Защита от ветра и осадков',
     text: 'Терраса, веранда или беседка становятся комфортнее даже в переменчивую погоду.'
   },
   {
     area: 'season',
-    label: '03',
+    label: 'сезон',
     title: 'Дольше по сезону',
     text: 'Пространством можно полноценно пользоваться не только в идеальные дни.'
   },
   {
     area: 'selection',
-    label: '04',
+    label: 'архитектура',
     title: 'Подбор под архитектуру объекта',
     text: 'Система выбирается под проём, сценарий открывания и характер конкретного дома.'
   },
   {
     area: 'status',
-    label: '05',
+    label: 'вид',
     title: 'Статусный внешний вид',
     text: 'Остекление делает объект аккуратнее, современнее и визуально дороже.'
   }
 ];
 ---
 
-<section class="benefits-v2" id="benefits" aria-labelledby="benefits-title">
+<section class="benefits-v2 seams seams--deep" id="benefits" aria-labelledby="benefits-title">
   <div class="benefits-v2__inner">
     <div class="benefits-v2__intro">
       <p class="benefits-v2__eyebrow">Что вы получаете</p>
@@ -92,10 +92,8 @@ const cards = [
 
 <style>
   .benefits-v2 {
-    background:
-      radial-gradient(circle at top left, rgba(236, 58, 47, 0.14), transparent 32%),
-      linear-gradient(180deg, #161616 0%, #101010 100%);
-    color: #ffffff;
+    background: var(--c-deep);
+    color: var(--c-on-deep);
   }
 
   .benefits-v2__inner {
@@ -117,19 +115,21 @@ const cards = [
     margin: 0 0 18px;
     font-size: 12px;
     line-height: 1.2;
-    font-weight: 700;
-    letter-spacing: 0.16em;
+    font-family: var(--f-mono);
+    font-weight: 400;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #e44336;
+    color: var(--c-warm);
   }
 
   .benefits-v2__title {
     margin: 0;
-    max-width: 11ch;
-    font-size: clamp(40px, 5.4vw, 72px);
-    line-height: 0.98;
-    letter-spacing: -0.04em;
-    font-weight: 700;
+    max-width: 13ch;
+    font-family: var(--f-display);
+    font-size: var(--t-display);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    font-weight: 300;
   }
 
   .benefits-v2__lead {
@@ -137,7 +137,7 @@ const cards = [
     max-width: 620px;
     font-size: clamp(18px, 1.55vw, 22px);
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.72);
+    color: var(--c-on-deep-soft);
   }
 
   .benefits-v2__meta {
@@ -152,12 +152,14 @@ const cards = [
     align-items: center;
     min-height: 38px;
     padding: 0 14px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--c-seam-deep);
+    border-radius: 2px;
+    background: transparent;
+    font-family: var(--f-mono);
+    letter-spacing: 0.06em;
     font-size: 13px;
     line-height: 1;
-    font-weight: 600;
+    font-weight: 400;
     color: #ffffff;
     backdrop-filter: blur(10px);
   }
@@ -185,12 +187,10 @@ const cards = [
     overflow: hidden;
     min-height: 230px;
     padding: 24px 22px 22px;
-    border-radius: 28px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.04) inset,
-      0 18px 48px rgba(0, 0, 0, 0.24);
+    border-radius: 2px;
+    background: rgba(231, 235, 234, 0.04);
+    border: 1px solid var(--c-seam-deep);
+    box-shadow: none;
     transition:
       transform 0.28s ease,
       box-shadow 0.28s ease,
@@ -198,11 +198,7 @@ const cards = [
   }
 
   .benefits-v2__card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(228, 67, 54, 0.42);
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.06) inset,
-      0 24px 64px rgba(0, 0, 0, 0.32);
+    border-color: rgba(47, 109, 95, 0.6);
   }
 
   .benefits-v2__card::after {
@@ -220,12 +216,11 @@ const cards = [
     grid-area: featured;
     min-height: 478px;
     padding: 30px 30px 28px;
-    background:
-      radial-gradient(circle at top right, rgba(228, 67, 54, 0.10), transparent 38%),
-      linear-gradient(180deg, #ffffff 0%, #f4f1ef 100%);
-    border-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.38);
-    color: #111111;
+    background: var(--c-light);
+    border-color: transparent;
+    border-radius: 2px;
+    box-shadow: none;
+    color: var(--c-ink);
   }
 
   .benefits-v2__card--featured:hover {
@@ -249,27 +244,29 @@ const cards = [
     position: relative;
     z-index: 1;
     margin: 0 0 18px;
-    font-size: 12px;
+    font-family: var(--f-mono);
+    font-size: var(--t-micro);
     line-height: 1.2;
-    font-weight: 700;
-    letter-spacing: 0.16em;
+    font-weight: 400;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #e44336;
+    color: var(--c-edge-on-deep);
   }
 
   .benefits-v2__card-label--light {
-    color: #8b929c;
+    color: var(--c-ink-soft);
   }
 
   .benefits-v2__featured-title {
     position: relative;
     z-index: 1;
     margin: 0;
-    max-width: 12ch;
-    font-size: clamp(30px, 3vw, 44px);
-    line-height: 1.03;
-    letter-spacing: -0.04em;
-    font-weight: 700;
+    max-width: 13ch;
+    font-family: var(--f-display);
+    font-size: clamp(28px, 2.8vw, 40px);
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    font-weight: 300;
   }
 
   .benefits-v2__featured-text {
@@ -301,7 +298,7 @@ const cards = [
     border: 1px solid rgba(17, 17, 17, 0.10);
     font-size: 13px;
     line-height: 1;
-    font-weight: 600;
+    font-weight: 500;
     color: #111111;
   }
 
@@ -312,9 +309,10 @@ const cards = [
     max-width: 14ch;
     font-size: clamp(22px, 1.9vw, 28px);
     line-height: 1.1;
-    letter-spacing: -0.03em;
-    font-weight: 700;
-    color: #ffffff;
+    letter-spacing: -0.02em;
+    font-family: var(--f-display);
+    font-weight: 300;
+    color: var(--c-on-deep);
   }
 
   .benefits-v2__card-text {
@@ -324,7 +322,7 @@ const cards = [
     max-width: 28ch;
     font-size: 16px;
     line-height: 1.65;
-    color: rgba(255, 255, 255, 0.66);
+    color: var(--c-on-deep-soft);
   }
 
   .benefits-v2__card--panorama { grid-area: panorama; }

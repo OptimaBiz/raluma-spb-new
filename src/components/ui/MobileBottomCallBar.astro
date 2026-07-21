@@ -126,7 +126,7 @@ const isHomePage = Astro.url.pathname === '/';
       align-items: center;
       justify-content: center;
       min-height: 48px;
-      border-radius: 999px;
+      border-radius: 2px;
       text-decoration: none;
       box-shadow: 0 14px 34px rgba(9, 17, 30, 0.18);
       backdrop-filter: blur(14px);
@@ -137,11 +137,11 @@ const isHomePage = Astro.url.pathname === '/';
 
     .mobile-actionbar__primary {
       padding: 0 17px;
-      background: rgba(229, 57, 53, 0.96);
-      color: #ffffff;
+      background: var(--c-graphite);
+      color: var(--c-on-deep);
       font-size: 13px;
       line-height: 1;
-      font-weight: 800;
+      font-weight: 500;
       white-space: nowrap;
     }
 
@@ -149,8 +149,8 @@ const isHomePage = Astro.url.pathname === '/';
       flex: 0 0 48px;
       width: 48px;
       border: 1px solid rgba(17, 17, 17, 0.08);
-      background: rgba(255, 255, 255, 0.96);
-      color: #111111;
+      background: var(--c-light-raised);
+      color: var(--c-ink);
     }
 
     .mobile-actionbar__phone svg {

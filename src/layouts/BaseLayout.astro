@@ -102,6 +102,34 @@ const isHomePage = Astro.url.pathname === '/';
     <MobileBottomCallBar />
     <FloatingUi />
 
+    <!-- Scroll reveal: one shift, once per element, skipped entirely when the
+         visitor asks for reduced motion. -->
+    <script is:inline>
+      (function () {
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var reveal = function () {
+          var items = document.querySelectorAll('.rise');
+          if (reduce || typeof IntersectionObserver === 'undefined') {
+            items.forEach(function (el) { el.classList.add('is-in'); });
+            return;
+          }
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add('is-in');
+              io.unobserve(entry.target);
+            });
+          }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+          items.forEach(function (el) { io.observe(el); });
+        };
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', reveal, { once: true });
+        } else {
+          reveal();
+        }
+      })();
+    </script>
+
     <!-- Conversion event wiring: phone clicks, CTA clicks, form start, scroll to form -->
     <script is:inline>
       (function() {

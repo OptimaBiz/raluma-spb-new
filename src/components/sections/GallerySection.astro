@@ -1,6 +1,6 @@
 ---
 const images = [
-  { src: "/images/gallery/verandy/slide-verandy-12.jpeg", alt: "Веранда" },
+  { src: "/images/gallery/verandy/slide-verandy-12.webp", alt: "Веранда" },
   { src: "/images/gallery/verandy/slide-verandy-6.webp",  alt: "Веранда" },
   { src: "/images/gallery/gallery-slide-enter.webp",      alt: "Вход" },
   { src: "/images/gallery/slide-extra.webp",               alt: "Проект" },
@@ -14,8 +14,8 @@ const images = [
   { src: "/images/gallery/terrasy/slide-terrasy-1.webp",   alt: "Терраса" },
   { src: "/images/gallery/terrasy/slide-terrasy-3.webp",   alt: "Терраса" },
   { src: "/images/gallery/verandy/slide-verandy-1.webp",   alt: "Веранда" },
-  { src: "/images/gallery/verandy/slide-verandy-3.jpeg",  alt: "Веранда" },
-  { src: "/images/gallery/verandy/slide-verandy-11.jpeg", alt: "Веранда" },
+  { src: "/images/gallery/verandy/slide-verandy-3.webp",  alt: "Веранда" },
+  { src: "/images/gallery/verandy/slide-verandy-11.webp", alt: "Веранда" },
   { src: "/images/gallery/verandy/slide-verandy-4.webp",   alt: "Веранда" },
   { src: "/images/gallery/verandy/slide-verandy-5.webp",   alt: "Веранда" },
   { src: "/images/gallery/verandy/slide-verandy-7.webp",  alt: "Веранда" },
@@ -36,7 +36,7 @@ const images = [
     <!-- Большая фото -->
     <button class="gs__featured" id="gsFeatured" aria-label="Открыть полный экран">
       <img class="gs__feat-img" id="gsFeatImg"
-           src={images[0].src} alt={images[0].alt} loading="lazy" decoding="async" fetchpriority="low" />
+           data-thumb-src={images[0].src} alt={images[0].alt} loading="lazy" decoding="async" fetchpriority="low" />
       <span class="gs__feat-hint">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -53,7 +53,7 @@ const images = [
           data-i={i}
           aria-label={img.alt}
         >
-          <img src={img.src} alt={img.alt} loading="lazy" decoding="async" />
+          <img data-thumb-src={img.src.replace(/\.(webp|jpe?g|png)$/i, '-thumb.webp')} alt={img.alt} loading="lazy" decoding="async" width="150" height="110" />
         </button>
       ))}
     </div>
@@ -95,9 +95,9 @@ const images = [
   /* ── Section ── */
   .gs {
     background:
-      radial-gradient(circle at top left, rgba(228,67,54,.05), transparent 24%),
-      linear-gradient(180deg, #f3f1ef 0%, #efedeb 100%);
-    color: #111;
+      radial-gradient(circle at top left, rgba(47, 109, 95,.05), transparent 24%),
+      linear-gradient(180deg, #ebeeed 0%, #ebeeed 100%);
+    color: #191d1c;
   }
 
   .gs__wrap {
@@ -113,27 +113,32 @@ const images = [
   }
 
   .gs__eyebrow {
+  font-family: var(--f-mono);
+  font-weight: 400;
+  letter-spacing: 0.12em;
     margin: 0 0 12px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: .16em;
     text-transform: uppercase;
-    color: #e44336;
+    color: #2f6d5f;
   }
 
   .gs__title {
+  font-family: var(--f-display);
+  font-weight: 300;
     margin: 0;
     font-size: clamp(32px, 5vw, 56px);
     line-height: .96;
     letter-spacing: -.04em;
-    font-weight: 700;
+    font-weight: 500;
   }
 
   .gs__lead {
     margin: 14px auto 0;
     font-size: clamp(15px, 1.3vw, 18px);
     line-height: 1.65;
-    color: #5f6773;
+    color: #5c6564;
   }
 
   /* ── Featured ── */
@@ -143,7 +148,7 @@ const images = [
     aspect-ratio: 16 / 9;
     padding: 0;
     border: none;
-    border-radius: 18px;
+    border-radius: 2px;
     overflow: hidden;
     cursor: zoom-in;
     background: #1c1c1e;
@@ -230,7 +235,7 @@ const images = [
   }
 
   .gs__thumb--active {
-    border-color: #e44336;
+    border-color: #2f6d5f;
     opacity: 1;
   }
 
@@ -355,7 +360,7 @@ const images = [
 
     .gs__featured {
       aspect-ratio: 4 / 3;
-      border-radius: 14px;
+      border-radius: 2px;
     }
 
     .gs__thumb {
@@ -374,7 +379,41 @@ const images = [
     .lb__arr--r { right: 6px; }
     .lb__img { border-radius: 4px; }
   }
-</style>
+
+  .gs__title {
+    font-weight: 300;
+  }
+  </style>
+
+<script>
+  // Native lazy loading measures against the layout at parse time, when the
+  // page is still short, so every gallery image was fetched up front. Sources
+  // are attached once the section is within a screen of the viewport.
+  (function () {
+    var section = document.querySelector('.gs');
+    if (!section) return;
+
+    var attach = function () {
+      section.querySelectorAll('img[data-thumb-src]').forEach(function (img) {
+        img.src = img.dataset.thumbSrc;
+        delete img.dataset.thumbSrc;
+      });
+    };
+
+    if (typeof IntersectionObserver === 'undefined') {
+      attach();
+      return;
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (e) { return e.isIntersecting; })) return;
+      attach();
+      io.disconnect();
+    }, { rootMargin: '900px 0px' });
+
+    io.observe(section);
+  })();
+</script>
 
 <script>
   var thumbs   = Array.from(document.querySelectorAll('.gs__thumb'));
