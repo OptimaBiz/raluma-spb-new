@@ -1,0 +1,1483 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LeadFormSection from '../components/sections/LeadFormSection.astro';
+import FooterSection from '../components/sections/FooterSection.astro';
+
+const images = {
+  hero: 'https://thb.tildacdn.com/tild3830-6335-4235-a337-663062393435/-/resize/1900x/3.jpg',
+  louvered: 'https://thb.tildacdn.com/tild3533-6633-4535-b039-323632373730/-/resize/1500x/1.jpg',
+  glass: 'https://thb.tildacdn.com/tild3730-3338-4066-b261-626564313738/-/resize/1500x/2.jpg',
+  size3x3: 'https://thb.tildacdn.com/tild3533-6633-4535-b039-323632373730/-/resize/1000x/1.jpg',
+  size3x4: 'https://thb.tildacdn.com/tild3730-3338-4066-b261-626564313738/-/resize/1000x/2.jpg',
+  size4x5: 'https://thb.tildacdn.com/tild3830-6335-4235-a337-663062393435/-/resize/1000x/3.jpg',
+  finish: 'https://thb.tildacdn.com/tild3230-3532-4638-b336-623064663766/-/resize/1100x/photo.png',
+  glassSample: 'https://thb.tildacdn.com/tild3266-3031-4862-a333-626433303433/-/resize/900x/4.png',
+  decor: 'https://thb.tildacdn.com/tild3430-6261-4338-a630-623431613434/-/resize/900x/5.png',
+};
+
+const roofStates = [
+  {
+    id: 'closed',
+    number: '01',
+    title: 'Полностью закрыты',
+    text: 'Ламели образуют плотную крышу и защищают пространство от осадков и прямого солнца.',
+    angle: '0°',
+  },
+  {
+    id: 'shade',
+    number: '02',
+    title: 'Открыты под углом',
+    text: 'Мягкая тень сохраняется, а между ламелями проходит воздух — комфортно даже в жаркий день.',
+    angle: '45°',
+  },
+  {
+    id: 'open',
+    number: '03',
+    title: 'Полностью открыты',
+    text: 'Максимум естественного света, открытого неба и свободного проветривания.',
+    angle: '90°',
+  },
+];
+
+const sizes = [
+  { size: '3 × 3 м', height: 'высота 2,8 м', image: images.size3x3 },
+  { size: '3 × 4 м', height: 'высота 2,8 м', image: images.size3x4 },
+  { size: '4 × 5 м', height: 'высота 2,8 м', image: images.size4x5 },
+];
+
+const faq = [
+  {
+    question: 'Подходит ли пергола для климата Санкт-Петербурга?',
+    answer: 'Да. Конфигурацию рассчитываем с учётом ветровой и снеговой нагрузки конкретного объекта, способа примыкания и места установки. Для Петербурга особенно важны усиленный каркас и корректный водоотвод.',
+  },
+  {
+    question: 'Можно ли установить перголу у уже построенного дома?',
+    answer: 'Можно. Пергола может примыкать к фасаду либо стоять отдельно. Перед проектированием проверяем основание, точки крепления, высоты, водостоки и открывание существующих дверей и окон.',
+  },
+  {
+    question: 'Можно ли полностью закрыть перголу стеклом?',
+    answer: 'Да. В конструкцию можно интегрировать безрамные системы «Слайд», «Книжка» или «Лифт» и получить защищённое пространство без тяжёлых вертикальных рам.',
+  },
+  {
+    question: 'Куда уходит вода при закрытой ламельной крыше?',
+    answer: 'Вода собирается во встроенных желобах и уходит через скрытые каналы внутри колонн. Снаружи не остаётся навесных труб, нарушающих архитектуру.',
+  },
+  {
+    question: 'Можно ли выбрать цвет и дополнительные опции?',
+    answer: 'Да. Доступно окрашивание по каталогу RAL, фактурные покрытия и декор под дерево. Также можно предусмотреть освещение, автоматику, датчики погоды, обогрев и остекление.',
+  },
+  {
+    question: 'Сколько занимает изготовление и монтаж?',
+    answer: 'Срок зависит от размера, покрытия, автоматики и остекления. После замера и согласования конфигурации фиксируем этапы и срок в договоре.',
+  },
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Биоклиматические перголы под ключ',
+  provider: {
+    '@type': 'Organization',
+    name: 'Raluma СПб',
+    telephone: '+7-812-330-74-15',
+  },
+  areaServed: ['Санкт-Петербург', 'Ленинградская область'],
+  serviceType: 'Проектирование, изготовление и монтаж алюминиевых пергол',
+  url: 'https://raluma.com.ru/pergolas/',
+};
+---
+
+<BaseLayout
+  title="Биоклиматические перголы под ключ в Санкт-Петербурге — Raluma"
+  description="Алюминиевые биоклиматические перголы с поворотной или стеклянной крышей в Санкт-Петербурге и Ленинградской области. Проектирование, изготовление, монтаж и безрамное остекление."
+  canonical="https://raluma.com.ru/pergolas/"
+  ogImage={images.hero}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
+
+  <main class="pergolas-page">
+    <section class="pergola-hero" aria-labelledby="pergola-hero-title">
+      <div class="pergola-hero__media" aria-hidden="true">
+        <img
+          src={images.hero}
+          alt=""
+          width="1900"
+          height="1200"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          referrerpolicy="no-referrer-when-downgrade"
+        />
+      </div>
+
+      <div class="shell pergola-hero__inner">
+        <div class="pergola-hero__copy">
+          <p class="eyebrow pergola-hero__eyebrow">Санкт-Петербург и Ленинградская область</p>
+          <h1 class="pergola-hero__title" id="pergola-hero-title">
+            Биоклиматические перголы под ключ
+          </h1>
+          <p class="pergola-hero__lead">
+            Создаём полноценное пространство с регулируемой или стеклянной крышей,
+            скрытым водоотводом, автоматикой и безрамным остеклением.
+          </p>
+
+          <div class="pergola-hero__actions">
+            <a
+              class="btn pergola-hero__primary"
+              href="#lead-form"
+              data-pergola-goal="pergolas_hero_calculate"
+            >
+              Рассчитать стоимость
+            </a>
+            <a
+              class="btn btn--on-deep"
+              href="tel:+78123307415"
+              data-goal="phone_click_pergolas_hero"
+            >
+              +7 (812) 330-74-15
+            </a>
+          </div>
+
+          <dl class="pergola-hero__facts">
+            <div>
+              <dt>2</dt>
+              <dd>типа крыши</dd>
+            </div>
+            <div>
+              <dt>3</dt>
+              <dd>системы остекления</dd>
+            </div>
+            <div>
+              <dt>RAL</dt>
+              <dd>индивидуальный цвет</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="pergola-section pergola-types seams" aria-labelledby="pergola-types-title">
+      <div class="shell">
+        <div class="pergola-head rise">
+          <p class="eyebrow eyebrow--edge">Выберите принцип крыши</p>
+          <h2 class="title" id="pergola-types-title">Два решения для разных сценариев</h2>
+          <p class="lead">
+            Ламели управляют солнцем и вентиляцией. Стеклянная крыша постоянно сохраняет
+            естественный свет и защищает от осадков.
+          </p>
+        </div>
+
+        <div class="pergola-types__grid">
+          <article class="pergola-type rise">
+            <div class="pergola-type__media">
+              <img
+                src={images.louvered}
+                alt="Ламельная биоклиматическая пергола Raluma"
+                width="1500"
+                height="980"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer-when-downgrade"
+              />
+            </div>
+            <div class="pergola-type__body">
+              <p class="figure pergola-type__number">01 / ламели</p>
+              <h3>Регулируемая биоклиматическая крыша</h3>
+              <p>
+                Поворотные алюминиевые ламели меняют угол от закрытого положения до
+                полностью открытого. Управление — дистанционно с пульта.
+              </p>
+              <ul>
+                <li>Контроль солнца и тени</li>
+                <li>Естественное проветривание</li>
+                <li>Защита от дождя при закрытии</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="pergola-type rise">
+            <div class="pergola-type__media">
+              <img
+                src={images.glass}
+                alt="Алюминиевая пергола Raluma со стеклянной крышей"
+                width="1500"
+                height="980"
+                loading="lazy"
+                decoding="async"
+                referrerpolicy="no-referrer-when-downgrade"
+              />
+            </div>
+            <div class="pergola-type__body">
+              <p class="figure pergola-type__number">02 / стекло</p>
+              <h3>Пергола со стеклянной крышей</h3>
+              <p>
+                Прозрачная кровля наполняет пространство естественным светом и может быть
+                самостоятельной конструкцией или продолжением архитектуры дома.
+              </p>
+              <ul>
+                <li>Максимум естественного света</li>
+                <li>Постоянная защита от осадков</li>
+                <li>Интеграция в фасад или отдельная установка</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="pergola-section pergola-climate seams seams--deep" aria-labelledby="pergola-climate-title">
+      <div class="shell pergola-climate__layout">
+        <div class="pergola-climate__intro rise">
+          <p class="eyebrow pergola-climate__eyebrow">Рассчитано на погоду</p>
+          <h2 id="pergola-climate-title">Не летний навес, а инженерная конструкция</h2>
+          <p>
+            Для Петербурга важны не только внешний вид и автоматика. Проверяем снеговую и
+            ветровую нагрузку, основание, примыкание к фасаду и путь отвода воды.
+          </p>
+        </div>
+
+        <div class="pergola-climate__specs">
+          <article class="pergola-spec rise">
+            <span class="figure">105–125</span>
+            <strong>кг/м²</strong>
+            <p>заявленная снеговая нагрузка в зависимости от серии</p>
+          </article>
+          <article class="pergola-spec rise">
+            <span class="figure">100–120</span>
+            <strong>км/ч</strong>
+            <p>предельная скорость ветра при открытых ламелях</p>
+          </article>
+          <article class="pergola-spec rise">
+            <span class="figure">0–90°</span>
+            <strong>поворот</strong>
+            <p>плавная регулировка положения алюминиевых ламелей</p>
+          </article>
+          <article class="pergola-spec pergola-spec--wide rise">
+            <span class="pergola-spec__icon" aria-hidden="true">↓</span>
+            <div>
+              <strong>Скрытая дренажная система</strong>
+              <p>Вода собирается во встроенных желобах и уходит через каналы внутри колонн.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="pergola-section pergola-roof seams" aria-labelledby="pergola-roof-title" data-roof-section>
+      <div class="shell">
+        <div class="pergola-head rise">
+          <p class="eyebrow eyebrow--edge">Три состояния крыши</p>
+          <h2 class="title" id="pergola-roof-title">Погода меняется — пространство остаётся вашим</h2>
+        </div>
+
+        <div class="pergola-roof__layout">
+          <div class="pergola-roof__visual rise" data-roof-visual="closed">
+            <div class="pergola-roof__frame" aria-hidden="true">
+              <span class="pergola-roof__beam pergola-roof__beam--left"></span>
+              <span class="pergola-roof__beam pergola-roof__beam--right"></span>
+              <span class="pergola-roof__beam pergola-roof__beam--front"></span>
+              <span class="pergola-roof__beam pergola-roof__beam--back"></span>
+              <div class="pergola-roof__lamellas">
+                {Array.from({ length: 12 }).map(() => <span></span>)}
+              </div>
+            </div>
+            <p class="figure pergola-roof__angle" data-roof-angle>0°</p>
+          </div>
+
+          <div class="pergola-roof__controls" role="tablist" aria-label="Положения ламелей">
+            {roofStates.map((state, index) => (
+              <button
+                class:list={['pergola-roof__tab', { 'is-active': index === 0 }]}
+                type="button"
+                role="tab"
+                aria-selected={index === 0 ? 'true' : 'false'}
+                data-roof-tab={state.id}
+                data-angle={state.angle}
+              >
+                <span class="figure pergola-roof__tab-number">{state.number}</span>
+                <span>
+                  <strong>{state.title}</strong>
+                  <small>{state.text}</small>
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pergola-section pergola-sizes" aria-labelledby="pergola-sizes-title">
+      <div class="shell">
+        <div class="pergola-head rise">
+          <p class="eyebrow eyebrow--edge">Габариты</p>
+          <h2 class="title" id="pergola-sizes-title">Стандартные модули и индивидуальный проект</h2>
+          <p class="lead">
+            Модуль можно привязать к фасаду, террасе или коммерческой площадке. Размер и
+            количество секций уточняются после замера.
+          </p>
+        </div>
+
+        <div class="pergola-sizes__grid">
+          {sizes.map((item) => (
+            <article class="pergola-size rise">
+              <div class="pergola-size__media">
+                <img
+                  src={item.image}
+                  alt={`Пергола Raluma размером ${item.size}`}
+                  width="1000"
+                  height="760"
+                  loading="lazy"
+                  decoding="async"
+                  referrerpolicy="no-referrer-when-downgrade"
+                />
+              </div>
+              <div class="pergola-size__body">
+                <strong class="figure">{item.size}</strong>
+                <span>{item.height}</span>
+              </div>
+            </article>
+          ))}
+
+          <article class="pergola-size pergola-size--custom rise">
+            <p class="eyebrow">Под ваш объект</p>
+            <h3>Индивидуальный размер</h3>
+            <p>
+              Рассчитаем конфигурацию по фото, плану или чертежу. Прикрепить файл можно в
+              форме ниже.
+            </p>
+            <a
+              class="btn btn--outline"
+              href="#lead-form"
+              data-pergola-goal="pergolas_sizes_calculate"
+            >
+              Рассчитать проект
+            </a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="pergola-section pergola-glazing seams seams--deep" aria-labelledby="pergola-glazing-title">
+      <div class="shell pergola-glazing__layout">
+        <div class="pergola-glazing__intro rise">
+          <p class="eyebrow pergola-glazing__eyebrow">Пергола + остекление</p>
+          <h2 id="pergola-glazing-title">Из открытой террасы — в защищённое пространство</h2>
+          <p>
+            Во все перголы можно интегрировать одну из трёх безрамных систем Raluma.
+            Подбираем механику под сценарий открывания, высоту проёма и сезонность.
+          </p>
+          <a class="btn btn--on-deep" href="/#systems">Посмотреть системы остекления</a>
+        </div>
+
+        <div class="pergola-glazing__systems">
+          <article class="pergola-glazing__system rise">
+            <span class="figure">01</span>
+            <h3>Слайд</h3>
+            <p>Панели сдвигаются параллельно. Простое ежедневное открывание и минимум места.</p>
+          </article>
+          <article class="pergola-glazing__system rise">
+            <span class="figure">02</span>
+            <h3>Книжка</h3>
+            <p>Панели собираются в парковочную зону и позволяют почти полностью открыть проём.</p>
+          </article>
+          <article class="pergola-glazing__system rise">
+            <span class="figure">03</span>
+            <h3>Лифт</h3>
+            <p>Вертикальное открывание для барных стоек, ресторанов и компактных фасадов.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="pergola-section pergola-benefits seams" aria-labelledby="pergola-benefits-title">
+      <div class="shell">
+        <div class="pergola-head rise">
+          <p class="eyebrow eyebrow--edge">Что меняется после монтажа</p>
+          <h2 class="title" id="pergola-benefits-title">Терраса работает дольше и выглядит частью дома</h2>
+        </div>
+
+        <div class="pergola-benefits__grid">
+          <article class="pergola-benefit rise">
+            <span class="figure">свет</span>
+            <h3>Управляемое естественное освещение</h3>
+            <p>Открывайте ламели для солнца или создавайте ровную тень без тяжёлого навеса.</p>
+          </article>
+          <article class="pergola-benefit rise">
+            <span class="figure">воздух</span>
+            <h3>Режим естественной вентиляции</h3>
+            <p>Тёплый воздух выходит через крышу, сохраняя комфортный микроклимат.</p>
+          </article>
+          <article class="pergola-benefit rise">
+            <span class="figure">вода</span>
+            <h3>Водоотвод спрятан в конструкции</h3>
+            <p>Желоба и каналы внутри колонн не перегружают фасад видимыми трубами.</p>
+          </article>
+          <article class="pergola-benefit rise">
+            <span class="figure">вид</span>
+            <h3>Единая архитектура с домом</h3>
+            <p>Цвет, размеры, примыкание и остекление проектируются как одна композиция.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="pergola-section pergola-options" aria-labelledby="pergola-options-title">
+      <div class="shell">
+        <div class="pergola-head rise">
+          <p class="eyebrow eyebrow--edge">Материалы и опции</p>
+          <h2 class="title" id="pergola-options-title">Не только белый или графит</h2>
+          <p class="lead">
+            Доступны цвета по каталогу RAL, матовые и фактурные покрытия, декор под дерево,
+            варианты стекла, освещение и автоматизация.
+          </p>
+        </div>
+
+        <div class="pergola-options__grid">
+          <article class="pergola-option pergola-option--large rise">
+            <img
+              src={images.finish}
+              alt="Примеры декоративных покрытий Raluma"
+              width="1100"
+              height="760"
+              loading="lazy"
+              decoding="async"
+              referrerpolicy="no-referrer-when-downgrade"
+            />
+            <div>
+              <p class="eyebrow">Цвет и фактура</p>
+              <h3>Окрашивание по RAL и декор</h3>
+              <p>Подбираем покрытие под фасад, окна, кровлю и существующие элементы участка.</p>
+            </div>
+          </article>
+
+          <article class="pergola-option rise">
+            <img
+              src={images.glassSample}
+              alt="Варианты стекла Raluma"
+              width="900"
+              height="760"
+              loading="lazy"
+              decoding="async"
+              referrerpolicy="no-referrer-when-downgrade"
+            />
+            <div>
+              <p class="eyebrow">Заполнение</p>
+              <h3>Прозрачное, осветлённое или тонированное стекло</h3>
+            </div>
+          </article>
+
+          <article class="pergola-option rise">
+            <img
+              src={images.decor}
+              alt="Декоративные решения Raluma"
+              width="900"
+              height="760"
+              loading="lazy"
+              decoding="async"
+              referrerpolicy="no-referrer-when-downgrade"
+            />
+            <div>
+              <p class="eyebrow">Комфорт</p>
+              <h3>Освещение, датчики погоды и обогрев</h3>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="pergola-section pergola-process seams seams--deep" aria-labelledby="pergola-process-title">
+      <div class="shell">
+        <div class="pergola-process__head rise">
+          <p class="eyebrow">Как проходит работа</p>
+          <h2 id="pergola-process-title">От фотографии участка до настроенной автоматики</h2>
+        </div>
+
+        <ol class="pergola-process__steps">
+          <li class="rise"><span class="figure">01</span><strong>Заявка</strong><p>Получаем фото, план или описание задачи.</p></li>
+          <li class="rise"><span class="figure">02</span><strong>Замер</strong><p>Проверяем основание, высоты и примыкания.</p></li>
+          <li class="rise"><span class="figure">03</span><strong>Проект</strong><p>Выбираем тип крыши, размер, цвет и опции.</p></li>
+          <li class="rise"><span class="figure">04</span><strong>Производство</strong><p>Изготавливаем согласованную конструкцию.</p></li>
+          <li class="rise"><span class="figure">05</span><strong>Монтаж</strong><p>Собираем, герметизируем и настраиваем систему.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="pergola-section pergola-faq seams" id="pergolas-faq" aria-labelledby="pergola-faq-title">
+      <div class="shell pergola-faq__layout">
+        <div class="pergola-faq__intro rise">
+          <p class="eyebrow eyebrow--edge">Вопросы до замера</p>
+          <h2 class="title" id="pergola-faq-title">Главное о перголах</h2>
+          <p class="lead">Точную конфигурацию определяем по объекту, но базовые ответы можно получить заранее.</p>
+        </div>
+
+        <div class="pergola-faq__list">
+          {faq.map((item, index) => (
+            <details class="pergola-faq__item rise" open={index === 0}>
+              <summary>
+                <span>{item.question}</span>
+                <span class="pergola-faq__plus" aria-hidden="true">+</span>
+              </summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="pergola-final-cta seams seams--deep" aria-labelledby="pergola-final-title">
+      <div class="shell pergola-final-cta__inner rise">
+        <p class="eyebrow">Предварительный расчёт</p>
+        <h2 id="pergola-final-title">Пришлите фотографию фасада или участка</h2>
+        <p>
+          Оценим возможную конфигурацию и зададим вопросы, которые действительно влияют
+          на стоимость проекта.
+        </p>
+        <a class="btn pergola-final-cta__button" href="#lead-form" data-pergola-goal="pergolas_final_calculate">
+          Перейти к форме
+        </a>
+      </div>
+    </section>
+
+    <LeadFormSection />
+  </main>
+
+  <FooterSection />
+
+  <script>
+    const roofSection = document.querySelector('[data-roof-section]');
+    if (roofSection) {
+      const visual = roofSection.querySelector('[data-roof-visual]');
+      const angle = roofSection.querySelector('[data-roof-angle]');
+      const tabs = Array.from(roofSection.querySelectorAll('[data-roof-tab]'));
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const state = tab.getAttribute('data-roof-tab') || 'closed';
+          tabs.forEach((candidate) => {
+            const active = candidate === tab;
+            candidate.classList.toggle('is-active', active);
+            candidate.setAttribute('aria-selected', String(active));
+          });
+          visual?.setAttribute('data-roof-visual', state);
+          if (angle) angle.textContent = tab.getAttribute('data-angle') || '';
+          window.safeReachGoal?.('pergolas_roof_state_select');
+        });
+      });
+    }
+
+    document.querySelectorAll('[data-pergola-goal]').forEach((link) => {
+      link.addEventListener('click', () => {
+        const goal = link.getAttribute('data-pergola-goal');
+        if (goal) window.safeReachGoal?.(goal);
+      });
+    });
+
+    const successPanel = document.getElementById('lead-form-success');
+    if (successPanel && typeof MutationObserver !== 'undefined') {
+      let sent = false;
+      const observer = new MutationObserver(() => {
+        if (sent || successPanel.hidden) return;
+        sent = true;
+        window.safeReachGoal?.('pergolas_form_submit');
+        observer.disconnect();
+      });
+      observer.observe(successPanel, { attributes: true, attributeFilter: ['hidden'] });
+    }
+
+    const form = document.getElementById('lead-form-element');
+    form?.addEventListener('focusin', () => window.safeReachGoal?.('pergolas_form_start'), { once: true });
+  </script>
+</BaseLayout>
+
+<style>
+  .pergolas-page {
+    overflow: clip;
+    background: var(--c-light);
+  }
+
+  .pergola-section {
+    padding-block: var(--section-y);
+  }
+
+  .pergola-head {
+    display: grid;
+    gap: 20px;
+    max-width: 940px;
+    margin-bottom: clamp(42px, 6vw, 76px);
+  }
+
+  .pergola-head .title {
+    max-width: 18ch;
+  }
+
+  .pergola-hero {
+    position: relative;
+    min-height: calc(100svh - 64px);
+    overflow: hidden;
+    background: var(--c-deep);
+    color: var(--c-on-deep);
+  }
+
+  .pergola-hero__media,
+  .pergola-hero__media::after {
+    position: absolute;
+    inset: 0;
+  }
+
+  .pergola-hero__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .pergola-hero__media::after {
+    content: '';
+    background:
+      linear-gradient(90deg, rgba(14, 20, 19, 0.95) 0%, rgba(14, 20, 19, 0.77) 42%, rgba(14, 20, 19, 0.18) 78%),
+      linear-gradient(180deg, rgba(14, 20, 19, 0.04), rgba(14, 20, 19, 0.35));
+  }
+
+  .pergola-hero__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    min-height: calc(100svh - 64px);
+    padding-block: clamp(72px, 10vw, 150px);
+  }
+
+  .pergola-hero__copy {
+    max-width: 820px;
+  }
+
+  .pergola-hero__eyebrow {
+    margin-bottom: 24px;
+    color: var(--c-edge-on-deep);
+  }
+
+  .pergola-hero__title {
+    margin: 0;
+    max-width: 13ch;
+    font-family: var(--f-display);
+    font-size: clamp(44px, 6.3vw, 86px);
+    font-weight: 300;
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  .pergola-hero__lead {
+    max-width: 64ch;
+    margin: 30px 0 0;
+    font-size: clamp(18px, 1.6vw, 23px);
+    line-height: 1.6;
+    color: var(--c-on-deep-soft);
+  }
+
+  .pergola-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 36px;
+  }
+
+  .pergola-hero__primary,
+  .pergola-final-cta__button {
+    background: var(--c-on-deep);
+    color: var(--c-deep);
+  }
+
+  .pergola-hero__primary:hover,
+  .pergola-final-cta__button:hover {
+    background: #ffffff;
+  }
+
+  .pergola-hero__facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 720px;
+    margin: clamp(50px, 7vw, 86px) 0 0;
+    border-top: 1px solid var(--c-seam-deep);
+    border-bottom: 1px solid var(--c-seam-deep);
+  }
+
+  .pergola-hero__facts div {
+    padding: 18px 20px 18px 0;
+  }
+
+  .pergola-hero__facts div + div {
+    padding-left: 20px;
+    border-left: 1px solid var(--c-seam-deep);
+  }
+
+  .pergola-hero__facts dt {
+    font-family: var(--f-mono);
+    font-size: clamp(23px, 2.5vw, 34px);
+    color: var(--c-on-deep);
+  }
+
+  .pergola-hero__facts dd {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: var(--c-on-deep-soft);
+  }
+
+  .pergola-types__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(18px, 3vw, 42px);
+  }
+
+  .pergola-type {
+    display: grid;
+    min-width: 0;
+    border: 1px solid var(--c-seam);
+    background: var(--c-light-raised);
+  }
+
+  .pergola-type__media {
+    aspect-ratio: 1.42;
+    overflow: hidden;
+    background: #d7dcda;
+  }
+
+  .pergola-type__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 700ms var(--ease-open);
+  }
+
+  .pergola-type:hover .pergola-type__media img {
+    transform: scale(1.025);
+  }
+
+  .pergola-type__body {
+    padding: clamp(24px, 3vw, 42px);
+  }
+
+  .pergola-type__number {
+    margin: 0 0 20px;
+    font-size: 12px;
+    color: var(--c-edge);
+  }
+
+  .pergola-type h3,
+  .pergola-option h3,
+  .pergola-size--custom h3 {
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: var(--t-h3);
+    font-weight: 300;
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+  }
+
+  .pergola-type p:not(.pergola-type__number) {
+    margin: 20px 0 0;
+    line-height: 1.65;
+    color: var(--c-ink-soft);
+  }
+
+  .pergola-type ul {
+    display: grid;
+    gap: 10px;
+    margin: 24px 0 0;
+    padding: 20px 0 0;
+    border-top: 1px solid var(--c-seam);
+    list-style: none;
+    color: var(--c-ink-soft);
+  }
+
+  .pergola-type li::before {
+    content: '—';
+    margin-right: 8px;
+    color: var(--c-edge);
+  }
+
+  .pergola-climate,
+  .pergola-glazing,
+  .pergola-process,
+  .pergola-final-cta {
+    background: var(--c-deep);
+    color: var(--c-on-deep);
+  }
+
+  .pergola-climate__layout,
+  .pergola-glazing__layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(48px, 8vw, 128px);
+    align-items: start;
+  }
+
+  .pergola-climate__intro {
+    position: sticky;
+    top: 110px;
+  }
+
+  .pergola-climate__eyebrow,
+  .pergola-glazing__eyebrow,
+  .pergola-process__head .eyebrow,
+  .pergola-final-cta .eyebrow {
+    color: var(--c-edge-on-deep);
+  }
+
+  .pergola-climate__intro h2,
+  .pergola-glazing__intro h2,
+  .pergola-process__head h2,
+  .pergola-final-cta h2 {
+    margin: 18px 0 0;
+    font-family: var(--f-display);
+    font-size: var(--t-h2);
+    font-weight: 300;
+    line-height: 1.14;
+    letter-spacing: -0.03em;
+  }
+
+  .pergola-climate__intro > p:last-child,
+  .pergola-glazing__intro > p,
+  .pergola-final-cta p {
+    margin: 24px 0 0;
+    font-size: var(--t-lead);
+    line-height: 1.65;
+    color: var(--c-on-deep-soft);
+  }
+
+  .pergola-climate__specs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--c-seam-deep);
+    border: 1px solid var(--c-seam-deep);
+  }
+
+  .pergola-spec {
+    min-height: 260px;
+    padding: clamp(24px, 3vw, 42px);
+    background: var(--c-graphite);
+  }
+
+  .pergola-spec > .figure {
+    display: block;
+    font-size: clamp(34px, 4vw, 58px);
+    line-height: 1;
+    color: var(--c-on-deep);
+  }
+
+  .pergola-spec > strong {
+    display: block;
+    margin-top: 12px;
+    font-family: var(--f-mono);
+    font-size: 14px;
+    color: var(--c-edge-on-deep);
+  }
+
+  .pergola-spec p {
+    margin: 28px 0 0;
+    line-height: 1.6;
+    color: var(--c-on-deep-soft);
+  }
+
+  .pergola-spec--wide {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+    align-items: start;
+    min-height: auto;
+  }
+
+  .pergola-spec--wide strong {
+    font-family: var(--f-display);
+    font-size: 23px;
+    font-weight: 300;
+  }
+
+  .pergola-spec--wide p {
+    margin-top: 12px;
+  }
+
+  .pergola-spec__icon {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border: 1px solid var(--c-seam-deep);
+    font-family: var(--f-mono);
+    color: var(--c-edge-on-deep);
+  }
+
+  .pergola-roof__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    gap: clamp(34px, 6vw, 92px);
+    align-items: center;
+  }
+
+  .pergola-roof__visual {
+    position: relative;
+    min-height: clamp(360px, 44vw, 620px);
+    overflow: hidden;
+    border: 1px solid var(--c-seam);
+    background:
+      linear-gradient(180deg, #cfd8d7 0%, #e9eceb 56%, #b8c1bd 56%, #9ca8a3 100%);
+  }
+
+  .pergola-roof__frame {
+    position: absolute;
+    inset: 15% 10% 12%;
+    perspective: 900px;
+  }
+
+  .pergola-roof__beam {
+    position: absolute;
+    display: block;
+    background: var(--c-graphite);
+  }
+
+  .pergola-roof__beam--left,
+  .pergola-roof__beam--right {
+    top: 10%;
+    bottom: 0;
+    width: 18px;
+  }
+
+  .pergola-roof__beam--left { left: 0; }
+  .pergola-roof__beam--right { right: 0; }
+
+  .pergola-roof__beam--front,
+  .pergola-roof__beam--back {
+    left: 0;
+    right: 0;
+    height: 18px;
+  }
+
+  .pergola-roof__beam--front { bottom: 0; }
+  .pergola-roof__beam--back { top: 10%; }
+
+  .pergola-roof__lamellas {
+    position: absolute;
+    left: 2%;
+    right: 2%;
+    top: 11%;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 5px;
+    transform: rotateX(58deg);
+    transform-origin: top;
+  }
+
+  .pergola-roof__lamellas span {
+    display: block;
+    height: clamp(170px, 27vw, 350px);
+    background: #d9dedc;
+    border: 1px solid #78827f;
+    transform-origin: center;
+    transition: transform 600ms var(--ease-open), opacity 600ms var(--ease-open);
+  }
+
+  [data-roof-visual='shade'] .pergola-roof__lamellas span {
+    transform: rotateY(48deg);
+  }
+
+  [data-roof-visual='open'] .pergola-roof__lamellas span {
+    transform: rotateY(82deg);
+  }
+
+  .pergola-roof__angle {
+    position: absolute;
+    right: 24px;
+    bottom: 18px;
+    margin: 0;
+    font-size: clamp(30px, 4vw, 56px);
+    color: var(--c-edge-deep);
+  }
+
+  .pergola-roof__controls {
+    display: grid;
+    border-top: 1px solid var(--c-seam);
+  }
+
+  .pergola-roof__tab {
+    display: grid;
+    grid-template-columns: 54px 1fr;
+    gap: 18px;
+    width: 100%;
+    padding: 26px 0;
+    border: 0;
+    border-bottom: 1px solid var(--c-seam);
+    background: transparent;
+    color: var(--c-ink);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .pergola-roof__tab-number {
+    color: var(--c-ink-mute);
+  }
+
+  .pergola-roof__tab strong {
+    display: block;
+    font-size: 19px;
+    font-weight: 500;
+  }
+
+  .pergola-roof__tab small {
+    display: block;
+    max-width: 48ch;
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--c-ink-soft);
+  }
+
+  .pergola-roof__tab.is-active .pergola-roof__tab-number,
+  .pergola-roof__tab.is-active strong {
+    color: var(--c-edge);
+  }
+
+  .pergola-sizes {
+    background: var(--c-light-raised);
+  }
+
+  .pergola-sizes__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    border: 1px solid var(--c-seam);
+    background: var(--c-seam);
+  }
+
+  .pergola-size {
+    min-width: 0;
+    background: var(--c-light);
+  }
+
+  .pergola-size__media {
+    aspect-ratio: 1 / 0.82;
+    overflow: hidden;
+  }
+
+  .pergola-size__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .pergola-size__body {
+    padding: 24px;
+  }
+
+  .pergola-size__body strong {
+    display: block;
+    font-size: 23px;
+    color: var(--c-ink);
+  }
+
+  .pergola-size__body span {
+    display: block;
+    margin-top: 7px;
+    color: var(--c-ink-soft);
+    font-size: 14px;
+  }
+
+  .pergola-size--custom {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(28px, 3vw, 44px);
+    background: var(--c-graphite);
+    color: var(--c-on-deep);
+  }
+
+  .pergola-size--custom .eyebrow {
+    color: var(--c-edge-on-deep);
+  }
+
+  .pergola-size--custom h3 {
+    margin-top: 18px;
+    color: var(--c-on-deep);
+  }
+
+  .pergola-size--custom p:not(.eyebrow) {
+    margin: 18px 0 26px;
+    line-height: 1.6;
+    color: var(--c-on-deep-soft);
+  }
+
+  .pergola-size--custom .btn {
+    align-self: flex-start;
+    border-color: var(--c-seam-deep);
+    color: var(--c-on-deep);
+  }
+
+  .pergola-glazing__intro .btn {
+    margin-top: 30px;
+  }
+
+  .pergola-glazing__systems {
+    display: grid;
+    gap: 1px;
+    border: 1px solid var(--c-seam-deep);
+    background: var(--c-seam-deep);
+  }
+
+  .pergola-glazing__system {
+    display: grid;
+    grid-template-columns: 66px minmax(120px, 0.45fr) 1fr;
+    gap: 22px;
+    align-items: baseline;
+    padding: clamp(25px, 3vw, 38px);
+    background: var(--c-graphite);
+  }
+
+  .pergola-glazing__system .figure {
+    color: var(--c-edge-on-deep);
+  }
+
+  .pergola-glazing__system h3 {
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: 24px;
+    font-weight: 300;
+  }
+
+  .pergola-glazing__system p {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--c-on-deep-soft);
+  }
+
+  .pergola-benefits__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    border: 1px solid var(--c-seam);
+    background: var(--c-seam);
+  }
+
+  .pergola-benefit {
+    min-height: 280px;
+    padding: clamp(28px, 4vw, 54px);
+    background: var(--c-light-raised);
+  }
+
+  .pergola-benefit > .figure {
+    color: var(--c-edge);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .pergola-benefit h3 {
+    max-width: 20ch;
+    margin: 54px 0 0;
+    font-family: var(--f-display);
+    font-size: clamp(22px, 2.3vw, 32px);
+    font-weight: 300;
+    line-height: 1.16;
+  }
+
+  .pergola-benefit p {
+    max-width: 48ch;
+    margin: 20px 0 0;
+    line-height: 1.65;
+    color: var(--c-ink-soft);
+  }
+
+  .pergola-options {
+    background: var(--c-light-raised);
+  }
+
+  .pergola-options__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .pergola-option {
+    display: grid;
+    grid-template-columns: minmax(150px, 0.8fr) 1fr;
+    min-height: 330px;
+    border: 1px solid var(--c-seam);
+    background: var(--c-light);
+  }
+
+  .pergola-option--large {
+    grid-column: 1 / -1;
+    grid-template-columns: 1.2fr 0.8fr;
+    min-height: 440px;
+  }
+
+  .pergola-option img {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    object-fit: cover;
+    background: #d7dcda;
+  }
+
+  .pergola-option > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(26px, 4vw, 56px);
+  }
+
+  .pergola-option h3 {
+    margin-top: 18px;
+  }
+
+  .pergola-option p:last-child {
+    margin: 20px 0 0;
+    line-height: 1.65;
+    color: var(--c-ink-soft);
+  }
+
+  .pergola-process__head {
+    max-width: 860px;
+  }
+
+  .pergola-process__steps {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1px;
+    margin: clamp(48px, 7vw, 90px) 0 0;
+    padding: 0;
+    border: 1px solid var(--c-seam-deep);
+    background: var(--c-seam-deep);
+    list-style: none;
+  }
+
+  .pergola-process__steps li {
+    min-height: 270px;
+    padding: 28px 24px;
+    background: var(--c-graphite);
+  }
+
+  .pergola-process__steps .figure {
+    color: var(--c-edge-on-deep);
+  }
+
+  .pergola-process__steps strong {
+    display: block;
+    margin-top: 58px;
+    font-family: var(--f-display);
+    font-size: 20px;
+    font-weight: 300;
+  }
+
+  .pergola-process__steps p {
+    margin: 16px 0 0;
+    line-height: 1.55;
+    color: var(--c-on-deep-soft);
+  }
+
+  .pergola-faq__layout {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.65fr) minmax(0, 1.35fr);
+    gap: clamp(48px, 9vw, 140px);
+    align-items: start;
+  }
+
+  .pergola-faq__intro {
+    position: sticky;
+    top: 110px;
+  }
+
+  .pergola-faq__intro .lead {
+    margin-top: 22px;
+  }
+
+  .pergola-faq__list {
+    border-top: 1px solid var(--c-seam);
+  }
+
+  .pergola-faq__item {
+    border-bottom: 1px solid var(--c-seam);
+  }
+
+  .pergola-faq__item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    padding: 25px 0;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .pergola-faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .pergola-faq__plus {
+    flex: 0 0 auto;
+    font-family: var(--f-mono);
+    font-size: 26px;
+    font-weight: 300;
+    color: var(--c-edge);
+    transition: transform 220ms ease;
+  }
+
+  .pergola-faq__item[open] .pergola-faq__plus {
+    transform: rotate(45deg);
+  }
+
+  .pergola-faq__item > p {
+    max-width: 72ch;
+    margin: 0;
+    padding: 0 54px 28px 0;
+    line-height: 1.7;
+    color: var(--c-ink-soft);
+  }
+
+  .pergola-final-cta {
+    padding-block: clamp(78px, 9vw, 132px);
+  }
+
+  .pergola-final-cta__inner {
+    text-align: center;
+  }
+
+  .pergola-final-cta h2 {
+    max-width: 19ch;
+    margin-inline: auto;
+  }
+
+  .pergola-final-cta p {
+    max-width: 62ch;
+    margin-inline: auto;
+  }
+
+  .pergola-final-cta__button {
+    margin-top: 32px;
+  }
+
+  @media (max-width: 1080px) {
+    .pergola-sizes__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pergola-process__steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 820px) {
+    .pergola-hero__media::after {
+      background: linear-gradient(180deg, rgba(14, 20, 19, 0.16) 0%, rgba(14, 20, 19, 0.75) 48%, rgba(14, 20, 19, 0.98) 100%);
+    }
+
+    .pergola-hero__inner {
+      align-items: flex-end;
+      padding-top: 120px;
+      padding-bottom: 54px;
+    }
+
+    .pergola-hero__title {
+      font-size: clamp(42px, 12vw, 62px);
+    }
+
+    .pergola-hero__facts {
+      grid-template-columns: 1fr;
+    }
+
+    .pergola-hero__facts div,
+    .pergola-hero__facts div + div {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      align-items: baseline;
+      padding: 13px 0;
+      border-left: 0;
+      border-top: 1px solid var(--c-seam-deep);
+    }
+
+    .pergola-hero__facts div:first-child {
+      border-top: 0;
+    }
+
+    .pergola-types__grid,
+    .pergola-climate__layout,
+    .pergola-roof__layout,
+    .pergola-glazing__layout,
+    .pergola-faq__layout {
+      grid-template-columns: 1fr;
+    }
+
+    .pergola-climate__intro,
+    .pergola-faq__intro {
+      position: static;
+    }
+
+    .pergola-glazing__system {
+      grid-template-columns: 48px 1fr;
+    }
+
+    .pergola-glazing__system p {
+      grid-column: 2;
+    }
+
+    .pergola-options__grid,
+    .pergola-benefits__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .pergola-option,
+    .pergola-option--large {
+      grid-column: auto;
+      grid-template-columns: 1fr;
+    }
+
+    .pergola-option img {
+      aspect-ratio: 1.45;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .pergola-section {
+      padding-block: 76px;
+    }
+
+    .pergola-hero__actions {
+      display: grid;
+    }
+
+    .pergola-hero__actions .btn {
+      width: 100%;
+    }
+
+    .pergola-climate__specs,
+    .pergola-sizes__grid,
+    .pergola-process__steps {
+      grid-template-columns: 1fr;
+    }
+
+    .pergola-spec--wide {
+      grid-column: auto;
+    }
+
+    .pergola-spec {
+      min-height: 220px;
+    }
+
+    .pergola-roof__visual {
+      min-height: 340px;
+    }
+
+    .pergola-roof__tab {
+      grid-template-columns: 42px 1fr;
+    }
+
+    .pergola-benefit {
+      min-height: auto;
+    }
+
+    .pergola-benefit h3 {
+      margin-top: 34px;
+    }
+  }
+</style>
