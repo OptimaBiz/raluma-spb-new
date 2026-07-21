@@ -1,0 +1,163 @@
+---
+const teaserImage = 'https://thb.tildacdn.com/tild3830-6335-4235-a337-663062393435/-/resize/1800x/3.jpg';
+---
+
+<section class="pergolas-teaser" aria-labelledby="pergolas-teaser-title">
+  <div class="pergolas-teaser__media" aria-hidden="true">
+    <img
+      src={teaserImage}
+      alt=""
+      width="1800"
+      height="1100"
+      loading="lazy"
+      decoding="async"
+      referrerpolicy="no-referrer-when-downgrade"
+    />
+  </div>
+
+  <div class="shell pergolas-teaser__inner">
+    <div class="pergolas-teaser__copy rise">
+      <p class="eyebrow pergolas-teaser__eyebrow">Отдельное архитектурное решение</p>
+      <h2 class="pergolas-teaser__title" id="pergolas-teaser-title">
+        Биоклиматические перголы
+      </h2>
+      <p class="pergolas-teaser__lead">
+        Алюминиевая конструкция с поворотной или стеклянной крышей. Проектируем,
+        устанавливаем и при необходимости дополняем безрамным остеклением.
+      </p>
+
+      <div class="pergolas-teaser__facts" aria-label="Ключевые возможности">
+        <span>Ламельная крыша</span>
+        <span>Стеклянная крыша</span>
+        <span>Скрытый водоотвод</span>
+      </div>
+
+      <a
+        class="btn btn--solid pergolas-teaser__cta"
+        href="/pergolas/"
+        data-goal="pergolas_teaser_click"
+      >
+        Посмотреть перголы
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pergolas-teaser {
+    position: relative;
+    min-height: clamp(560px, 64vw, 780px);
+    overflow: hidden;
+    background: var(--c-deep);
+    color: var(--c-on-deep);
+  }
+
+  .pergolas-teaser__media,
+  .pergolas-teaser__media::after {
+    position: absolute;
+    inset: 0;
+  }
+
+  .pergolas-teaser__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .pergolas-teaser__media::after {
+    content: '';
+    background:
+      linear-gradient(90deg, rgba(14, 20, 19, 0.94) 0%, rgba(14, 20, 19, 0.78) 43%, rgba(14, 20, 19, 0.24) 76%, rgba(14, 20, 19, 0.12) 100%),
+      linear-gradient(180deg, rgba(14, 20, 19, 0.08), rgba(14, 20, 19, 0.34));
+  }
+
+  .pergolas-teaser__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    min-height: inherit;
+    padding-block: var(--section-y);
+  }
+
+  .pergolas-teaser__copy {
+    max-width: 690px;
+  }
+
+  .pergolas-teaser__eyebrow {
+    margin-bottom: 20px;
+    color: var(--c-edge-on-deep);
+  }
+
+  .pergolas-teaser__title {
+    margin: 0;
+    max-width: 12ch;
+    font-family: var(--f-display);
+    font-size: var(--t-display);
+    font-weight: 300;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: var(--c-on-deep);
+    text-wrap: balance;
+  }
+
+  .pergolas-teaser__lead {
+    margin: 28px 0 0;
+    max-width: 58ch;
+    font-size: var(--t-lead);
+    line-height: 1.65;
+    color: var(--c-on-deep-soft);
+  }
+
+  .pergolas-teaser__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 30px;
+  }
+
+  .pergolas-teaser__facts span {
+    padding: 9px 12px;
+    border: 1px solid var(--c-seam-deep);
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--c-on-deep);
+    background: rgba(14, 20, 19, 0.25);
+    backdrop-filter: blur(8px);
+  }
+
+  .pergolas-teaser__cta {
+    margin-top: 34px;
+    background: var(--c-on-deep);
+    color: var(--c-deep);
+  }
+
+  .pergolas-teaser__cta:hover {
+    background: #ffffff;
+  }
+
+  @media (max-width: 780px) {
+    .pergolas-teaser {
+      min-height: 690px;
+    }
+
+    .pergolas-teaser__media::after {
+      background: linear-gradient(180deg, rgba(14, 20, 19, 0.18) 0%, rgba(14, 20, 19, 0.82) 52%, rgba(14, 20, 19, 0.97) 100%);
+    }
+
+    .pergolas-teaser__inner {
+      align-items: flex-end;
+      padding-block: 72px 58px;
+    }
+
+    .pergolas-teaser__title {
+      font-size: clamp(38px, 12vw, 56px);
+    }
+
+    .pergolas-teaser__lead {
+      font-size: 17px;
+    }
+  }
+</style>
