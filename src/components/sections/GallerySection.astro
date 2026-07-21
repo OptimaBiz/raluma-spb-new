@@ -1,6 +1,6 @@
 ---
 const images = [
-  { src: "/images/gallery/verandy/slide-verandy-12.jpeg", alt: "Веранда" },
+  { src: "/images/gallery/verandy/slide-verandy-12.webp", alt: "Веранда" },
   { src: "/images/gallery/verandy/slide-verandy-6.webp",  alt: "Веранда" },
   { src: "/images/gallery/gallery-slide-enter.webp",      alt: "Вход" },
   { src: "/images/gallery/slide-extra.webp",               alt: "Проект" },
@@ -14,8 +14,8 @@ const images = [
   { src: "/images/gallery/terrasy/slide-terrasy-1.webp",   alt: "Терраса" },
   { src: "/images/gallery/terrasy/slide-terrasy-3.webp",   alt: "Терраса" },
   { src: "/images/gallery/verandy/slide-verandy-1.webp",   alt: "Веранда" },
-  { src: "/images/gallery/verandy/slide-verandy-3.jpeg",  alt: "Веранда" },
-  { src: "/images/gallery/verandy/slide-verandy-11.jpeg", alt: "Веранда" },
+  { src: "/images/gallery/verandy/slide-verandy-3.webp",  alt: "Веранда" },
+  { src: "/images/gallery/verandy/slide-verandy-11.webp", alt: "Веранда" },
   { src: "/images/gallery/verandy/slide-verandy-4.webp",   alt: "Веранда" },
   { src: "/images/gallery/verandy/slide-verandy-5.webp",   alt: "Веранда" },
   { src: "/images/gallery/verandy/slide-verandy-7.webp",  alt: "Веранда" },
@@ -53,7 +53,7 @@ const images = [
           data-i={i}
           aria-label={img.alt}
         >
-          <img src={img.src} alt={img.alt} loading="lazy" decoding="async" />
+          <img src={img.src.replace(/\.(webp|jpe?g|png)$/i, '-thumb.webp')} alt={img.alt} loading="lazy" decoding="async" width="150" height="110" />
         </button>
       ))}
     </div>

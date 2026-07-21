@@ -5,15 +5,15 @@ const cases = [
   {
     id: 'case-2024-wooden-gazebo',
     active: true,
-    year: '2024',
+    year: '2022',
     type: 'Деревянная беседка / зона барбекю',
     system: 'Слайд',
     price: '480 000 ₽',
-    title: 'Остекление в деревянной беседке',
+    title: 'Остекление деревянной беседки',
     description:
       'Система «Слайд» с москитной сеткой-плиссе.',
     task:
-      'Защитить зону барбекю от ветра, осадков и насекомых, сохранив проветривание.',
+      'Защитить беседку от ветра, осадков и насекомых, сохранив проветривание и вид.',
     result:
       'Комфортное использование с весны до осени без потери ощущения открытого пространства.',
     features: [
@@ -23,23 +23,23 @@ const cases = [
     ],
     images: [
       {
-        src: '/images/cases/wooden-gazebo/main-1.jpg',
-        alt: 'Остекление в деревянной беседке, основной вид',
+        src: '/images/cases/wooden-gazebo/main-1.webp',
+        alt: 'Остекление деревянной беседки, основной вид',
       },
       {
-        src: '/images/cases/wooden-gazebo/main-2.jpeg',
-        alt: 'Остекление в деревянной беседке, второй ракурс',
+        src: '/images/cases/wooden-gazebo/main-2.webp',
+        alt: 'Остекление деревянной беседки, второй ракурс',
       },
     ],
   },
   {
     id: 'case-2025-terrace-sertolovo',
     active: true,
-    year: '2025',
+    year: '2024',
     type: 'Веранда',
     system: 'Слайд',
     price: '880 000 ₽',
-    title: 'Остекление веранды в Сертолово',
+    title: 'Остекление веранды',
     description:
       'Система «Слайд»: два проёма, открывание от центра и тонированное стекло.',
     task:
@@ -101,8 +101,7 @@ const visibleCases = cases
       <p class="eyebrow">Реализованные объекты</p>
       <h2 class="cases__title" id="cases-title">Паспорта проектов</h2>
       <p class="lead">
-        Что за объект, какая система, сколько стоило. Данные те же, что мы даём
-        на замере.
+        Что за объект, какая система, сколько стоило.
       </p>
     </header>
 
@@ -146,7 +145,7 @@ const visibleCases = cases
                     data-alt={image.alt}
                     aria-label={`Показать фото ${index + 1}`}
                   >
-                    <img src={image.src} alt="" loading="lazy" decoding="async" />
+                    <img src={image.src.replace(/\.(webp|jpe?g|png)$/i, '-thumb.webp')} alt="" loading="lazy" decoding="async" width="108" height="80" />
                   </button>
                 ))}
               </div>
