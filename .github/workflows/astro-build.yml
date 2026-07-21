@@ -11,7 +11,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,38 +24,3 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
-      - name: Install Playwright
-        run: |
-          npm install --no-save playwright
-          npx playwright install --with-deps chromium
-      - name: Start preview
-        run: |
-          npm run preview -- --host 127.0.0.1 > /tmp/raluma-preview.log 2>&1 &
-          for i in {1..30}; do
-            curl -fsS http://127.0.0.1:4321/pergolas/ >/dev/null && break
-            sleep 2
-          done
-      - name: Capture pergolas screenshots
-        run: |
-          mkdir -p screenshots
-          node <<'NODE'
-          const { chromium, devices } = require('playwright');
-          (async () => {
-            const browser = await chromium.launch({ headless: true });
-            const desktop = await browser.newPage({ viewport: { width: 1440, height: 1200 }, deviceScaleFactor: 1 });
-            await desktop.goto('http://127.0.0.1:4321/pergolas/', { waitUntil: 'networkidle', timeout: 120000 });
-            await desktop.screenshot({ path: 'screenshots/pergolas-desktop.png', fullPage: true });
-            const mobileContext = await browser.newContext({ ...devices['iPhone 13'] });
-            const mobile = await mobileContext.newPage();
-            await mobile.goto('http://127.0.0.1:4321/pergolas/', { waitUntil: 'networkidle', timeout: 120000 });
-            await mobile.screenshot({ path: 'screenshots/pergolas-mobile.png', fullPage: true });
-            await mobileContext.close();
-            await browser.close();
-          })();
-          NODE
-      - name: Upload screenshots
-        uses: actions/upload-artifact@v4
-        with:
-          name: pergolas-screenshots
-          path: screenshots/*.png
-          retention-days: 3
