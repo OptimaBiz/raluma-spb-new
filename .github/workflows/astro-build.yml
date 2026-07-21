@@ -1,4 +1,4 @@
-name: Collect official pergola images
+name: Collect remaining pergola images
 
 on:
   pull_request:
@@ -11,32 +11,30 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Download images
+      - name: Download remaining images
         run: |
           mkdir -p images
           get() {
-            curl -fL --retry 3 --connect-timeout 20 --max-time 120 \
-              -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/150 Safari/537.36" \
-              -H "Referer: https://raluma.ru/pergolas" \
-              "$1" -o "images/$2" || rm -f "images/$2"
+            for attempt in 1 2 3 4 5; do
+              curl -fL --connect-timeout 20 --max-time 120 \
+                -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/150 Safari/537.36" \
+                -H "Referer: https://raluma.ru/pergolas" \
+                "$1" -o "images/$2" && return 0
+              sleep 2
+            done
+            rm -f "images/$2"
+            return 0
           }
           get "https://static.tildacdn.com/tild3533-6633-4535-b039-323632373730/1.jpg" "01-louvered.jpg"
           get "https://static.tildacdn.com/tild3730-3338-4066-b261-626564313738/2.jpg" "02-glass.jpg"
-          get "https://optim.tildacdn.com/tild3530-6161-4263-b733-363830333934/-/cover/640x460/center/center/-/format/webp/_.jpg.webp" "03-hero.webp"
-          get "https://static.tildacdn.com/tild3731-3034-4039-a565-306532636337/000002.jpg" "04-background.jpg"
-          get "https://static.tildacdn.com/tild6662-3565-4336-b133-643330653536/-2.png" "05-wide.png"
-          get "https://static.tildacdn.com/tild3136-3730-4038-a531-623333383130/__1.png" "06-wide.png"
-          get "https://static.tildacdn.com/tild6339-3933-4966-a435-653731313937/IMG_7536.jpg" "07-project.jpg"
-          get "https://static.tildacdn.com/tild6633-3131-4636-b935-396365313735/3.jpg" "08-project.jpg"
-          get "https://static.tildacdn.com/tild3564-3936-4535-b639-396137393538/IMG_3165.jpg" "09-project.jpg"
-          get "https://static.tildacdn.com/tild6463-6361-4738-b739-346133633231/IMG_3859.jpg" "10-project.jpg"
           get "https://static.tildacdn.com/tild3266-3031-4862-a333-626433303433/4.png" "11-glass-options.png"
           get "https://static.tildacdn.com/tild3430-6261-4338-a630-623431613434/5.png" "12-comfort-options.png"
-          file images/*
+          file images/* || true
           ls -lh images
       - name: Upload images
         uses: actions/upload-artifact@v4
         with:
-          name: official-pergola-images
+          name: remaining-pergola-images
           path: images/*
+          if-no-files-found: warn
           retention-days: 3
