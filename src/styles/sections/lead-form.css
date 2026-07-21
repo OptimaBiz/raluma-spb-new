@@ -36,7 +36,7 @@
   margin: 0 auto;
   padding: 26px 38px 34px;
   border: 1px solid rgba(255, 255, 255, 0.58);
-  border-radius: 34px;
+  border-radius: 2px;
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 30px 80px rgba(7, 16, 34, 0.24);
   backdrop-filter: blur(10px);

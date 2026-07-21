@@ -209,6 +209,13 @@ const facts = [
       align-items: center;
     }
 
+    /* The desktop scrim runs left-to-right; on a phone the copy sits over the
+       whole frame, so the wash has to be even. */
+    .hero__scrim {
+      background:
+        linear-gradient(180deg, rgba(14, 20, 19, 0.62) 0%, rgba(14, 20, 19, 0.78) 100%);
+    }
+
     .hero__glass {
       grid-template-columns: repeat(2, 1fr);
     }

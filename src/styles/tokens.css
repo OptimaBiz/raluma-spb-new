@@ -69,7 +69,7 @@
   position: relative;
 }
 
-.seams::before {
+.seams.seams::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -85,7 +85,7 @@
   opacity: 0.9;
 }
 
-.seams--deep::before {
+.seams.seams--deep::before {
   background-image: repeating-linear-gradient(
     to right,
     var(--c-seam-deep) 0 1px,
@@ -95,7 +95,7 @@
 
 @media (max-width: 780px) {
   /* On a phone the panel grid collapses to a single visible joint. */
-  .seams::before {
+  .seams.seams::before {
     background-image: linear-gradient(to right, var(--c-seam) 0 1px, transparent 1px);
     background-size: 100% 100%;
   }
