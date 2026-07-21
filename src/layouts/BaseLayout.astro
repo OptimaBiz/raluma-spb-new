@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import SiteHeader from '../components/ui/SiteHeader.astro';
 import FloatingUi from '../components/ui/FloatingUi.astro';
 import MobileBottomCallBar from '../components/ui/MobileBottomCallBar.astro';
 
@@ -93,6 +94,7 @@ const isHomePage = Astro.url.pathname === '/';
       </div>
     </noscript>
 
+    <SiteHeader />
     <slot />
     <MobileBottomCallBar />
     <FloatingUi />
