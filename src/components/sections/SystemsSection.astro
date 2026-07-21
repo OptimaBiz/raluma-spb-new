@@ -118,7 +118,15 @@ const systemsJson = JSON.stringify(systems);
             <span class="systems-selector__active-mark" aria-hidden="true"></span>
 
             <span class="systems-selector__thumb">
-              <img src={system.image} alt={`Система ${system.name}`} loading="lazy" />
+              {/* 84px thumb, so it loads a 84px-worth file rather than the cover. */}
+              <img
+                src={system.image.replace(/\.webp$/i, '-thumb.webp')}
+                alt={`Система ${system.name}`}
+                loading="lazy"
+                decoding="async"
+                width="110"
+                height="84"
+              />
             </span>
 
             <span class="systems-selector__content">

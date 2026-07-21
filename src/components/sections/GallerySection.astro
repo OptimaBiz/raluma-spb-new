@@ -36,7 +36,7 @@ const images = [
     <!-- Большая фото -->
     <button class="gs__featured" id="gsFeatured" aria-label="Открыть полный экран">
       <img class="gs__feat-img" id="gsFeatImg"
-           src={images[0].src} alt={images[0].alt} loading="lazy" decoding="async" fetchpriority="low" />
+           data-thumb-src={images[0].src} alt={images[0].alt} loading="lazy" decoding="async" fetchpriority="low" />
       <span class="gs__feat-hint">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -53,7 +53,7 @@ const images = [
           data-i={i}
           aria-label={img.alt}
         >
-          <img src={img.src.replace(/\.(webp|jpe?g|png)$/i, '-thumb.webp')} alt={img.alt} loading="lazy" decoding="async" width="150" height="110" />
+          <img data-thumb-src={img.src.replace(/\.(webp|jpe?g|png)$/i, '-thumb.webp')} alt={img.alt} loading="lazy" decoding="async" width="150" height="110" />
         </button>
       ))}
     </div>
@@ -384,6 +384,36 @@ const images = [
     font-weight: 300;
   }
   </style>
+
+<script>
+  // Native lazy loading measures against the layout at parse time, when the
+  // page is still short, so every gallery image was fetched up front. Sources
+  // are attached once the section is within a screen of the viewport.
+  (function () {
+    var section = document.querySelector('.gs');
+    if (!section) return;
+
+    var attach = function () {
+      section.querySelectorAll('img[data-thumb-src]').forEach(function (img) {
+        img.src = img.dataset.thumbSrc;
+        delete img.dataset.thumbSrc;
+      });
+    };
+
+    if (typeof IntersectionObserver === 'undefined') {
+      attach();
+      return;
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (e) { return e.isIntersecting; })) return;
+      attach();
+      io.disconnect();
+    }, { rootMargin: '900px 0px' });
+
+    io.observe(section);
+  })();
+</script>
 
 <script>
   var thumbs   = Array.from(document.querySelectorAll('.gs__thumb'));
