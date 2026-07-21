@@ -94,26 +94,27 @@ const visibleCases = cases.filter(
 );
 ---
 
-<section class="cases" id="cases" aria-labelledby="cases-title">
-  <div class="cases__wrap">
-    <div class="cases__head">
-      <p class="cases__eyebrow">Реализованные объекты</p>
-      <h2 class="cases__title" id="cases-title">Проекты с ценами и результатами</h2>
-      <p class="cases__lead">
-        Задача, решение и результат — без общих обещаний.
+<section class="cases seams" id="cases" aria-labelledby="cases-title">
+  <div class="shell">
+    <header class="cases__head rise">
+      <p class="eyebrow">Реализованные объекты</p>
+      <h2 class="cases__title" id="cases-title">Паспорта проектов</h2>
+      <p class="lead">
+        Что за объект, какая система, сколько стоило. Данные те же, что мы даём
+        на замере.
       </p>
-    </div>
+    </header>
 
-    <div class="cases__grid">
-      {visibleCases.map((c) => (
-        <article class="case-card">
+    <div class="cases__list">
+      {visibleCases.map((c, caseIndex) => (
+        <article class="passport rise">
           <div
-            class:list={['case-card__media', { 'case-card__media--multi': c.images.length > 1 }]}
+            class:list={['passport__media', { 'passport__media--multi': c.images.length > 1 }]}
             data-case-gallery={c.id}
           >
-            <div class="case-card__stage">
+            <div class="passport__stage">
               <img
-                class="case-card__img"
+                class="passport__img"
                 data-case-main-image
                 src={c.images[0].src}
                 alt={c.images[0].alt}
@@ -123,21 +124,21 @@ const visibleCases = cases.filter(
 
               {c.images.length > 1 && (
                 <>
-                  <button class="case-card__nav case-card__nav--prev" type="button" data-case-prev aria-label="Предыдущее фото">
-                    <span aria-hidden="true">‹</span>
+                  <button class="passport__nav passport__nav--prev" type="button" data-case-prev aria-label="Предыдущее фото">
+                    <span aria-hidden="true">←</span>
                   </button>
-                  <button class="case-card__nav case-card__nav--next" type="button" data-case-next aria-label="Следующее фото">
-                    <span aria-hidden="true">›</span>
+                  <button class="passport__nav passport__nav--next" type="button" data-case-next aria-label="Следующее фото">
+                    <span aria-hidden="true">→</span>
                   </button>
                 </>
               )}
             </div>
 
             {c.images.length > 1 && (
-              <div class="case-card__thumbs" aria-label="Мини-галерея проекта">
+              <div class="passport__thumbs" aria-label="Мини-галерея проекта">
                 {c.images.map((image, index) => (
                   <button
-                    class:list={['case-card__thumb', { 'is-active': index === 0 }]}
+                    class:list={['passport__thumb', { 'is-active': index === 0 }]}
                     type="button"
                     data-case-thumb
                     data-src={image.src}
@@ -149,75 +150,55 @@ const visibleCases = cases.filter(
                 ))}
               </div>
             )}
-
-            <div class="case-card__badges" aria-hidden="true">
-              <span class="case-card__year">{c.year}</span>
-              <span class="case-card__system">{c.system}</span>
-            </div>
           </div>
 
-          <div class="case-card__body">
-            <div class="case-card__meta">
-              <span class="case-card__type">{c.type}</span>
+          <div class="passport__sheet">
+            <p class="passport__index figure">{String(caseIndex + 1).padStart(2, '0')} / {String(visibleCases.length).padStart(2, '0')}</p>
+
+            <h3 class="passport__name">{c.title}</h3>
+
+            <dl class="passport__specs figure">
+              <div><dt>Объект</dt><dd>{c.type}</dd></div>
+              <div><dt>Система</dt><dd>{c.system}</dd></div>
+              <div><dt>Год</dt><dd>{c.year}</dd></div>
+              <div class="passport__specs-total"><dt>Стоимость</dt><dd>{c.price}</dd></div>
+            </dl>
+
+            <div class="passport__notes">
+              <p><span>Задача</span>{c.task}</p>
+              <p><span>Решение</span>{c.description}</p>
+              <p><span>Результат</span>{c.result}</p>
             </div>
 
-            <h3 class="case-card__name">{c.title}</h3>
+            <ul class="passport__features">
+              {c.features.map((feature) => <li>{feature}</li>)}
+            </ul>
 
-            <div class="case-card__price" aria-label={`Стоимость проекта ${c.price}`}>
-              <span class="case-card__price-label">Стоимость</span>
-              <strong class="case-card__price-value">{c.price}</strong>
-            </div>
-
-            <div class="case-card__copy-block">
-              <span class="case-card__label">Что сделали</span>
-              <p class="case-card__text">{c.description}</p>
-            </div>
-
-            <div class="case-card__copy-block">
-              <span class="case-card__label">Задача</span>
-              <p class="case-card__text">{c.task}</p>
-            </div>
-
-            <div class="case-card__copy-block">
-              <span class="case-card__label">Результат</span>
-              <p class="case-card__text">{c.result}</p>
-            </div>
-
-            <div class="case-card__chips" aria-label="Особенности проекта">
-              {c.features.map((feature) => (
-                <span class="case-card__chip">{feature}</span>
-              ))}
-            </div>
-
-            <div class="case-card__actions">
-              <a class="case-card__cta" href="#lead-form">Рассчитать похожий проект</a>
-            </div>
+            <a class="passport__cta" href="#lead-form">
+              Рассчитать похожий проект
+              <span aria-hidden="true">→</span>
+            </a>
           </div>
         </article>
       ))}
 
-      {/* Fills the trailing grid cell an odd number of cases leaves empty, and
-          puts the ask where the visitor has just seen three real prices.
-          Replace with a fourth case once one is available. */}
-      <article class="case-card case-card--cta">
-        <p class="case-card--cta__eyebrow">Бесплатный подбор решения</p>
-        <h3 class="case-card--cta__title">Сколько выйдет на вашем объекте?</h3>
-        <p class="case-card--cta__text">
-          Пришлите фото или чертёж проёма — подберём систему и посчитаем
-          стоимость под ваш объект.
-        </p>
+      {/* Stands in for the case we do not have yet, and puts the ask right where
+          the visitor has just read three real prices. */}
+      <article class="passport passport--ask rise">
+        <div class="passport__sheet passport__sheet--ask">
+          <p class="eyebrow">Ваш объект</p>
+          <h3 class="passport__name">Сколько выйдет у вас?</h3>
+          <p class="lead passport__ask-text">
+            Пришлите фото или чертёж проёма — вернёмся с системой, сроком и
+            стоимостью в течение рабочего дня.
+          </p>
 
-        <ul class="case-card--cta__list">
-          <li>Расчёт по фото или чертежу</li>
-          <li>Ответим в течение рабочего дня</li>
-          <li>Замер на объекте — бесплатно</li>
-        </ul>
-
-        <div class="case-card--cta__actions">
-          <a class="case-card__cta" href="#lead-form">Получить расчёт</a>
-          <a class="case-card--cta__phone" href="tel:+78123307415" data-goal="phone_click_cases">
-            или позвоните: +7 (812) 330-74-15
-          </a>
+          <div class="passport__ask-actions">
+            <a class="btn btn--solid" href="#lead-form">Отправить фото или чертёж</a>
+            <a class="passport__ask-phone figure" href="tel:+78123307415" data-goal="phone_click_cases">
+              +7 (812) 330-74-15
+            </a>
+          </div>
         </div>
       </article>
     </div>

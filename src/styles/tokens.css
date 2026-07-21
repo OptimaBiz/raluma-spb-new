@@ -1,0 +1,218 @@
+/* Raluma design tokens.
+   The palette comes from the material rather than from a mood board: the green
+   is the colour of a float-glass edge seen head-on, the greys are anodised
+   aluminium, and the amber is lamp light seen from outside through the glass.
+   Rule: cold outside, warm inside. Amber is only ever light, never a fill. */
+
+:root {
+  /* Surfaces */
+  --c-light: #ebeeed; /* северный свет */
+  --c-light-raised: #f4f6f5;
+  --c-deep: #0e1413; /* ночь за стеклом */
+  --c-graphite: #191d1c; /* анодированный графит */
+
+  /* Ink */
+  --c-ink: #191d1c;
+  --c-ink-soft: #5c6564;
+  --c-ink-mute: #8e9997; /* алюминий */
+  --c-on-deep: #e7ebea;
+  --c-on-deep-soft: rgba(231, 235, 234, 0.66);
+
+  /* Accents */
+  --c-edge: #2f6d5f; /* торец стекла */
+  --c-edge-deep: #24564b;
+  --c-warm: #d98e3c; /* свет изнутри */
+
+  /* The seam: one hairline, used for the page grid and every divider. */
+  --c-seam: rgba(142, 153, 151, 0.22);
+  --c-seam-deep: rgba(231, 235, 234, 0.16);
+
+  /* Type */
+  --f-display: 'Unbounded', 'Golos Text', system-ui, sans-serif;
+  --f-text: 'Golos Text', system-ui, -apple-system, sans-serif;
+  --f-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+
+  --t-display: clamp(38px, 5.4vw, 72px);
+  --t-h2: clamp(30px, 3.6vw, 48px);
+  --t-h3: clamp(22px, 2.2vw, 32px);
+  --t-lead: clamp(17px, 1.35vw, 20px);
+  --t-body: 16px;
+  --t-small: 14px;
+  --t-micro: 12px;
+
+  /* Rhythm */
+  --gutter: clamp(20px, 4vw, 56px);
+  --section-y: clamp(80px, 9vw, 148px);
+  --measure: 1440px;
+
+  /* Motion */
+  --ease-open: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 180ms;
+  --dur-base: 400ms;
+  --dur-open: 1200ms;
+}
+
+/* Page shell ---------------------------------------------------------------- */
+
+.shell {
+  width: min(var(--measure), 100% - calc(var(--gutter) * 2));
+  margin-inline: auto;
+}
+
+/* The seam grid: vertical hairlines running the height of a section, standing
+   in for the joints between glass panels. Flat sections only — over a photo a
+   1px line reads as a rendering artefact, so .seams is never placed on media. */
+.seams {
+  position: relative;
+}
+
+.seams::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--c-seam) 0 1px,
+    transparent 1px calc(100% / 4)
+  );
+  background-position: center;
+  background-size: min(var(--measure), calc(100% - var(--gutter) * 2)) 100%;
+  background-repeat: no-repeat;
+  opacity: 0.9;
+}
+
+.seams--deep::before {
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--c-seam-deep) 0 1px,
+    transparent 1px calc(100% / 4)
+  );
+}
+
+@media (max-width: 780px) {
+  /* On a phone the panel grid collapses to a single visible joint. */
+  .seams::before {
+    background-image: linear-gradient(to right, var(--c-seam) 0 1px, transparent 1px);
+    background-size: 100% 100%;
+  }
+}
+
+/* Shared type roles --------------------------------------------------------- */
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--f-mono);
+  font-size: var(--t-micro);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-ink-mute);
+}
+
+.eyebrow--edge {
+  color: var(--c-edge);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 300;
+  font-size: var(--t-h2);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--c-ink);
+  text-wrap: balance;
+}
+
+.lead {
+  margin: 0;
+  max-width: 60ch;
+  font-size: var(--t-lead);
+  line-height: 1.6;
+  color: var(--c-ink-soft);
+}
+
+/* Figures always set in mono: to this audience a number reads as a quote, not
+   as a claim. */
+.figure {
+  font-family: var(--f-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Controls ------------------------------------------------------------------ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 0 26px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  font-family: var(--f-text);
+  font-size: var(--t-small);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease;
+}
+
+.btn--solid {
+  background: var(--c-graphite);
+  color: var(--c-on-deep);
+}
+
+.btn--solid:hover {
+  background: var(--c-edge-deep);
+}
+
+.btn--outline {
+  border-color: var(--c-ink);
+  color: var(--c-ink);
+  background: transparent;
+}
+
+.btn--outline:hover {
+  border-color: var(--c-edge);
+  color: var(--c-edge);
+}
+
+.btn--on-deep {
+  border-color: rgba(231, 235, 234, 0.4);
+  color: var(--c-on-deep);
+}
+
+.btn--on-deep:hover {
+  border-color: var(--c-on-deep);
+  background: rgba(231, 235, 234, 0.08);
+}
+
+:where(a, button, summary, input, textarea):focus-visible {
+  outline: 2px solid var(--c-edge);
+  outline-offset: 3px;
+}
+
+/* Scroll reveal: one rule, one shift, once. */
+.rise {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 500ms var(--ease-open), transform 500ms var(--ease-open);
+}
+
+.rise.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

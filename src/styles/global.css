@@ -1,20 +1,25 @@
+@import './fonts.css';
+@import './tokens.css';
+
 :root {
-  --bg: #f3f3f3;
+  /* Legacy names kept so untouched sections keep compiling; they now resolve to
+     the new palette instead of the old red-on-grey one. */
+  --bg: var(--c-light);
   --surface: #ffffff;
-  --text: #111111;
-  --muted: #6b7280;
-  --accent: #e53935;
-  --border: #dddddd;
-  --container: 1280px;
-  --radius: 20px;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Arial, sans-serif;
-  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --text: var(--c-ink);
+  --muted: var(--c-ink-mute);
+  --accent: var(--c-edge);
+  --border: var(--c-seam);
+  --container: 1440px;
+  --radius: 2px;
+  --shadow: 0 18px 48px rgba(14, 20, 19, 0.08);
+  --font-sans: 'Golos Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --motion-ease-productive: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --motion-fast: 160ms;
-  --motion-base: 240ms;
+  --motion-fast: 180ms;
+  --motion-base: 400ms;
   --motion-page: 360ms;
-  --focus-ring: 0 0 0 4px rgba(229, 57, 53, 0.18);
+  --focus-ring: 0 0 0 3px rgba(47, 109, 95, 0.24);
 }
 
 *,
