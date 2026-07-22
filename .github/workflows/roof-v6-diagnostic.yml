@@ -1,0 +1,139 @@
+name: Roof V6 build diagnostic
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.deployment/**'
+      - '.verification/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: roof-v6-diagnostic
+  cancel-in-progress: true
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run full roof build diagnostic
+        id: diagnostic
+        shell: bash
+        run: |
+          set +e
+          log=/tmp/roof-v6-diagnostic.log
+          : > "$log"
+
+          python -m pip install --quiet pillow >>"$log" 2>&1
+          pip_status=$?
+
+          python scripts/split_roof_states.py >>"$log" 2>&1
+          split_status=$?
+
+          npm ci >>"$log" 2>&1
+          npm_status=$?
+
+          npm run build >>"$log" 2>&1
+          build_status=$?
+
+          marker_status=1
+          if [ -f dist/pergolas/index.html ] \
+            && grep -q 'data-roof-real-photos="v6"' dist/pergolas/index.html \
+            && grep -q 'roof-closed.webp?v=6' dist/pergolas/index.html \
+            && grep -q 'roof-half-open.webp?v=6' dist/pergolas/index.html \
+            && grep -q 'roof-open.webp?v=6' dist/pergolas/index.html; then
+            marker_status=0
+          fi
+
+          pixel_status=1
+          python - <<'PY' >>"$log" 2>&1
+          from pathlib import Path
+          from PIL import Image, ImageChops, ImageStat
+
+          paths = [
+              Path('public/images/pergolas/roof-closed.webp'),
+              Path('public/images/pergolas/roof-half-open.webp'),
+              Path('public/images/pergolas/roof-open.webp'),
+          ]
+          images = []
+          for path in paths:
+              with Image.open(path) as source:
+                  source.load()
+                  image = source.convert('RGB')
+              gray = image.convert('L')
+              low, high = gray.getextrema()
+              stats = ImageStat.Stat(gray)
+              print(
+                  f'{path.name}: size={image.size}, range={low}..{high}, '
+                  f'mean={stats.mean[0]:.2f}, stddev={stats.stddev[0]:.2f}'
+              )
+              images.append(image)
+
+          for left in range(3):
+              for right in range(left + 1, 3):
+                  difference = ImageChops.difference(images[left], images[right])
+                  rms = sum(ImageStat.Stat(difference).rms) / 3
+                  print(f'difference {left + 1}-{right + 1}: rms={rms:.2f}')
+          PY
+          pixel_status=$?
+
+          overall=success
+          if [ "$pip_status" -ne 0 ] \
+            || [ "$split_status" -ne 0 ] \
+            || [ "$npm_status" -ne 0 ] \
+            || [ "$build_status" -ne 0 ] \
+            || [ "$marker_status" -ne 0 ] \
+            || [ "$pixel_status" -ne 0 ]; then
+            overall=failure
+          fi
+
+          mkdir -p .verification
+          {
+            echo "status=$overall"
+            echo "source_commit=${GITHUB_SHA}"
+            echo "pip_status=$pip_status"
+            echo "split_status=$split_status"
+            echo "npm_status=$npm_status"
+            echo "build_status=$build_status"
+            echo "marker_status=$marker_status"
+            echo "pixel_status=$pixel_status"
+            echo "verified_at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo
+            echo "--- diagnostic log tail ---"
+            tail -n 160 "$log"
+          } > .verification/roof-v6-build.txt
+
+          echo "overall=$overall" >> "$GITHUB_OUTPUT"
+
+      - name: Record diagnostic result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .verification/roof-v6-build.txt
+          git commit -m "chore: record roof v6 build diagnostic" || exit 0
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Fail when diagnostic failed
+        if: steps.diagnostic.outputs.overall != 'success'
+        run: exit 1
