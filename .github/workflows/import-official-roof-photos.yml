@@ -1,0 +1,113 @@
+name: Import official roof-state photos
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/import-official-roof-photos.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Download and validate official photos
+        run: |
+          python -m pip install --quiet requests pillow
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import io
+          from pathlib import Path
+
+          import requests
+          from PIL import Image, ImageChops, ImageStat
+
+          # Exact image sources from the official Raluma Tilda record rec894214390.
+          # DOM order on the source page: open [03], diagonal [02], closed [01].
+          sources = {
+              'roof-open.jpg': 'https://static.tildacdn.com/tild6434-3131-4462-a533-623964346565/photo.jpg',
+              'roof-half-open.jpg': 'https://static.tildacdn.com/tild3536-6335-4261-a530-653466623464/photo.jpg',
+              'roof-closed.jpg': 'https://static.tildacdn.com/tild3435-6366-4536-a634-636362326534/photo.jpg',
+          }
+
+          output_dir = Path('public/images/pergolas')
+          output_dir.mkdir(parents=True, exist_ok=True)
+          decoded = {}
+          report = [
+              'status=success',
+              'source_page=https://raluma.ru/pergolas',
+              'source_record=rec894214390',
+              'mapping=open:01,half-open:02,closed:03',
+          ]
+
+          for filename, url in sources.items():
+              response = requests.get(url, timeout=45)
+              response.raise_for_status()
+              data = response.content
+              with Image.open(io.BytesIO(data)) as source:
+                  source.load()
+                  image = source.convert('RGB')
+
+              if image.width < 480 or image.height < 300:
+                  raise RuntimeError(f'{filename}: unexpected size {image.size}')
+
+              gray = image.convert('L')
+              low, high = gray.getextrema()
+              stats = ImageStat.Stat(gray)
+              if high - low < 18 or stats.stddev[0] < 5 or stats.mean[0] < 8:
+                  raise RuntimeError(f'{filename}: image appears blank or dark')
+
+              path = output_dir / filename
+              path.write_bytes(data)
+              decoded[filename] = image
+              report.append(
+                  f'{filename}={url} | size={image.width}x{image.height} '
+                  f'bytes={len(data)} sha256={hashlib.sha256(data).hexdigest()} '
+                  f'mean={stats.mean[0]:.2f} stddev={stats.stddev[0]:.2f}'
+              )
+
+          names = list(decoded)
+          for left_index in range(len(names)):
+              for right_index in range(left_index + 1, len(names)):
+                  left = decoded[names[left_index]].resize((480, 312))
+                  right = decoded[names[right_index]].resize((480, 312))
+                  difference = ImageChops.difference(left, right)
+                  rms = sum(ImageStat.Stat(difference).rms) / 3
+                  if rms < 4:
+                      raise RuntimeError(f'{names[left_index]} and {names[right_index]} look identical')
+                  report.append(f'difference_{left_index + 1}_{right_index + 1}_rms={rms:.2f}')
+
+          verification = Path('.verification/official-roof-import.txt')
+          verification.parent.mkdir(parents=True, exist_ok=True)
+          verification.write_text('\n'.join(report) + '\n', encoding='utf-8')
+          print(verification.read_text(encoding='utf-8'))
+          PY
+
+      - name: Commit imported photos
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            public/images/pergolas/roof-open.jpg \
+            public/images/pergolas/roof-half-open.jpg \
+            public/images/pergolas/roof-closed.jpg \
+            .verification/official-roof-import.txt
+          git commit -m "fix: add three valid official roof photos" || exit 0
+          git pull --rebase origin main
+          git push origin HEAD:main
