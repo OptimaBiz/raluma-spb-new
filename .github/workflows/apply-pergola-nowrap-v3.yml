@@ -3,12 +3,14 @@ name: Apply pergola nowrap mobile fixes
 on:
   push:
     branches: [main]
-    paths:
-      - '.github/workflows/apply-pergola-nowrap-v3.yml'
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: pergola-nowrap-v3
+  cancel-in-progress: false
 
 jobs:
   apply:
