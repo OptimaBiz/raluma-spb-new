@@ -1,15 +1,15 @@
 status=failure
-source_commit=ea2877def58fefea5e582df75485adf34f73a44b
+source_commit=e863247a03c1fc88245fcf9556b36b09b7ff02b3
 verified_widths=320,390,430
 typography_scale=unified-v4
 benefit_cards=failure
-verified_at=2026-07-22T16:35:29Z
+verified_at=2026-07-22T16:58:46Z
 error<<EOF
 [stdin]:69
       throw new Error(`Mobile visual failure at ${width}px: ${JSON.stringify(result)}`);
             ^
 
-Error: Mobile visual failure at 320px: {"pageOverflow":false,"h1":["28.00"],"h2":["24.00"],"h3":["20.00"],"leads":["16.00"],"bodies":["16.00"],"headingFailures":[{"text":"Перголы под ключ","nowrap":true,"overflow":true},{"text":"Как создаётся пергола","nowrap":true,"overflow":true},{"text":"Расчёт по фотографии","nowrap":true,"overflow":true},{"text":"Рассчитать стоимость","nowrap":true,"overflow":true}],"benefitFailures":[]}
+Error: Mobile visual failure at 320px: {"pageOverflow":false,"h1":["26.00"],"h2":["24.00","22.00","23.00","20.00","18.50"],"h3":["20.00"],"leads":["16.00"],"bodies":["16.00"],"headingFailures":[],"benefitFailures":[]}
     at [stdin]:69:13
 
 Node.js v22.23.1
