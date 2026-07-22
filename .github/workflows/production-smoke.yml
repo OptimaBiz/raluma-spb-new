@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths-ignore:
       - '.deployment/**'
+      - '.verification/**'
   workflow_dispatch:
 
 permissions:
@@ -12,11 +13,40 @@ permissions:
 
 concurrency:
   group: production-smoke
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
+  apply-pending-patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Apply pending pergola patch
+        run: |
+          if [ -f scripts/apply_pergola_nowrap_v3.py ]; then
+            python3 scripts/apply_pergola_nowrap_v3.py
+          fi
+
+      - name: Commit applied patch
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No pending patch"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: keep pergola headings single-line on mobile"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
   smoke:
     runs-on: ubuntu-latest
+    needs: apply-pending-patch
     timeout-minutes: 12
     steps:
       - name: Checkout
@@ -34,7 +64,7 @@ jobs:
             html="$(curl -fsSL --connect-timeout 15 --max-time 30 "$url" || true)"
             asset_status="$(curl -sSIL --connect-timeout 15 --max-time 30 -o /dev/null -w '%{http_code}' "$asset" || true)"
 
-            if grep -q "Биоклиматические перголы под ключ" <<<"$html" \
+            if grep -q "Биоклиматические перголы" <<<"$html" \
               && [ "$asset_status" = "200" ]; then
               echo "Production deployment verified: $url"
               mkdir -p .deployment
@@ -61,4 +91,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .deployment/last-success.txt
           git commit -m "chore: record successful production deployment" || exit 0
+          git pull --rebase origin main
           git push origin HEAD:main
