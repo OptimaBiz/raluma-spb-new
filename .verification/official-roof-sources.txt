@@ -1,0 +1,12 @@
+status=success
+page=https://raluma.ru/pergolas
+record_id=rec894214390
+candidate_count=4
+
+01. https://static.tildacdn.com/tild6434-3131-4462-a533-623964346565/photo.jpg | status=200 bytes=59422 size=518x336 sha256=217fe9d23dffff97 mean=143.14 stddev=95.09
+02. https://static.tildacdn.com/tild3536-6335-4261-a530-653466623464/photo.jpg | status=200 bytes=39147 size=520x340 sha256=3f2a78e590ad2f02 mean=98.00 stddev=96.36
+03. https://static.tildacdn.com/tild3435-6366-4536-a634-636362326534/photo.jpg | status=200 bytes=31082 size=518x338 sha256=43a58a635c0eb9a2 mean=82.74 stddev=74.80
+04. https://static.tildacdn.com/tild6432-3861-4133-a134-653337363838/-.svg | error=UnidentifiedImageError: cannot identify image file <_io.BytesIO object at 0x7facfa804360>
+
+--- record text ---
+Угол поворота лопастей можно регулировать дистанционно с пульта Лопасти полностью открыты, можно загорать, полное проветривание [03] Лопасти открыты диагонально, защита от чрезмерного солнца, лёгкое проветривание [02] Лопасти полностью закрыты, защищают от осадков и солнца [01] Три состояния крыши Состояния
