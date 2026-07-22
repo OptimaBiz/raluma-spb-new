@@ -1,0 +1,76 @@
+<style is:global>
+  @media (max-width: 820px) {
+    #pergola-roof-title {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      height: auto !important;
+      max-height: none !important;
+      white-space: normal !important;
+      text-wrap: wrap !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      overflow-wrap: normal !important;
+      word-break: normal !important;
+      hyphens: none !important;
+      font-size: clamp(28px, 8.2vw, 40px) !important;
+      line-height: 1.08 !important;
+      letter-spacing: -0.035em !important;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var selector = '#pergola-roof-title';
+    var observer = null;
+    var title = null;
+
+    function observeTitle() {
+      if (!title || typeof MutationObserver !== 'function') return;
+      if (observer) observer.disconnect();
+      observer = new MutationObserver(function () {
+        unlockTitle();
+      });
+      observer.observe(title, { attributes: true, attributeFilter: ['style'] });
+    }
+
+    function unlockTitle() {
+      title = document.querySelector(selector);
+      if (!title) return;
+
+      var hasInlineFit = title.style.getPropertyValue('font-size') ||
+        title.style.getPropertyValue('letter-spacing');
+
+      if (hasInlineFit) {
+        if (observer) observer.disconnect();
+        title.style.removeProperty('font-size');
+        title.style.removeProperty('letter-spacing');
+        window.requestAnimationFrame(observeTitle);
+      } else if (!observer) {
+        observeTitle();
+      }
+
+      title.dataset.responsiveWrap = 'true';
+    }
+
+    function scheduleUnlock() {
+      window.requestAnimationFrame(function () {
+        window.setTimeout(unlockTitle, 80);
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', scheduleUnlock, { once: true });
+    } else {
+      scheduleUnlock();
+    }
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(scheduleUnlock);
+    }
+
+    window.addEventListener('resize', scheduleUnlock, { passive: true });
+  })();
+</script>
