@@ -16,7 +16,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: pergolas-mobile-visual-v3
+  group: pergolas-mobile-visual-v4
   cancel-in-progress: true
 
 jobs:
@@ -56,7 +56,7 @@ jobs:
           cat /tmp/raluma-preview.log
           exit 1
 
-      - name: Check mobile layouts
+      - name: Check typography and cards
         run: |
           mkdir -p screenshots .verification
           node <<'NODE'
@@ -73,72 +73,83 @@ jobs:
               await page.goto('http://127.0.0.1:4321/', { waitUntil: 'networkidle' });
               await page.locator('.pergolas-teaser').scrollIntoViewIfNeeded();
               await page.locator('.pergolas-teaser .rise').evaluate((el) => el.classList.add('is-in'));
-              await page.waitForTimeout(150);
+              await page.waitForTimeout(120);
 
-              const teaserFailure = await page.locator('.pergolas-teaser__title').evaluate((el) => {
+              const teaser = await page.locator('.pergolas-teaser__title').evaluate((el) => {
                 const style = getComputedStyle(el);
-                const lineHeight = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.2;
                 return {
-                  lines: el.getBoundingClientRect().height / lineHeight,
-                  overflow: el.scrollWidth > el.clientWidth + 1,
-                  nowrap: style.whiteSpace === 'nowrap',
                   fontSize: parseFloat(style.fontSize),
+                  nowrap: style.whiteSpace === 'nowrap',
+                  overflow: el.scrollWidth > el.clientWidth + 1,
                 };
               });
               const homeOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
-              if (teaserFailure.lines > 1.15 || teaserFailure.overflow || !teaserFailure.nowrap || teaserFailure.fontSize < 16 || homeOverflow) {
-                throw new Error(`Homepage teaser heading failure at ${width}px: ${JSON.stringify(teaserFailure)}`);
+              if (!teaser.nowrap || teaser.overflow || teaser.fontSize < 20 || homeOverflow) {
+                throw new Error(`Homepage typography failure at ${width}px: ${JSON.stringify(teaser)}`);
               }
               await page.locator('.pergolas-teaser').screenshot({ path: `screenshots/home-pergolas-${width}.png` });
 
               await page.goto('http://127.0.0.1:4321/pergolas/', { waitUntil: 'networkidle' });
               await page.locator('.rise').evaluateAll((items) => items.forEach((el) => el.classList.add('is-in')));
-              await page.waitForTimeout(180);
+              await page.waitForTimeout(160);
 
               const pageOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
-              const headingFailures = await page.locator('.pergolas-page h1, .pergolas-page h2, .pergolas-page h3').evaluateAll((headings) => headings.map((el) => {
-                const style = getComputedStyle(el);
-                const lineHeight = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.2;
-                return {
+              if (pageOverflow) throw new Error(`Horizontal overflow at ${width}px`);
+
+              const typography = await page.evaluate(() => {
+                const sizes = (selector) => [...document.querySelectorAll(selector)].map((el) => parseFloat(getComputedStyle(el).fontSize));
+                const unique = (values) => [...new Set(values.map((value) => value.toFixed(2)))];
+                const headings = [...document.querySelectorAll('.pergolas-page h1, .pergolas-page h2, .pergolas-page h3')].map((el) => ({
                   text: (el.textContent || '').trim(),
-                  lines: el.getBoundingClientRect().height / lineHeight,
+                  nowrap: getComputedStyle(el).whiteSpace === 'nowrap',
                   overflow: el.scrollWidth > el.clientWidth + 1,
-                  nowrap: style.whiteSpace === 'nowrap',
-                  fontSize: parseFloat(style.fontSize),
+                }));
+                return {
+                  h1: unique(sizes('.pergolas-page h1')),
+                  h2: unique(sizes('.pergolas-page h2')),
+                  h3: unique(sizes('.pergolas-page h3')),
+                  leads: unique(sizes('.pergola-hero__lead, .pergola-head .lead, .pergola-climate__intro > p:last-child, .pergola-glazing__intro > p, .pergola-final-cta p, .pergola-faq__intro .lead')),
+                  bodies: unique(sizes('.pergola-type p:not(.pergola-type__number), .pergola-spec p, .pergola-glazing__system p, .pergola-benefit p, .pergola-process__steps p')),
+                  headingFailures: headings.filter((item) => !item.nowrap || item.overflow),
                 };
-              }).filter((item) => item.lines > 1.15 || item.overflow || !item.nowrap || item.fontSize < 14));
-              if (pageOverflow || headingFailures.length) {
-                throw new Error(`Pergolas heading failure at ${width}px: ${JSON.stringify(headingFailures)}`);
+              });
+
+              if (typography.h1.length !== 1 || typography.h2.length !== 1 || typography.h3.length !== 1 || typography.leads.length !== 1 || typography.bodies.length !== 1 || typography.headingFailures.length) {
+                throw new Error(`Typography scale failure at ${width}px: ${JSON.stringify(typography)}`);
               }
 
-              const optionFailures = await page.locator('.pergola-option').evaluateAll((cards) => cards.map((card) => {
-                const body = card.querySelector(':scope > div');
-                const image = card.querySelector('img');
+              const benefitFailures = await page.locator('.pergola-benefit').evaluateAll((cards) => cards.map((card) => {
+                const rect = card.getBoundingClientRect();
                 const title = card.querySelector('h3');
-                const paragraph = card.querySelector('p:last-child');
+                const paragraph = card.querySelector('p');
+                const style = getComputedStyle(card);
                 return {
                   title: title ? (title.textContent || '').trim() : '',
-                  bodyPadding: body ? parseFloat(getComputedStyle(body).paddingLeft) : 0,
-                  imageHeight: image ? image.getBoundingClientRect().height : 0,
-                  titleSize: title ? parseFloat(getComputedStyle(title).fontSize) : 0,
-                  paragraphSize: paragraph ? parseFloat(getComputedStyle(paragraph).fontSize) : 0,
+                  overflowY: style.overflowY,
+                  clipped: card.scrollHeight > card.clientHeight + 1,
+                  widthOverflow: rect.right > document.documentElement.clientWidth + 1 || rect.left < -1,
+                  titleVisible: !!title && title.getBoundingClientRect().bottom <= rect.bottom + 1,
+                  paragraphVisible: !!paragraph && paragraph.getBoundingClientRect().bottom <= rect.bottom + 1,
+                  padding: parseFloat(style.paddingLeft),
                 };
-              }).filter((item) => item.bodyPadding < 18 || item.imageHeight < 150 || item.titleSize < 14 || item.paragraphSize < 14));
-              if (optionFailures.length) {
-                throw new Error(`Options readability failure at ${width}px: ${JSON.stringify(optionFailures)}`);
+              }).filter((item) => item.clipped || item.widthOverflow || !item.titleVisible || !item.paragraphVisible || item.padding < 18 || item.overflowY === 'hidden' || item.overflowY === 'clip'));
+
+              if (benefitFailures.length) {
+                throw new Error(`Benefits card failure at ${width}px: ${JSON.stringify(benefitFailures)}`);
               }
 
+              await page.locator('.pergola-benefits').screenshot({ path: `screenshots/pergola-benefits-${width}.png` });
               await page.screenshot({ path: `screenshots/pergolas-${width}.png`, fullPage: true });
               await page.close();
             }
 
             await browser.close();
-            fs.writeFileSync('.verification/pergolas-mobile-v3-success.txt', [
+            fs.writeFileSync('.verification/pergolas-mobile-v4-success.txt', [
               'status=success',
               `source_commit=${process.env.GITHUB_SHA}`,
               `verified_widths=${widths.join(',')}`,
-              'heading_policy=nowrap-v3',
-              'options_readability=success',
+              'typography_scale=unified-v4',
+              'benefit_cards=success',
               `verified_at=${new Date().toISOString()}`,
               ''
             ].join('\n'));
@@ -148,7 +159,7 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: pergolas-mobile-v3-screenshots
+          name: pergolas-mobile-v4-screenshots
           path: screenshots/*.png
           retention-days: 7
 
@@ -156,7 +167,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .verification/pergolas-mobile-v3-success.txt
-          git commit -m "chore: record pergola mobile v3 verification" || exit 0
+          git add .verification/pergolas-mobile-v4-success.txt
+          git commit -m "chore: record pergola mobile v4 verification" || exit 0
           git pull --rebase origin main
           git push origin HEAD:main
