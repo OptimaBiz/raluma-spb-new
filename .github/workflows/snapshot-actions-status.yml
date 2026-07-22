@@ -1,0 +1,45 @@
+name: Snapshot workflow run statuses
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/snapshot-actions-status.yml'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Read recent workflow runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p .verification
+          {
+            echo "captured_at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo "source_commit=${GITHUB_SHA}"
+            echo
+            gh api "repos/${GITHUB_REPOSITORY}/actions/runs?per_page=40" \
+              --jq '.workflow_runs[] | [.id, .name, .head_sha[0:12], .status, (.conclusion // "-"), .event, .created_at, .updated_at, .html_url] | @tsv'
+          } > .verification/actions-runs.txt
+          cat .verification/actions-runs.txt
+
+      - name: Record status snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .verification/actions-runs.txt
+          git commit -m "chore: record workflow status snapshot" || exit 0
+          git pull --rebase origin main
+          git push origin HEAD:main
