@@ -1,0 +1,68 @@
+name: Apply official roof viewer V7
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-roof-v7.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Replace corrupted WebP sources with official JPEG photos
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          old_path = Path('src/components/ui/PergolaRoofPhotosV6.astro')
+          new_path = Path('src/components/ui/PergolaRoofPhotosV7.astro')
+          text = old_path.read_text(encoding='utf-8')
+
+          replacements = {
+              '/images/pergolas/roof-closed.webp?v=6': '/images/pergolas/roof-closed.jpg?v=7',
+              '/images/pergolas/roof-half-open.webp?v=6': '/images/pergolas/roof-half-open.jpg?v=7',
+              '/images/pergolas/roof-open.webp?v=6': '/images/pergolas/roof-open.jpg?v=7',
+              'aspect-ratio: 480 / 312': 'aspect-ratio: 520 / 338',
+              'image.width = 480': 'image.width = 520',
+              'image.height = 312': 'image.height = 338',
+          }
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'missing expected component text: {old}')
+              text = text.replace(old, new)
+
+          text = text.replace('V6', 'V7').replace('v6', 'v7')
+          new_path.write_text(text, encoding='utf-8')
+          old_path.unlink()
+
+          layout = Path('src/layouts/BaseLayout.astro')
+          layout_text = layout.read_text(encoding='utf-8')
+          if 'PergolaRoofPhotosV6' not in layout_text:
+              raise SystemExit('BaseLayout does not import V6 viewer')
+          layout.write_text(
+              layout_text.replace('PergolaRoofPhotosV6', 'PergolaRoofPhotosV7'),
+              encoding='utf-8',
+          )
+          PY
+
+      - name: Commit V7 viewer
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A src/components/ui/PergolaRoofPhotosV6.astro \
+            src/components/ui/PergolaRoofPhotosV7.astro \
+            src/layouts/BaseLayout.astro
+          git commit -m "fix: use official separate roof photos in viewer v7" || exit 0
+          git pull --rebase origin main
+          git push origin HEAD:main
