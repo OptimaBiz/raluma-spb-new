@@ -16,5 +16,5 @@ roof_legacy_css=disabled
 size_cards=responsive-contain
 systems_vertical_scroll=protected
 mobile_text_clipping=prevented
-source_commit=d376ed4e3170e0eef3dc6a276ea03bc18a72ba68
-verified_at=2026-07-22T22:57:47Z
+source_commit=06021a7015b8d13224b28dbc69f392e296cb85bc
+verified_at=2026-07-22T22:58:27Z
