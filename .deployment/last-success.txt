@@ -6,5 +6,5 @@ mobile_layout=adaptive-type-v6
 roof_controls=enhanced
 systems_vertical_scroll=protected
 mobile_text_clipping=prevented
-source_commit=035b0bb12b8f66dca06979302564038bd648872f
-verified_at=2026-07-22T17:02:31Z
+source_commit=447027b1651bbb7ce7fec19b15e8364d59dc32b6
+verified_at=2026-07-22T17:15:17Z
