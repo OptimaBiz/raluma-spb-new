@@ -4,6 +4,16 @@
   }
 
   @media (max-width: 820px) {
+    .pergolas-teaser,
+    .pergolas-page {
+      --pg-display: 22px;
+      --pg-section-title: 20px;
+      --pg-card-title: 17px;
+      --pg-lead: 16px;
+      --pg-body: 15px;
+      --pg-meta: 11px;
+    }
+
     .pergolas-teaser__title,
     .pergolas-page h1,
     .pergolas-page h2,
@@ -16,34 +26,66 @@
       overflow-wrap: normal !important;
       word-break: normal !important;
       hyphens: none !important;
+      font-weight: 300 !important;
+      letter-spacing: -0.025em !important;
     }
 
-    .pergolas-teaser__title {
-      font-size: clamp(20px, 6.4vw, 36px) !important;
-      line-height: 1.04;
-    }
-
+    .pergolas-teaser__title,
     .pergola-hero__title {
-      font-size: clamp(21px, 6.8vw, 40px) !important;
-      line-height: 1.03;
+      font-size: var(--pg-display) !important;
+      line-height: 1.05 !important;
     }
 
-    .pergola-head .title,
-    .pergola-climate__intro h2,
-    .pergola-glazing__intro h2,
-    .pergola-process__head h2,
-    .pergola-final-cta h2,
-    .pergola-faq__intro h2 {
-      font-size: clamp(20px, 6.2vw, 34px) !important;
-      line-height: 1.06;
+    .pergolas-page h2 {
+      font-size: var(--pg-section-title) !important;
+      line-height: 1.08 !important;
     }
 
-    .pergola-type h3,
-    .pergola-option h3,
-    .pergola-size--custom h3,
-    .pergola-benefit h3 {
-      font-size: clamp(18px, 5.5vw, 28px) !important;
-      line-height: 1.08;
+    .pergolas-page h3 {
+      font-size: var(--pg-card-title) !important;
+      line-height: 1.12 !important;
+    }
+
+    .pergolas-teaser .eyebrow,
+    .pergolas-page .eyebrow,
+    .pergola-benefit > .figure,
+    .pergola-type__number {
+      font-size: var(--pg-meta) !important;
+      line-height: 1.35 !important;
+      letter-spacing: 0.08em !important;
+    }
+
+    .pergolas-teaser__lead,
+    .pergola-hero__lead,
+    .pergola-head .lead,
+    .pergola-climate__intro > p:last-child,
+    .pergola-glazing__intro > p,
+    .pergola-final-cta p,
+    .pergola-faq__intro .lead {
+      font-size: var(--pg-lead) !important;
+      line-height: 1.55 !important;
+    }
+
+    .pergola-type p,
+    .pergola-type li,
+    .pergola-spec p,
+    .pergola-roof__tab small,
+    .pergola-size--custom p:not(.eyebrow),
+    .pergola-glazing__system p,
+    .pergola-benefit p,
+    .pergola-option p:last-child,
+    .pergola-option__mobile-copy,
+    .pergola-process__steps p,
+    .pergola-faq__item > p {
+      font-size: var(--pg-body) !important;
+      line-height: 1.55 !important;
+    }
+
+    .pergola-roof__tab strong,
+    .pergola-process__steps strong,
+    .pergola-size__body strong {
+      font-size: var(--pg-card-title) !important;
+      line-height: 1.2 !important;
     }
 
     .pergola-options__grid {
@@ -56,6 +98,8 @@
       display: block !important;
       grid-column: auto !important;
       min-height: 0 !important;
+      height: auto !important;
+      overflow: visible !important;
       border: 1px solid var(--c-seam);
       background: var(--c-light);
     }
@@ -77,8 +121,6 @@
 
     .pergola-option .eyebrow {
       margin: 0 0 10px;
-      font-size: 11px;
-      line-height: 1.35;
     }
 
     .pergola-option h3 {
@@ -90,30 +132,58 @@
       display: block;
       max-width: 42ch;
       margin: 12px 0 0 !important;
-      font-size: 15px;
-      line-height: 1.55;
       color: var(--c-ink-soft);
+    }
+
+    /* "Что меняется после монтажа": полноценные вертикальные карточки без обрезания. */
+    .pergola-benefits__grid {
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      gap: 12px !important;
+      overflow: visible !important;
+      border: 0 !important;
+      background: transparent !important;
+    }
+
+    .pergola-benefit {
+      box-sizing: border-box;
+      min-width: 0;
+      min-height: 0 !important;
+      height: auto !important;
+      overflow: visible !important;
+      padding: 22px 20px 24px !important;
+      border: 1px solid var(--c-seam);
+      background: var(--c-light-raised);
+    }
+
+    .pergola-benefit h3 {
+      max-width: none !important;
+      margin: 18px 0 0 !important;
+    }
+
+    .pergola-benefit p {
+      max-width: none !important;
+      margin: 12px 0 0 !important;
+    }
+
+    .pergola-faq__item summary,
+    .pergola-hero__actions .btn,
+    .pergola-final-cta__button,
+    .pergola-size--custom .btn,
+    .pergola-glazing__intro .btn {
+      font-size: 15px !important;
+      line-height: 1.3 !important;
     }
   }
 
-  @media (max-width: 380px) {
-    .pergolas-teaser__title { font-size: 19px !important; }
-    .pergola-hero__title { font-size: 20px !important; }
-
-    .pergola-head .title,
-    .pergola-climate__intro h2,
-    .pergola-glazing__intro h2,
-    .pergola-process__head h2,
-    .pergola-final-cta h2,
-    .pergola-faq__intro h2 {
-      font-size: 19px !important;
-    }
-
-    .pergola-type h3,
-    .pergola-option h3,
-    .pergola-size--custom h3,
-    .pergola-benefit h3 {
-      font-size: 17px !important;
+  @media (max-width: 340px) {
+    .pergolas-teaser,
+    .pergolas-page {
+      --pg-display: 20px;
+      --pg-section-title: 18px;
+      --pg-card-title: 16px;
+      --pg-lead: 15px;
+      --pg-body: 15px;
     }
   }
 </style>
@@ -121,7 +191,6 @@
 <script is:inline>
   (function () {
     var selector = '.pergolas-teaser__title, .pergolas-page h1, .pergolas-page h2, .pergolas-page h3';
-    var timer;
     var replacements = {
       'Биоклиматические перголы под ключ': 'Биоклиматические перголы',
       'Два решения для разных сценариев': 'Два типа крыши',
@@ -133,7 +202,7 @@
       'Индивидуальный размер': 'Размер под объект',
       'Из открытой террасы — в защищённое пространство': 'Остекление перголы',
       'Терраса работает дольше и выглядит частью дома': 'Комфорт круглый сезон',
-      'Управляемое естественное освещение': 'Свет по вашему сценарию',
+      'Управляемое естественное освещение': 'Свет по сценарию',
       'Режим естественной вентиляции': 'Естественная вентиляция',
       'Водоотвод спрятан в конструкции': 'Скрытый водоотвод',
       'Единая архитектура с домом': 'В едином стиле с домом',
@@ -145,11 +214,11 @@
       'Пришлите фотографию фасада или участка': 'Расчёт по фотографии'
     };
 
-    function setMobileCopy() {
+    function applyMobileCopy() {
       var mobile = window.matchMedia('(max-width: 820px)').matches;
 
       document.querySelectorAll('.pergolas-teaser, .pergolas-page').forEach(function (el) {
-        el.setAttribute('data-mobile-layout', 'nowrap-v3');
+        el.setAttribute('data-mobile-layout', 'type-scale-v4');
       });
 
       document.querySelectorAll(selector).forEach(function (el) {
@@ -180,40 +249,19 @@
       });
     }
 
-    function fitHeading(el) {
-      el.style.removeProperty('font-size');
-      el.style.removeProperty('white-space');
-      if (!window.matchMedia('(max-width: 820px)').matches) return;
-
-      el.style.setProperty('white-space', 'nowrap', 'important');
-      var size = parseFloat(window.getComputedStyle(el).fontSize) || 20;
-      var minimum = el.tagName === 'H3' ? 14 : 16;
-      var guard = 80;
-
-      while (el.scrollWidth > el.clientWidth + 0.5 && size > minimum && guard > 0) {
-        size -= 0.5;
-        el.style.setProperty('font-size', size + 'px', 'important');
-        guard -= 1;
-      }
-    }
-
-    function apply() {
-      setMobileCopy();
-      document.querySelectorAll(selector).forEach(fitHeading);
-    }
-
+    var timer;
     function schedule() {
       window.clearTimeout(timer);
-      timer = window.setTimeout(apply, 50);
+      timer = window.setTimeout(applyMobileCopy, 40);
     }
 
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', apply, { once: true });
+      document.addEventListener('DOMContentLoaded', applyMobileCopy, { once: true });
     } else {
-      apply();
+      applyMobileCopy();
     }
 
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(apply);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyMobileCopy);
     window.addEventListener('resize', schedule, { passive: true });
   })();
 </script>
