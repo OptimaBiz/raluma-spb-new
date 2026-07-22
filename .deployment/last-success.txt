@@ -5,5 +5,5 @@ asset=https://raluma.com.ru/images/pergolas/project-hero.webp
 mobile_layout=main-type-v5
 roof_controls=enhanced
 systems_vertical_scroll=protected
-source_commit=8319f9e0706762507138f7fd5ef86cab12338aa4
-verified_at=2026-07-22T16:36:28Z
+source_commit=163c043caf42e595cd3c7bb67a7e1f18633792e8
+verified_at=2026-07-22T16:54:43Z
