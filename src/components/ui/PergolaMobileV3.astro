@@ -135,7 +135,6 @@
       color: var(--c-ink-soft);
     }
 
-    /* "Что меняется после монтажа": полноценные вертикальные карточки без обрезания. */
     .pergola-benefits__grid {
       display: grid !important;
       grid-template-columns: 1fr !important;
@@ -224,7 +223,16 @@
       document.querySelectorAll(selector).forEach(function (el) {
         if (!el.dataset.desktopTitle) el.dataset.desktopTitle = (el.textContent || '').trim();
         var original = el.dataset.desktopTitle;
-        el.textContent = mobile && replacements[original] ? replacements[original] : original;
+        var mobileTitle = replacements[original] || original;
+
+        if (original === 'Биоклиматические перголы под ключ' && el.matches('.pergolas-teaser__title')) {
+          mobileTitle = 'Перголы Raluma';
+        }
+        if (original === 'Биоклиматические перголы под ключ' && el.matches('.pergola-hero__title')) {
+          mobileTitle = 'Перголы под ключ';
+        }
+
+        el.textContent = mobile ? mobileTitle : original;
       });
 
       document.querySelectorAll('.pergola-option').forEach(function (card) {
