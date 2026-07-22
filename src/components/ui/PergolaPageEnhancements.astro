@@ -1,85 +1,167 @@
 <style is:global>
-  .pergola-roof__control-panel {
-    display: grid;
-    gap: 20px;
-    min-width: 0;
+  .pergola-roof[data-roof-photo="true"] .pergola-roof__layout {
+    align-items: stretch;
   }
 
-  .pergola-roof__interaction {
-    display: grid;
-    gap: 14px;
-    padding: 20px;
+  .pergola-roof[data-roof-photo="true"] .pergola-roof__visual {
+    position: relative;
+    min-height: 0 !important;
+    aspect-ratio: 480 / 312;
+    overflow: hidden;
     border: 1px solid var(--c-seam);
-    background: var(--c-light-raised);
+    background: #111918;
+    isolation: isolate;
   }
 
-  .pergola-roof__interaction-copy {
-    display: grid;
-    gap: 6px;
+  .pergola-roof__photo-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: url('/images/pergolas/roof-states.webp');
+    background-repeat: no-repeat;
+    background-size: 100% 300%;
+    opacity: 0;
+    transform: scale(1.018);
+    transition:
+      opacity 520ms cubic-bezier(.2,.8,.2,1),
+      transform 850ms cubic-bezier(.2,.8,.2,1);
+    will-change: opacity, transform;
   }
 
-  .pergola-roof__interaction-copy strong {
-    font-family: var(--f-display);
-    font-size: 22px;
-    font-weight: 300;
-    line-height: 1.15;
-    color: var(--c-ink);
+  .pergola-roof__photo-layer[data-state="closed"] { background-position: center top; }
+  .pergola-roof__photo-layer[data-state="shade"] { background-position: center center; }
+  .pergola-roof__photo-layer[data-state="open"] { background-position: center bottom; }
+
+  .pergola-roof__photo-layer.is-active {
+    z-index: 1;
+    opacity: 1;
+    transform: scale(1);
   }
 
-  .pergola-roof__interaction-copy span {
-    font-size: 14px;
-    line-height: 1.5;
-    color: var(--c-ink-soft);
-  }
-
-  .pergola-roof__quick-switch {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
-  }
-
-  .pergola-roof__quick-button {
-    min-height: 48px;
-    padding: 10px 12px;
-    border: 1px solid var(--c-seam);
-    border-radius: 2px;
-    background: var(--c-light);
-    color: var(--c-ink);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease, border-color var(--dur-fast) ease;
-  }
-
-  .pergola-roof__quick-button:hover,
-  .pergola-roof__quick-button.is-active {
-    border-color: var(--c-edge);
-    background: var(--c-edge);
-    color: #fff;
+  .pergola-roof__photo-layer.is-leaving {
+    z-index: 2;
   }
 
   .pergola-roof__status {
     position: absolute;
     left: 18px;
     bottom: 18px;
-    z-index: 2;
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     margin: 0;
-    padding: 10px 12px;
+    padding: 11px 14px;
     border: 1px solid rgba(255,255,255,.42);
-    background: rgba(14,20,19,.78);
+    background: rgba(14,20,19,.82);
     color: #fff;
     font-size: 13px;
     line-height: 1.2;
     backdrop-filter: blur(10px);
   }
 
-  .pergola-roof__tab {
-    transition: background-color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+  .pergola-roof__status::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--c-edge-on-deep);
   }
 
-  .pergola-roof__tab:hover,
-  .pergola-roof__tab.is-active {
-    background: rgba(47, 109, 95, 0.07);
+  .pergola-roof__instruction {
+    display: grid;
+    gap: 5px;
+    margin-bottom: 10px;
+    padding: 0 0 18px;
+    border-bottom: 1px solid var(--c-seam);
+  }
+
+  .pergola-roof__instruction strong {
+    font-family: var(--f-display);
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--c-ink);
+  }
+
+  .pergola-roof__instruction span {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--c-ink-soft);
+  }
+
+  .pergola-roof[data-roof-photo="true"] .pergola-roof__controls {
+    display: grid;
+    gap: 10px;
+    border: 0;
+  }
+
+  .pergola-roof[data-roof-photo="true"] .pergola-roof__tab {
+    position: relative;
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: start;
+    width: 100%;
+    padding: 18px;
+    border: 1px solid var(--c-seam);
+    background: var(--c-light-raised);
+    color: var(--c-ink);
+    text-align: left;
+    cursor: pointer;
+    transition:
+      border-color 180ms ease,
+      background-color 180ms ease,
+      transform 180ms ease;
+  }
+
+  .pergola-roof[data-roof-photo="true"] .pergola-roof__tab:hover {
+    border-color: rgba(47,109,95,.48);
+    transform: translateX(2px);
+  }
+
+  .pergola-roof[data-roof-photo="true"] .pergola-roof__tab.is-active {
+    border-color: var(--c-edge);
+    background: rgba(47,109,95,.08);
+  }
+
+  .pergola-roof[data-roof-photo="true"] .pergola-roof__tab::after {
+    content: '→';
+    align-self: center;
+    color: var(--c-ink-mute);
+    font-size: 18px;
+    transition: transform 180ms ease, color 180ms ease;
+  }
+
+  .pergola-roof[data-roof-photo="true"] .pergola-roof__tab.is-active::after {
+    color: var(--c-edge);
+    transform: translateX(3px);
+  }
+
+  .pergola-roof[data-roof-photo="true"] .pergola-roof__tab-number {
+    padding-top: 2px;
+    color: var(--c-ink-mute);
+  }
+
+  .pergola-roof[data-roof-photo="true"] .pergola-roof__tab.is-active .pergola-roof__tab-number,
+  .pergola-roof[data-roof-photo="true"] .pergola-roof__tab.is-active strong {
+    color: var(--c-edge);
+  }
+
+  .pergola-roof[data-roof-photo="true"] .pergola-roof__tab strong {
+    display: block;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.25;
+  }
+
+  .pergola-roof[data-roof-photo="true"] .pergola-roof__tab small {
+    display: block;
+    max-width: 46ch;
+    margin-top: 7px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--c-ink-soft);
   }
 
   .pergola-glazing__cta-row {
@@ -115,47 +197,62 @@
   }
 
   @media (max-width: 820px) {
-    .pergola-roof__control-panel {
-      gap: 14px;
+    .pergola-roof[data-roof-photo="true"] .pergola-roof__layout {
+      gap: 22px !important;
     }
 
-    .pergola-roof__interaction {
-      order: -1;
-      padding: 18px;
-    }
-
-    .pergola-roof__interaction-copy strong {
-      font-size: 20px;
-    }
-
-    .pergola-roof__interaction-copy span {
-      font-size: 15px;
-    }
-
-    .pergola-roof__quick-switch {
-      gap: 6px;
-    }
-
-    .pergola-roof__quick-button {
-      min-height: 52px;
-      padding: 10px 8px;
-      font-size: 12px;
+    .pergola-roof[data-roof-photo="true"] .pergola-roof__visual {
+      width: 100%;
+      aspect-ratio: 480 / 312;
     }
 
     .pergola-roof__status {
       left: 12px;
       bottom: 12px;
-      max-width: calc(100% - 94px);
+      max-width: calc(100% - 24px);
+      padding: 9px 11px;
       font-size: 12px;
     }
 
-    .pergola-roof__tab {
-      padding-inline: 16px !important;
+    .pergola-roof__instruction {
+      margin-bottom: 2px;
+      padding-bottom: 16px;
+    }
+
+    .pergola-roof__instruction strong {
+      font-size: 21px;
+    }
+
+    .pergola-roof__instruction span {
+      font-size: 15px;
+    }
+
+    .pergola-roof[data-roof-photo="true"] .pergola-roof__tab {
+      grid-template-columns: 34px minmax(0, 1fr) auto;
+      gap: 11px;
+      padding: 16px !important;
+      transform: none !important;
+    }
+
+    .pergola-roof[data-roof-photo="true"] .pergola-roof__tab strong {
+      font-size: 17px;
+    }
+
+    .pergola-roof[data-roof-photo="true"] .pergola-roof__tab small {
+      font-size: 15px;
+      line-height: 1.5;
     }
 
     .pergola-glazing__cta-row,
     .pergola-glazing__cta-row .btn {
       width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pergola-roof__photo-layer,
+    .pergola-roof[data-roof-photo="true"] .pergola-roof__tab {
+      transition: none !important;
     }
   }
 </style>
@@ -181,125 +278,141 @@
       var section = document.querySelector('[data-roof-section]');
       if (!section || section.dataset.enhancedRoof === 'true') return;
 
-      var layout = section.querySelector('.pergola-roof__layout');
       var controls = section.querySelector('.pergola-roof__controls');
       var visual = section.querySelector('[data-roof-visual]');
-      var angle = section.querySelector('[data-roof-angle]');
       var tabs = Array.from(section.querySelectorAll('[data-roof-tab]'));
-      if (!layout || !controls || !visual || tabs.length === 0) return;
+      if (!controls || !visual || tabs.length !== 3) return;
 
       section.dataset.enhancedRoof = 'true';
+      section.dataset.roofPhoto = 'true';
 
-      var labels = {
-        closed: 'Закрыта',
-        shade: 'Полуоткрыта',
-        open: 'Открыта'
+      var states = {
+        closed: {
+          number: '01',
+          title: 'Закрыта',
+          text: 'Ламели сомкнуты: защита от дождя и прямого солнца.',
+          status: 'Крыша закрыта · защита от осадков'
+        },
+        shade: {
+          number: '02',
+          title: 'Тень и вентиляция',
+          text: 'Ламели под углом: мягкая тень и естественный воздухообмен.',
+          status: 'Ламели под углом · тень и воздух'
+        },
+        open: {
+          number: '03',
+          title: 'Открыта',
+          text: 'Ламели раскрыты: максимум света и открытого неба.',
+          status: 'Крыша открыта · максимум света'
+        }
       };
 
-      var statuses = {
-        closed: 'Сейчас: крыша полностью закрыта',
-        shade: 'Сейчас: тень и вентиляция',
-        open: 'Сейчас: крыша полностью открыта'
-      };
+      visual.innerHTML = '';
+      visual.setAttribute('role', 'img');
+      visual.setAttribute('aria-label', 'Три положения ламельной крыши перголы');
 
-      var panel = document.createElement('div');
-      panel.className = 'pergola-roof__control-panel';
-      controls.parentNode.insertBefore(panel, controls);
-
-      var interaction = document.createElement('div');
-      interaction.className = 'pergola-roof__interaction';
-      interaction.innerHTML = '<div class="pergola-roof__interaction-copy"><strong>Выберите состояние крыши</strong><span>Нажмите на положение ламелей и посмотрите, как меняется пространство.</span></div><div class="pergola-roof__quick-switch" role="group" aria-label="Быстрое переключение положения крыши"></div>';
-
-      var quickSwitch = interaction.querySelector('.pergola-roof__quick-switch');
-      var quickButtons = [];
-
-      tabs.forEach(function (tab) {
-        var state = tab.getAttribute('data-roof-tab') || 'closed';
-        var button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'pergola-roof__quick-button';
-        button.dataset.quickRoof = state;
-        button.textContent = labels[state] || state;
-        button.addEventListener('click', function () {
-          stopDemo();
-          tab.click();
-        });
-        quickSwitch.appendChild(button);
-        quickButtons.push(button);
+      var layers = {};
+      Object.keys(states).forEach(function (state) {
+        var layer = document.createElement('div');
+        layer.className = 'pergola-roof__photo-layer';
+        layer.dataset.state = state;
+        layer.setAttribute('aria-hidden', 'true');
+        visual.appendChild(layer);
+        layers[state] = layer;
       });
-
-      panel.appendChild(interaction);
-      panel.appendChild(controls);
 
       var status = document.createElement('p');
       status.className = 'pergola-roof__status';
+      status.setAttribute('aria-live', 'polite');
       visual.appendChild(status);
 
+      var instruction = document.createElement('div');
+      instruction.className = 'pergola-roof__instruction';
+      instruction.innerHTML = '<strong>Выберите положение крыши</strong><span>Нажмите на одну из трёх карточек — фотография изменится.</span>';
+      controls.insertBefore(instruction, controls.firstChild);
+
+      tabs.forEach(function (tab) {
+        var state = tab.getAttribute('data-roof-tab') || 'closed';
+        var config = states[state];
+        var number = tab.querySelector('.pergola-roof__tab-number');
+        var title = tab.querySelector('strong');
+        var text = tab.querySelector('small');
+        if (number) number.textContent = config.number;
+        if (title) title.textContent = config.title;
+        if (text) text.textContent = config.text;
+      });
+
+      var activeState = 'closed';
       var demoTimers = [];
       var demoStopped = false;
 
-      function clearDemoTimers() {
+      function clearDemo() {
         demoTimers.forEach(function (timer) { window.clearTimeout(timer); });
         demoTimers = [];
       }
 
       function stopDemo() {
         demoStopped = true;
-        clearDemoTimers();
+        clearDemo();
       }
 
-      function syncAux(state) {
-        quickButtons.forEach(function (button) {
-          var active = button.dataset.quickRoof === state;
-          button.classList.toggle('is-active', active);
-          button.setAttribute('aria-pressed', String(active));
-        });
-        status.textContent = statuses[state] || '';
-      }
+      function setState(state, manual) {
+        if (!states[state]) return;
+        if (manual) stopDemo();
 
-      function applyDemoState(state) {
-        var target = tabs.find(function (tab) {
-          return tab.getAttribute('data-roof-tab') === state;
-        });
-        if (!target) return;
+        var previous = layers[activeState];
+        var next = layers[state];
+
+        if (previous && previous !== next) {
+          previous.classList.add('is-leaving');
+          window.setTimeout(function () {
+            previous.classList.remove('is-active', 'is-leaving');
+          }, 540);
+        }
+
+        next.classList.add('is-active');
+        next.classList.remove('is-leaving');
+        activeState = state;
 
         tabs.forEach(function (tab) {
-          var active = tab === target;
+          var active = tab.getAttribute('data-roof-tab') === state;
           tab.classList.toggle('is-active', active);
           tab.setAttribute('aria-selected', String(active));
+          tab.setAttribute('tabindex', active ? '0' : '-1');
         });
+
         visual.setAttribute('data-roof-visual', state);
-        if (angle) angle.textContent = target.getAttribute('data-angle') || '';
-        syncAux(state);
+        status.textContent = states[state].status;
       }
 
       tabs.forEach(function (tab) {
         tab.addEventListener('click', function () {
-          stopDemo();
-          syncAux(tab.getAttribute('data-roof-tab') || 'closed');
+          setState(tab.getAttribute('data-roof-tab') || 'closed', true);
         });
       });
 
-      var initial = tabs.find(function (tab) { return tab.classList.contains('is-active'); });
-      syncAux(initial ? initial.getAttribute('data-roof-tab') || 'closed' : 'closed');
+      setState('closed', false);
 
       var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var demoSeen = false;
-      try { demoSeen = sessionStorage.getItem('raluma-roof-demo') === '1'; } catch (_) {}
+      try { demoSeen = sessionStorage.getItem('raluma-roof-photo-demo') === '1'; } catch (_) {}
 
       if (!reducedMotion && !demoSeen && typeof IntersectionObserver === 'function') {
         var observer = new IntersectionObserver(function (entries) {
           if (!entries.some(function (entry) { return entry.isIntersecting; })) return;
           observer.disconnect();
-          try { sessionStorage.setItem('raluma-roof-demo', '1'); } catch (_) {}
+          try { sessionStorage.setItem('raluma-roof-photo-demo', '1'); } catch (_) {}
 
-          var sequence = ['shade', 'open', 'closed'];
-          sequence.forEach(function (state, index) {
+          [
+            ['shade', 1100],
+            ['open', 2600],
+            ['closed', 4100]
+          ].forEach(function (step) {
             demoTimers.push(window.setTimeout(function () {
-              if (!demoStopped) applyDemoState(state);
-            }, 700 + index * 1100));
+              if (!demoStopped) setState(step[0], false);
+            }, step[1]));
           });
-        }, { threshold: 0.35 });
+        }, { threshold: 0.42 });
         observer.observe(section);
       }
     }
