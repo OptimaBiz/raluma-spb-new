@@ -14,15 +14,29 @@
       --pg-meta: 12px;
     }
 
+    .pergolas-page,
+    .pergolas-page .shell,
+    .pergolas-page :is(.pergola-head, .pergola-hero__copy, .pergola-type__body, .pergola-climate__intro,
+      .pergola-roof__controls, .pergola-size__body, .pergola-size--custom, .pergola-glazing__intro,
+      .pergola-glazing__system, .pergola-benefit, .pergola-option > div, .pergola-process__steps li,
+      .pergola-faq__intro, .pergola-faq__item, .pergola-final-cta__inner) {
+      min-width: 0 !important;
+      max-width: 100% !important;
+    }
+
+    /* Headings remain on one line, but are fitted to the real available width by JS. */
     .pergolas-teaser__title,
     .pergolas-page h1,
     .pergolas-page h2,
     .pergolas-page h3 {
-      display: block;
-      width: 100%;
+      display: block !important;
+      width: 100% !important;
       max-width: 100% !important;
+      margin-inline: 0 !important;
       white-space: nowrap !important;
       text-wrap: nowrap !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
       overflow-wrap: normal !important;
       word-break: normal !important;
       hyphens: none !important;
@@ -44,6 +58,21 @@
     .pergolas-page h3 {
       font-size: var(--pg-card-title) !important;
       line-height: 1.14 !important;
+    }
+
+    /* All prose is allowed to wrap and grow. No clamps, ellipses or hidden lines. */
+    .pergolas-page :is(p, li, dd, small, summary span, .btn),
+    .pergolas-teaser :is(p, span, .btn) {
+      max-width: 100% !important;
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      overflow-wrap: break-word !important;
+      word-break: normal !important;
+      hyphens: none !important;
+      -webkit-line-clamp: unset !important;
+      line-clamp: unset !important;
+      -webkit-box-orient: initial !important;
     }
 
     .pergolas-teaser .eyebrow,
@@ -77,6 +106,9 @@
     .pergola-option__mobile-copy,
     .pergola-process__steps p,
     .pergola-faq__item > p {
+      display: block !important;
+      height: auto !important;
+      max-height: none !important;
       font-size: var(--pg-body) !important;
       line-height: 1.6 !important;
     }
@@ -84,8 +116,28 @@
     .pergola-roof__tab strong,
     .pergola-process__steps strong,
     .pergola-size__body strong {
+      display: block !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      white-space: normal !important;
+      overflow: visible !important;
       font-size: var(--pg-card-title) !important;
       line-height: 1.2 !important;
+    }
+
+    /* Every content card grows with its text. */
+    .pergolas-page :is(.pergola-type, .pergola-spec, .pergola-size, .pergola-size--custom,
+      .pergola-glazing__system, .pergola-benefit, .pergola-option, .pergola-process__steps li,
+      .pergola-faq__item, .pergola-roof__tab) {
+      min-height: 0 !important;
+      height: auto !important;
+      max-height: none !important;
+    }
+
+    .pergolas-page :is(.pergola-type__body, .pergola-size__body, .pergola-size--custom,
+      .pergola-glazing__system, .pergola-benefit, .pergola-option > div,
+      .pergola-process__steps li, .pergola-faq__item) {
+      overflow: visible !important;
     }
 
     .pergola-options__grid {
@@ -97,8 +149,6 @@
     .pergola-option--large {
       display: block !important;
       grid-column: auto !important;
-      min-height: 0 !important;
-      height: auto !important;
       overflow: visible !important;
       border: 1px solid var(--c-seam);
       background: var(--c-light);
@@ -147,9 +197,6 @@
     .pergola-benefit {
       box-sizing: border-box;
       min-width: 0;
-      min-height: 0 !important;
-      height: auto !important;
-      overflow: visible !important;
       padding: 22px 20px 24px !important;
       border: 1px solid var(--c-seam);
       background: var(--c-light-raised);
@@ -165,13 +212,57 @@
       margin: 12px 0 0 !important;
     }
 
+    .pergola-glazing__system {
+      grid-template-columns: 36px minmax(0, 1fr) !important;
+      align-items: start !important;
+    }
+
+    .pergola-glazing__system p {
+      grid-column: 2 !important;
+      min-width: 0 !important;
+    }
+
+    .pergola-roof__tab {
+      grid-template-columns: 34px minmax(0, 1fr) !important;
+      align-items: start !important;
+    }
+
+    .pergola-roof__tab > span:last-child {
+      min-width: 0 !important;
+    }
+
+    .pergola-faq__item summary {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      align-items: start !important;
+      gap: 14px !important;
+      font-size: 16px !important;
+      line-height: 1.4 !important;
+    }
+
+    .pergola-faq__item summary span:first-child {
+      min-width: 0 !important;
+    }
+
+    .pergola-faq__item > p {
+      padding-right: 0 !important;
+    }
+
     .pergola-faq__item summary,
     .pergola-hero__actions .btn,
     .pergola-final-cta__button,
     .pergola-size--custom .btn,
-    .pergola-glazing__cta-row .btn {
+    .pergola-glazing__cta-row .btn,
+    .pergola-roof__quick-button {
       font-size: 15px !important;
       line-height: 1.3 !important;
+    }
+
+    .pergolas-page .btn {
+      min-height: 50px !important;
+      height: auto !important;
+      padding-block: 13px !important;
+      text-align: center !important;
     }
   }
 
@@ -189,7 +280,7 @@
 
 <script is:inline>
   (function () {
-    var selector = '.pergolas-teaser__title, .pergolas-page h1, .pergolas-page h2, .pergolas-page h3';
+    var headingSelector = '.pergolas-teaser__title, .pergolas-page h1, .pergolas-page h2, .pergolas-page h3';
     var replacements = {
       'Биоклиматические перголы под ключ': 'Биоклиматические перголы',
       'Два решения для разных сценариев': 'Два типа крыши',
@@ -214,14 +305,47 @@
       'Узнайте стоимость под ваш объект': 'Рассчитать стоимость'
     };
 
-    function applyMobileCopy() {
+    function fitHeading(el) {
+      if (!window.matchMedia('(max-width: 820px)').matches) {
+        el.style.removeProperty('font-size');
+        el.style.removeProperty('letter-spacing');
+        return;
+      }
+
+      el.style.removeProperty('font-size');
+      el.style.removeProperty('letter-spacing');
+
+      var available = Math.floor(el.getBoundingClientRect().width || el.parentElement?.clientWidth || 0);
+      if (!available) return;
+
+      var computed = window.getComputedStyle(el);
+      var start = Math.round(parseFloat(computed.fontSize) || 24);
+      var min = el.tagName === 'H1' ? 20 : el.tagName === 'H2' ? 18 : 16;
+      var size = start;
+
+      el.style.setProperty('font-size', size + 'px', 'important');
+      while (size > min && el.scrollWidth > available + 1) {
+        size -= 0.5;
+        el.style.setProperty('font-size', size + 'px', 'important');
+      }
+
+      if (el.scrollWidth > available + 1) {
+        el.style.setProperty('letter-spacing', '-0.055em', 'important');
+        while (size > 14 && el.scrollWidth > available + 1) {
+          size -= 0.5;
+          el.style.setProperty('font-size', size + 'px', 'important');
+        }
+      }
+    }
+
+    function applyMobileCopyAndFit() {
       var mobile = window.matchMedia('(max-width: 820px)').matches;
 
       document.querySelectorAll('.pergolas-teaser, .pergolas-page').forEach(function (el) {
-        el.setAttribute('data-mobile-layout', 'main-type-v5');
+        el.setAttribute('data-mobile-layout', 'adaptive-type-v6');
       });
 
-      document.querySelectorAll(selector).forEach(function (el) {
+      document.querySelectorAll(headingSelector).forEach(function (el) {
         if (!el.dataset.desktopTitle) el.dataset.desktopTitle = (el.textContent || '').trim();
         var original = el.dataset.desktopTitle;
         var mobileTitle = replacements[original] || original;
@@ -230,6 +354,7 @@
         if (el.matches('.pergola-hero__title')) mobileTitle = 'Перголы под ключ';
 
         el.textContent = mobile ? mobileTitle : original;
+        fitHeading(el);
       });
 
       document.querySelectorAll('.pergola-option').forEach(function (card) {
@@ -257,16 +382,23 @@
     var timer;
     function schedule() {
       window.clearTimeout(timer);
-      timer = window.setTimeout(applyMobileCopy, 40);
+      timer = window.setTimeout(applyMobileCopyAndFit, 60);
     }
 
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', applyMobileCopy, { once: true });
+      document.addEventListener('DOMContentLoaded', applyMobileCopyAndFit, { once: true });
     } else {
-      applyMobileCopy();
+      applyMobileCopyAndFit();
     }
 
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyMobileCopy);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyMobileCopyAndFit);
     window.addEventListener('resize', schedule, { passive: true });
+
+    if (typeof ResizeObserver === 'function') {
+      var observer = new ResizeObserver(schedule);
+      document.querySelectorAll('.pergolas-teaser, .pergolas-page').forEach(function (el) {
+        observer.observe(el);
+      });
+    }
   })();
 </script>
