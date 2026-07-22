@@ -1,0 +1,99 @@
+name: Pergolas mobile visual guard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/pages/pergolas.astro'
+      - 'src/components/sections/PergolasTeaserSection.astro'
+      - 'src/styles/pergolas-mobile-first.css'
+      - 'src/layouts/BaseLayout.astro'
+      - '.github/workflows/pergolas-mobile-visual.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Start preview
+        run: |
+          npm run preview -- --host 127.0.0.1 > /tmp/raluma-preview.log 2>&1 &
+          for attempt in $(seq 1 40); do
+            curl -fsS http://127.0.0.1:4321/ >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/raluma-preview.log
+          exit 1
+
+      - name: Check mobile layouts
+        run: |
+          mkdir -p screenshots
+          node <<'NODE'
+          const { chromium } = require('playwright');
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const widths = [320, 390, 430];
+
+            for (const width of widths) {
+              const page = await browser.newPage({ viewport: { width, height: 844 }, deviceScaleFactor: 1 });
+
+              await page.goto('http://127.0.0.1:4321/', { waitUntil: 'networkidle' });
+              await page.locator('.pergolas-teaser').scrollIntoViewIfNeeded();
+              await page.locator('.pergolas-teaser .rise').evaluate((el) => el.classList.add('is-in'));
+              const teaser = page.locator('.pergolas-teaser');
+              const teaserTitle = page.locator('.pergolas-teaser__title');
+              const teaserBox = await teaserTitle.boundingBox();
+              const teaserVisible = await teaserTitle.isVisible();
+              const homeOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
+              if (!teaserVisible || !teaserBox || teaserBox.x < 0 || teaserBox.x + teaserBox.width > width + 1 || homeOverflow) {
+                throw new Error(`Homepage teaser mobile failure at ${width}px`);
+              }
+              await teaser.screenshot({ path: `screenshots/home-pergolas-${width}.png` });
+
+              await page.goto('http://127.0.0.1:4321/pergolas/', { waitUntil: 'networkidle' });
+              await page.locator('.rise').evaluateAll((items) => items.forEach((el) => el.classList.add('is-in')));
+              const title = page.locator('.pergola-hero__title');
+              const titleBox = await title.boundingBox();
+              const pageOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
+              if (!(await title.isVisible()) || !titleBox || titleBox.x < 0 || titleBox.x + titleBox.width > width + 1 || pageOverflow) {
+                throw new Error(`Pergolas landing mobile failure at ${width}px`);
+              }
+              await page.screenshot({ path: `screenshots/pergolas-${width}.png`, fullPage: true });
+              await page.close();
+            }
+
+            await browser.close();
+          })();
+          NODE
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: pergolas-mobile-screenshots
+          path: screenshots/*.png
+          retention-days: 7
