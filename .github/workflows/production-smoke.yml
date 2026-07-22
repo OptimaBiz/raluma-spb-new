@@ -99,7 +99,7 @@ jobs:
 
             if grep -q "adaptive-type-v6" <<<"$html" \
               && grep -q "fitHeading" <<<"$html" \
-              && grep -q "data-roof-real-photos=\"v7\"" <<<"$html" \
+              && grep -q "PergolaRoofPhotosV7" <<<"$html" \
               && grep -q "data-roof-photo-v7" <<<"$html" \
               && grep -q "roof-closed.jpg?v=7" <<<"$html" \
               && grep -q "roof-half-open.jpg?v=7" <<<"$html" \
