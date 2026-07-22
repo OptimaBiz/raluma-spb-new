@@ -3,5 +3,5 @@ home_url=https://raluma.com.ru/
 url=https://raluma.com.ru/pergolas/
 asset=https://raluma.com.ru/images/pergolas/project-hero.webp
 mobile_layout=nowrap-v3
-source_commit=bf39eeed72d2a8a291eb5b909e3004bf886dffe5
-verified_at=2026-07-22T14:48:58Z
+source_commit=5674964a0d5aee5e3bf2fd94b35ba142a65a270f
+verified_at=2026-07-22T15:40:47Z
