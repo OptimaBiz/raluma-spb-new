@@ -1,12 +1,12 @@
 status=failure
-source_commit=680fcbbd1f0f8881aa9b4688dfe2cfe813e984ec
+source_commit=59b9e68618f2db32098afd791a4b995adf3804a4
 pip_status=0
 split_status=1
 npm_status=0
 build_status=0
 marker_status=1
 pixel_status=1
-verified_at=2026-07-22T21:41:59Z
+verified_at=2026-07-22T21:44:02Z
 
 --- diagnostic log tail ---
 roof-state generation failed: could not create decoder object
@@ -48,26 +48,26 @@ Run `npm audit` for details.
 > raluma-spb-new@1.0.0 build
 > astro build
 
-[2m21:41:57[22m [34m[types][39m Generated [2m128ms[22m
-[2m21:41:57[22m [34m[build][39m output: [34m"static"[39m
-[2m21:41:57[22m [34m[build][39m mode: [34m"static"[39m
-[2m21:41:57[22m [34m[build][39m directory: [34m/home/runner/work/raluma-spb-new/raluma-spb-new/dist/[39m
-[2m21:41:57[22m [34m[build][39m Collecting build info...
-[2m21:41:57[22m [34m[build][39m [32m✓ Completed in 140ms.[39m
-[2m21:41:57[22m [34m[build][39m Building static entrypoints...
-[2m21:41:59[22m [34m[vite][39m [32m✓ built in 1.53s[39m
-[2m21:41:59[22m [34m[vite][39m [32m✓ built in 119ms[39m
-[2m21:41:59[22m [34m[build][39m Rearranging server assets...
+[2m21:44:01[22m [34m[types][39m Generated [2m152ms[22m
+[2m21:44:01[22m [34m[build][39m output: [34m"static"[39m
+[2m21:44:01[22m [34m[build][39m mode: [34m"static"[39m
+[2m21:44:01[22m [34m[build][39m directory: [34m/home/runner/work/raluma-spb-new/raluma-spb-new/dist/[39m
+[2m21:44:01[22m [34m[build][39m Collecting build info...
+[2m21:44:01[22m [34m[build][39m [32m✓ Completed in 164ms.[39m
+[2m21:44:01[22m [34m[build][39m Building static entrypoints...
+[2m21:44:02[22m [34m[vite][39m [32m✓ built in 1.43s[39m
+[2m21:44:02[22m [34m[vite][39m [32m✓ built in 111ms[39m
+[2m21:44:02[22m [34m[build][39m Rearranging server assets...
 
 [42m[30m generating static routes [39m[49m
-[2m21:41:59[22m   [34m├─[39m [2m/pergolas/index.html[22m [2m(+16ms)[22m 
-[2m21:41:59[22m   [34m├─[39m [2m/thank-you/index.html[22m [2m(+3ms)[22m 
-[2m21:41:59[22m   [34m├─[39m [2m/index.html[22m [2m(+7ms)[22m 
-[2m21:41:59[22m [32m✓ Completed in 36ms.
+[2m21:44:02[22m   [34m├─[39m [2m/pergolas/index.html[22m [2m(+15ms)[22m 
+[2m21:44:02[22m   [34m├─[39m [2m/thank-you/index.html[22m [2m(+6ms)[22m 
+[2m21:44:02[22m   [34m├─[39m [2m/index.html[22m [2m(+7ms)[22m 
+[2m21:44:02[22m [32m✓ Completed in 39ms.
 [39m
-[2m21:41:59[22m [34m[build][39m [32m✓ Completed in 1.74s.[39m
-[2m21:41:59[22m [34m[build][39m 3 page(s) built in [1m1.88s[22m
-[2m21:41:59[22m [34m[build][39m [1mComplete![22m
+[2m21:44:02[22m [34m[build][39m [32m✓ Completed in 1.63s.[39m
+[2m21:44:02[22m [34m[build][39m 3 page(s) built in [1m1.80s[22m
+[2m21:44:02[22m [34m[build][39m [1mComplete![22m
 Traceback (most recent call last):
   File "<stdin>", line 11, in <module>
   File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/PIL/Image.py", line 3639, in open
