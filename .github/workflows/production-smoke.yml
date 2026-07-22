@@ -31,7 +31,7 @@ jobs:
           home_url="https://raluma.com.ru/"
           url="https://raluma.com.ru/pergolas/"
           hero_asset="https://raluma.com.ru/images/pergolas/project-hero.webp"
-          roof_asset="https://raluma.com.ru/images/pergolas/roof-states.webp"
+          roof_asset="https://raluma.com.ru/images/pergolas/roof-states.webp?v=5"
 
           for attempt in $(seq 1 60); do
             home_html="$(curl -fsSL --connect-timeout 15 --max-time 30 "$home_url" || true)"
@@ -41,8 +41,10 @@ jobs:
 
             if grep -q "adaptive-type-v6" <<<"$html" \
               && grep -q "fitHeading" <<<"$html" \
-              && grep -q "Выберите положение крыши" <<<"$html" \
-              && grep -q "roof-photo-demo-v2" <<<"$html" \
+              && grep -q "data-roof-real-photos=\"v5\"" <<<"$html" \
+              && grep -q "raluma-roof-real-photos-v5" <<<"$html" \
+              && grep -q "data-roof-photo" <<<"$html" \
+              && grep -q "Полуоткрыта" <<<"$html" \
               && grep -q "3.jpg.webp" <<<"$html" \
               && grep -q "pergola-glazing__cta-row" <<<"$html" \
               && grep -q "horizontalIntentUntil" <<<"$home_html" \
@@ -57,7 +59,9 @@ jobs:
                 echo "asset=$hero_asset"
                 echo "roof_asset=$roof_asset"
                 echo "mobile_layout=adaptive-type-v6"
-                echo "roof_controls=real-images-v2"
+                echo "roof_controls=three-real-photos-v5"
+                echo "roof_animation=crossfade-three-modes"
+                echo "roof_legacy_css=disabled"
                 echo "size_cards=responsive-contain"
                 echo "systems_vertical_scroll=protected"
                 echo "mobile_text_clipping=prevented"
