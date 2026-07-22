@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   mobile-visual:
@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -51,9 +53,10 @@ jobs:
 
       - name: Check mobile layouts
         run: |
-          mkdir -p screenshots
+          mkdir -p screenshots .verification
           node <<'NODE'
           const { chromium } = require('playwright');
+          const fs = require('fs');
 
           (async () => {
             const browser = await chromium.launch({ headless: true });
@@ -88,6 +91,13 @@ jobs:
             }
 
             await browser.close();
+            fs.writeFileSync('.verification/pergolas-mobile-success.txt', [
+              'status=success',
+              `source_commit=${process.env.GITHUB_SHA}`,
+              `verified_widths=${widths.join(',')}`,
+              `verified_at=${new Date().toISOString()}`,
+              ''
+            ].join('\n'));
           })();
           NODE
 
@@ -97,3 +107,11 @@ jobs:
           name: pergolas-mobile-screenshots
           path: screenshots/*.png
           retention-days: 7
+
+      - name: Record successful verification
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .verification/pergolas-mobile-success.txt
+          git commit -m "chore: record pergola mobile verification" || exit 0
+          git push origin HEAD:main
