@@ -108,7 +108,7 @@ jobs:
                   h1: unique(sizes('.pergolas-page h1')),
                   h2: unique(sizes('.pergolas-page h2')),
                   h3: unique(sizes('.pergolas-page h3')),
-                  leads: unique(sizes('.pergola-hero__lead, .pergola-head .lead, .pergola-climate__intro > p:last-child, .pergola-glazing__intro > p, .pergola-final-cta p, .pergola-faq__intro .lead')),
+                  leads: unique(sizes('.pergola-hero__lead, .pergola-head .lead, .pergola-climate__intro > p:last-child, .pergola-glazing__intro > p:not(.eyebrow), .pergola-final-cta p:not(.eyebrow), .pergola-faq__intro .lead')),
                   bodies: unique(sizes('.pergola-type p:not(.pergola-type__number), .pergola-spec p, .pergola-glazing__system p, .pergola-benefit p, .pergola-process__steps p')),
                   headingFailures: headings.filter((item) => !item.nowrap || item.overflow),
                 };
