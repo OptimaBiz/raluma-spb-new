@@ -42,3 +42,5 @@ jobs:
           git commit -m "fix: disable corrupted legacy roof image initializer" || exit 0
           git pull --rebase origin main
           git push origin HEAD:main
+
+      # Retry marker: 2026-07-23
