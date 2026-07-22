@@ -57,11 +57,13 @@ jobs:
           exit 1
 
       - name: Check typography and cards
+        id: visual
+        continue-on-error: true
         run: |
           mkdir -p screenshots .verification
-          node <<'NODE'
+          set +e
+          node <<'NODE' > /tmp/pergola-visual.log 2>&1
           const { chromium } = require('playwright');
-          const fs = require('fs');
 
           (async () => {
             const browser = await chromium.launch({ headless: true });
@@ -93,10 +95,7 @@ jobs:
               await page.locator('.rise').evaluateAll((items) => items.forEach((el) => el.classList.add('is-in')));
               await page.waitForTimeout(160);
 
-              const pageOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
-              if (pageOverflow) throw new Error(`Horizontal overflow at ${width}px`);
-
-              const typography = await page.evaluate(() => {
+              const result = await page.evaluate(() => {
                 const sizes = (selector) => [...document.querySelectorAll(selector)].map((el) => parseFloat(getComputedStyle(el).fontSize));
                 const unique = (values) => [...new Set(values.map((value) => value.toFixed(2)))];
                 const headings = [...document.querySelectorAll('.pergolas-page h1, .pergolas-page h2, .pergolas-page h3')].map((el) => ({
@@ -104,38 +103,35 @@ jobs:
                   nowrap: getComputedStyle(el).whiteSpace === 'nowrap',
                   overflow: el.scrollWidth > el.clientWidth + 1,
                 }));
+                const benefits = [...document.querySelectorAll('.pergola-benefit')].map((card) => {
+                  const rect = card.getBoundingClientRect();
+                  const title = card.querySelector('h3');
+                  const paragraph = card.querySelector('p');
+                  const style = getComputedStyle(card);
+                  return {
+                    title: title ? (title.textContent || '').trim() : '',
+                    overflowY: style.overflowY,
+                    clipped: card.scrollHeight > card.clientHeight + 1,
+                    widthOverflow: rect.right > document.documentElement.clientWidth + 1 || rect.left < -1,
+                    titleVisible: !!title && title.getBoundingClientRect().bottom <= rect.bottom + 1,
+                    paragraphVisible: !!paragraph && paragraph.getBoundingClientRect().bottom <= rect.bottom + 1,
+                    padding: parseFloat(style.paddingLeft),
+                  };
+                });
                 return {
+                  pageOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
                   h1: unique(sizes('.pergolas-page h1')),
                   h2: unique(sizes('.pergolas-page h2')),
                   h3: unique(sizes('.pergolas-page h3')),
                   leads: unique(sizes('.pergola-hero__lead, .pergola-head .lead, .pergola-climate__intro > p:last-child, .pergola-glazing__intro > p:not(.eyebrow), .pergola-final-cta p:not(.eyebrow), .pergola-faq__intro .lead')),
                   bodies: unique(sizes('.pergola-type p:not(.pergola-type__number), .pergola-spec p, .pergola-glazing__system p, .pergola-benefit p, .pergola-process__steps p')),
                   headingFailures: headings.filter((item) => !item.nowrap || item.overflow),
+                  benefitFailures: benefits.filter((item) => item.clipped || item.widthOverflow || !item.titleVisible || !item.paragraphVisible || item.padding < 18 || item.overflowY === 'hidden' || item.overflowY === 'clip'),
                 };
               });
 
-              if (typography.h1.length !== 1 || typography.h2.length !== 1 || typography.h3.length !== 1 || typography.leads.length !== 1 || typography.bodies.length !== 1 || typography.headingFailures.length) {
-                throw new Error(`Typography scale failure at ${width}px: ${JSON.stringify(typography)}`);
-              }
-
-              const benefitFailures = await page.locator('.pergola-benefit').evaluateAll((cards) => cards.map((card) => {
-                const rect = card.getBoundingClientRect();
-                const title = card.querySelector('h3');
-                const paragraph = card.querySelector('p');
-                const style = getComputedStyle(card);
-                return {
-                  title: title ? (title.textContent || '').trim() : '',
-                  overflowY: style.overflowY,
-                  clipped: card.scrollHeight > card.clientHeight + 1,
-                  widthOverflow: rect.right > document.documentElement.clientWidth + 1 || rect.left < -1,
-                  titleVisible: !!title && title.getBoundingClientRect().bottom <= rect.bottom + 1,
-                  paragraphVisible: !!paragraph && paragraph.getBoundingClientRect().bottom <= rect.bottom + 1,
-                  padding: parseFloat(style.paddingLeft),
-                };
-              }).filter((item) => item.clipped || item.widthOverflow || !item.titleVisible || !item.paragraphVisible || item.padding < 18 || item.overflowY === 'hidden' || item.overflowY === 'clip'));
-
-              if (benefitFailures.length) {
-                throw new Error(`Benefits card failure at ${width}px: ${JSON.stringify(benefitFailures)}`);
+              if (result.pageOverflow || result.h1.length !== 1 || result.h2.length !== 1 || result.h3.length !== 1 || result.leads.length !== 1 || result.bodies.length !== 1 || result.headingFailures.length || result.benefitFailures.length) {
+                throw new Error(`Mobile visual failure at ${width}px: ${JSON.stringify(result)}`);
               }
 
               await page.locator('.pergola-benefits').screenshot({ path: `screenshots/pergola-benefits-${width}.png` });
@@ -144,30 +140,47 @@ jobs:
             }
 
             await browser.close();
-            fs.writeFileSync('.verification/pergolas-mobile-v4-success.txt', [
-              'status=success',
-              `source_commit=${process.env.GITHUB_SHA}`,
-              `verified_widths=${widths.join(',')}`,
-              'typography_scale=unified-v4',
-              'benefit_cards=success',
-              `verified_at=${new Date().toISOString()}`,
-              ''
-            ].join('\n'));
           })();
           NODE
+          code=$?
+          {
+            if [ "$code" -eq 0 ]; then
+              echo 'status=success'
+            else
+              echo 'status=failure'
+            fi
+            echo "source_commit=${GITHUB_SHA}"
+            echo 'verified_widths=320,390,430'
+            echo 'typography_scale=unified-v4'
+            echo "benefit_cards=$([ "$code" -eq 0 ] && echo success || echo failure)"
+            echo "verified_at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            if [ "$code" -ne 0 ]; then
+              echo 'error<<EOF'
+              tail -n 20 /tmp/pergola-visual.log
+              echo 'EOF'
+            fi
+          } > .verification/pergolas-mobile-v4-result.txt
+          cat /tmp/pergola-visual.log
+          exit "$code"
 
       - name: Upload screenshots
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pergolas-mobile-v4-screenshots
           path: screenshots/*.png
           retention-days: 7
 
-      - name: Record successful verification
+      - name: Record verification result
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .verification/pergolas-mobile-v4-success.txt
-          git commit -m "chore: record pergola mobile v4 verification" || exit 0
+          git add .verification/pergolas-mobile-v4-result.txt
+          git commit -m "chore: record pergola mobile v4 result" || exit 0
           git pull --rebase origin main
           git push origin HEAD:main
+
+      - name: Enforce result
+        if: always()
+        run: grep -q '^status=success$' .verification/pergolas-mobile-v4-result.txt
