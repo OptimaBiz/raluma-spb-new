@@ -138,3 +138,5 @@ jobs:
           done
           echo "Production responsive heading was not verified"
           exit 1
+
+# Triggered after GitHub registered this workflow.
