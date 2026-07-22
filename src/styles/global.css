@@ -247,3 +247,22 @@ h5,
 h6 {
   font-weight: 500;
 }
+
+/* Custom image for the first louvered-roof card on the pergolas landing. */
+.pergola-types__grid .pergola-type:first-child .pergola-type__media {
+  background-color: var(--c-graphite);
+  background-image: url('/images/pergolas/ламельная_крыша.jpg');
+  background-position: center 54%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.pergola-types__grid .pergola-type:first-child .pergola-type__media img {
+  opacity: 0;
+}
+
+@media (max-width: 820px) {
+  .pergola-types__grid .pergola-type:first-child .pergola-type__media {
+    background-position: center 48%;
+  }
+}
