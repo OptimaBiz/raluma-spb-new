@@ -97,3 +97,5 @@ jobs:
           done
           echo "Production heading was not verified"
           exit 1
+
+# Triggered separately so GitHub sees this workflow before the push event.
