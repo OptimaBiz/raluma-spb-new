@@ -1,4 +1,5 @@
 <style is:global>
+  /* Three real roof states: use normal image elements, not CSS background sprites. */
   .pergola-roof[data-roof-photo="true"] .pergola-roof__layout {
     align-items: stretch;
   }
@@ -9,7 +10,7 @@
     aspect-ratio: 480 / 312;
     overflow: hidden;
     border: 1px solid var(--c-seam);
-    background: #111918;
+    background: #dce3e1;
     isolation: isolate;
   }
 
@@ -17,29 +18,37 @@
     position: absolute;
     inset: 0;
     z-index: 0;
-    background-image: url('/images/pergolas/roof-states.webp');
-    background-repeat: no-repeat;
-    background-size: 100% 300%;
+    overflow: hidden;
     opacity: 0;
-    transform: scale(1.018);
+    transform: scale(1.015);
     transition:
-      opacity 520ms cubic-bezier(.2,.8,.2,1),
-      transform 850ms cubic-bezier(.2,.8,.2,1);
+      opacity 480ms cubic-bezier(.2,.8,.2,1),
+      transform 760ms cubic-bezier(.2,.8,.2,1);
     will-change: opacity, transform;
   }
 
-  .pergola-roof__photo-layer[data-state="closed"] { background-position: center top; }
-  .pergola-roof__photo-layer[data-state="shade"] { background-position: center center; }
-  .pergola-roof__photo-layer[data-state="open"] { background-position: center bottom; }
+  .pergola-roof__photo-layer img {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    max-width: none;
+    height: 300%;
+    object-fit: fill;
+    display: block;
+  }
+
+  .pergola-roof__photo-layer[data-state="closed"] img { top: 0; }
+  .pergola-roof__photo-layer[data-state="shade"] img { top: -100%; }
+  .pergola-roof__photo-layer[data-state="open"] img { top: -200%; }
 
   .pergola-roof__photo-layer.is-active {
-    z-index: 1;
+    z-index: 2;
     opacity: 1;
     transform: scale(1);
   }
 
   .pergola-roof__photo-layer.is-leaving {
-    z-index: 2;
+    z-index: 1;
   }
 
   .pergola-roof__status {
@@ -50,18 +59,20 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
+    max-width: calc(100% - 36px);
     margin: 0;
     padding: 11px 14px;
-    border: 1px solid rgba(255,255,255,.42);
+    border: 1px solid rgba(255,255,255,.44);
     background: rgba(14,20,19,.82);
     color: #fff;
     font-size: 13px;
-    line-height: 1.2;
+    line-height: 1.25;
     backdrop-filter: blur(10px);
   }
 
   .pergola-roof__status::before {
     content: '';
+    flex: 0 0 auto;
     width: 7px;
     height: 7px;
     border-radius: 50%;
@@ -70,7 +81,7 @@
 
   .pergola-roof__instruction {
     display: grid;
-    gap: 5px;
+    gap: 6px;
     margin-bottom: 10px;
     padding: 0 0 18px;
     border-bottom: 1px solid var(--c-seam);
@@ -164,6 +175,69 @@
     color: var(--c-ink-soft);
   }
 
+  /* Sizes: three image cards stay proportional and show every product in full. */
+  .pergola-sizes .pergola-sizes__grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: clamp(14px, 2vw, 24px) !important;
+    align-items: stretch;
+    border: 0 !important;
+    background: transparent !important;
+  }
+
+  .pergola-sizes .pergola-size {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--c-seam);
+    background: var(--c-light);
+  }
+
+  .pergola-sizes .pergola-size__media {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    padding: clamp(12px, 1.8vw, 24px);
+    overflow: hidden;
+    background: #f2f4f2;
+    border-bottom: 1px solid var(--c-seam);
+  }
+
+  .pergola-sizes .pergola-size__media img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+    object-fit: contain !important;
+    object-position: center !important;
+    transform: none !important;
+  }
+
+  .pergola-sizes .pergola-size__body {
+    padding: clamp(18px, 2vw, 26px) !important;
+  }
+
+  .pergola-sizes .pergola-size--custom {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 28px;
+    align-items: center;
+    padding: clamp(24px, 3vw, 38px);
+  }
+
+  .pergola-sizes .pergola-size--custom .eyebrow,
+  .pergola-sizes .pergola-size--custom h3,
+  .pergola-sizes .pergola-size--custom p {
+    grid-column: 1;
+  }
+
+  .pergola-sizes .pergola-size--custom .btn {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: center;
+    margin: 0;
+  }
+
   .pergola-glazing__cta-row {
     grid-column: 2;
     display: flex;
@@ -189,7 +263,17 @@
     transform: translate(2px, -2px);
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 980px) {
+    .pergola-sizes .pergola-sizes__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .pergola-sizes .pergola-size:nth-child(3) {
+      grid-column: 1 / -1;
+      width: min(100%, 620px);
+      justify-self: center;
+    }
+
     .pergola-glazing__cta-row {
       grid-column: 1;
       margin-top: 6px;
@@ -246,6 +330,34 @@
     .pergola-glazing__cta-row,
     .pergola-glazing__cta-row .btn {
       width: 100%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .pergola-sizes .pergola-sizes__grid {
+      grid-template-columns: 1fr !important;
+      gap: 16px !important;
+    }
+
+    .pergola-sizes .pergola-size:nth-child(3) {
+      grid-column: auto;
+      width: 100%;
+    }
+
+    .pergola-sizes .pergola-size__media {
+      aspect-ratio: 4 / 3;
+      padding: 16px;
+    }
+
+    .pergola-sizes .pergola-size--custom {
+      grid-column: auto;
+      display: block;
+      padding: 24px;
+    }
+
+    .pergola-sizes .pergola-size--custom .btn {
+      width: 100%;
+      margin-top: 22px;
     }
   }
 
@@ -317,6 +429,16 @@
         layer.className = 'pergola-roof__photo-layer';
         layer.dataset.state = state;
         layer.setAttribute('aria-hidden', 'true');
+
+        var image = document.createElement('img');
+        image.src = '/images/pergolas/roof-states.webp?v=2';
+        image.alt = '';
+        image.width = 480;
+        image.height = 936;
+        image.decoding = 'async';
+        image.loading = 'eager';
+        layer.appendChild(image);
+
         visual.appendChild(layer);
         layers[state] = layer;
       });
@@ -342,7 +464,7 @@
         if (text) text.textContent = config.text;
       });
 
-      var activeState = 'closed';
+      var activeState = null;
       var demoTimers = [];
       var demoStopped = false;
 
@@ -360,18 +482,26 @@
         if (!states[state]) return;
         if (manual) stopDemo();
 
-        var previous = layers[activeState];
+        var previous = activeState ? layers[activeState] : null;
         var next = layers[state];
 
-        if (previous && previous !== next) {
-          previous.classList.add('is-leaving');
-          window.setTimeout(function () {
-            previous.classList.remove('is-active', 'is-leaving');
-          }, 540);
+        if (next._hideTimer) {
+          window.clearTimeout(next._hideTimer);
+          next._hideTimer = null;
         }
 
         next.classList.add('is-active');
         next.classList.remove('is-leaving');
+
+        if (previous && previous !== next) {
+          if (previous._hideTimer) window.clearTimeout(previous._hideTimer);
+          previous.classList.add('is-leaving');
+          previous._hideTimer = window.setTimeout(function () {
+            previous.classList.remove('is-active', 'is-leaving');
+            previous._hideTimer = null;
+          }, 500);
+        }
+
         activeState = state;
 
         tabs.forEach(function (tab) {
@@ -395,13 +525,13 @@
 
       var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var demoSeen = false;
-      try { demoSeen = sessionStorage.getItem('raluma-roof-photo-demo') === '1'; } catch (_) {}
+      try { demoSeen = sessionStorage.getItem('raluma-roof-photo-demo-v2') === '1'; } catch (_) {}
 
       if (!reducedMotion && !demoSeen && typeof IntersectionObserver === 'function') {
         var observer = new IntersectionObserver(function (entries) {
           if (!entries.some(function (entry) { return entry.isIntersecting; })) return;
           observer.disconnect();
-          try { sessionStorage.setItem('raluma-roof-photo-demo', '1'); } catch (_) {}
+          try { sessionStorage.setItem('raluma-roof-photo-demo-v2', '1'); } catch (_) {}
 
           [
             ['shade', 1100],
