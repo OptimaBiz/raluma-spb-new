@@ -8,5 +8,5 @@ roof_controls=real-images-v2
 size_cards=responsive-contain
 systems_vertical_scroll=protected
 mobile_text_clipping=prevented
-source_commit=5a8a85aa5f70ce73dbc246df75258751907b4961
-verified_at=2026-07-22T18:10:29Z
+source_commit=66d16f2f959e88d1937a4c50e652cf7a57e163e7
+verified_at=2026-07-22T18:14:16Z
