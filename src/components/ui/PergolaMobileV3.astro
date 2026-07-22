@@ -1,0 +1,214 @@
+<style is:global>
+  @media (max-width: 820px) {
+    .pergolas-teaser__title,
+    .pergolas-page h1,
+    .pergolas-page h2,
+    .pergolas-page h3 {
+      display: block;
+      width: 100%;
+      max-width: 100% !important;
+      white-space: nowrap !important;
+      text-wrap: nowrap !important;
+      overflow-wrap: normal !important;
+      word-break: normal !important;
+      hyphens: none !important;
+    }
+
+    .pergolas-teaser__title {
+      font-size: clamp(20px, 6.4vw, 36px) !important;
+      line-height: 1.04;
+    }
+
+    .pergola-hero__title {
+      font-size: clamp(21px, 6.8vw, 40px) !important;
+      line-height: 1.03;
+    }
+
+    .pergola-head .title,
+    .pergola-climate__intro h2,
+    .pergola-glazing__intro h2,
+    .pergola-process__head h2,
+    .pergola-final-cta h2,
+    .pergola-faq__intro h2 {
+      font-size: clamp(20px, 6.2vw, 34px) !important;
+      line-height: 1.06;
+    }
+
+    .pergola-type h3,
+    .pergola-option h3,
+    .pergola-size--custom h3,
+    .pergola-benefit h3 {
+      font-size: clamp(18px, 5.5vw, 28px) !important;
+      line-height: 1.08;
+    }
+
+    .pergola-options__grid {
+      grid-template-columns: 1fr !important;
+      gap: 16px !important;
+    }
+
+    .pergola-option,
+    .pergola-option--large {
+      display: block !important;
+      grid-column: auto !important;
+      min-height: 0 !important;
+      border: 1px solid var(--c-seam);
+      background: var(--c-light);
+    }
+
+    .pergola-option img {
+      display: block;
+      width: 100%;
+      height: auto !important;
+      aspect-ratio: 16 / 10 !important;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .pergola-option > div {
+      display: block !important;
+      padding: 22px 20px 24px !important;
+      border-top: 1px solid var(--c-seam);
+    }
+
+    .pergola-option .eyebrow {
+      margin: 0 0 10px;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .pergola-option h3 {
+      margin: 0 !important;
+    }
+
+    .pergola-option p:last-child,
+    .pergola-option__mobile-copy {
+      max-width: 42ch;
+      margin: 12px 0 0 !important;
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--c-ink-soft);
+    }
+  }
+
+  @media (max-width: 380px) {
+    .pergolas-teaser__title { font-size: 19px !important; }
+    .pergola-hero__title { font-size: 20px !important; }
+
+    .pergola-head .title,
+    .pergola-climate__intro h2,
+    .pergola-glazing__intro h2,
+    .pergola-process__head h2,
+    .pergola-final-cta h2,
+    .pergola-faq__intro h2 {
+      font-size: 19px !important;
+    }
+
+    .pergola-type h3,
+    .pergola-option h3,
+    .pergola-size--custom h3,
+    .pergola-benefit h3 {
+      font-size: 17px !important;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var selector = '.pergolas-teaser__title, .pergolas-page h1, .pergolas-page h2, .pergolas-page h3';
+    var timer;
+    var replacements = {
+      'Биоклиматические перголы под ключ': 'Биоклиматические перголы',
+      'Два решения для разных сценариев': 'Два типа крыши',
+      'Регулируемая биоклиматическая крыша': 'Ламельная крыша',
+      'Пергола со стеклянной крышей': 'Стеклянная крыша',
+      'Не летний навес, а инженерная конструкция': 'Инженерная конструкция',
+      'Погода меняется — пространство остаётся вашим': 'Три режима крыши',
+      'Стандартные модули и индивидуальный проект': 'Размеры и конфигурации',
+      'Индивидуальный размер': 'Размер под объект',
+      'Из открытой террасы — в защищённое пространство': 'Остекление перголы',
+      'Терраса работает дольше и выглядит частью дома': 'Комфорт круглый сезон',
+      'Управляемое естественное освещение': 'Свет по вашему сценарию',
+      'Режим естественной вентиляции': 'Естественная вентиляция',
+      'Водоотвод спрятан в конструкции': 'Скрытый водоотвод',
+      'Единая архитектура с домом': 'В едином стиле с домом',
+      'Не только белый или графит': 'Цвета, стекло и комфорт',
+      'Окрашивание по RAL и декор': 'Цвет по RAL и декор',
+      'Прозрачное, осветлённое или тонированное стекло': 'Три варианта стекла',
+      'Освещение, датчики погоды и обогрев': 'Свет, датчики и обогрев',
+      'От фотографии участка до настроенной автоматики': 'Как создаётся пергола',
+      'Пришлите фотографию фасада или участка': 'Расчёт по фотографии'
+    };
+
+    function setMobileCopy() {
+      var mobile = window.matchMedia('(max-width: 820px)').matches;
+
+      document.querySelectorAll('.pergolas-teaser, .pergolas-page').forEach(function (el) {
+        el.setAttribute('data-mobile-layout', 'nowrap-v3');
+      });
+
+      document.querySelectorAll(selector).forEach(function (el) {
+        if (!el.dataset.desktopTitle) el.dataset.desktopTitle = (el.textContent || '').trim();
+        var original = el.dataset.desktopTitle;
+        el.textContent = mobile && replacements[original] ? replacements[original] : original;
+      });
+
+      document.querySelectorAll('.pergola-option').forEach(function (card) {
+        var title = card.querySelector('h3');
+        var body = card.querySelector(':scope > div');
+        if (!title || !body || body.querySelector('.pergola-option__mobile-copy')) return;
+
+        var original = title.dataset.desktopTitle || (title.textContent || '').trim();
+        var copy = '';
+        if (original === 'Прозрачное, осветлённое или тонированное стекло') {
+          copy = 'Прозрачное, осветлённое или тонированное — под свет, приватность и архитектуру.';
+        }
+        if (original === 'Освещение, датчики погоды и обогрев') {
+          copy = 'Интегрируем освещение, погодную автоматику и обогрев без визуального перегруза.';
+        }
+        if (!copy) return;
+
+        var paragraph = document.createElement('p');
+        paragraph.className = 'pergola-option__mobile-copy';
+        paragraph.textContent = copy;
+        body.appendChild(paragraph);
+      });
+    }
+
+    function fitHeading(el) {
+      el.style.removeProperty('font-size');
+      el.style.removeProperty('white-space');
+      if (!window.matchMedia('(max-width: 820px)').matches) return;
+
+      el.style.whiteSpace = 'nowrap';
+      var size = parseFloat(window.getComputedStyle(el).fontSize) || 20;
+      var minimum = el.tagName === 'H3' ? 14 : 16;
+      var guard = 80;
+
+      while (el.scrollWidth > el.clientWidth + 0.5 && size > minimum && guard > 0) {
+        size -= 0.5;
+        el.style.fontSize = size + 'px';
+        guard -= 1;
+      }
+    }
+
+    function apply() {
+      setMobileCopy();
+      document.querySelectorAll(selector).forEach(fitHeading);
+    }
+
+    function schedule() {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(apply, 50);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', apply, { once: true });
+    } else {
+      apply();
+    }
+
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(apply);
+    window.addEventListener('resize', schedule, { passive: true });
+  })();
+</script>
