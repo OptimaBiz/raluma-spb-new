@@ -1,0 +1,99 @@
+name: One-shot pergola roof title update
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-roof-title.yml'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  update-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Update heading and remove one-shot workflow
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path('src/pages/pergolas.astro')
+          old = 'Погода меняется — пространство остаётся вашим'
+          new = 'Удобное управление ламелями'
+          text = page.read_text(encoding='utf-8')
+
+          if old in text:
+              text = text.replace(old, new, 1)
+              page.write_text(text, encoding='utf-8')
+          elif new not in text:
+              raise SystemExit('Expected roof section heading was not found')
+          PY
+          rm -f .github/workflows/one-shot-roof-title.yml
+
+      - name: Commit source change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/pages/pergolas.astro .github/workflows/one-shot-roof-title.yml
+          git commit -m "fix: rename pergola roof section heading"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify built heading
+        run: grep -q "Удобное управление ламелями" dist/pergolas/index.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Verify production heading
+        run: |
+          for attempt in $(seq 1 30); do
+            html="$(curl -fsSL --connect-timeout 15 --max-time 30 'https://raluma.com.ru/pergolas/' || true)"
+            if grep -q "Удобное управление ламелями" <<<"$html"; then
+              echo "Production heading verified"
+              exit 0
+            fi
+            echo "Attempt $attempt: waiting for production"
+            sleep 10
+          done
+          echo "Production heading was not verified"
+          exit 1
