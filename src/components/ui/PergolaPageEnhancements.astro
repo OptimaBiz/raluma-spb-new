@@ -91,6 +91,20 @@
 
   .pergola-glazing__cta-row .btn {
     margin: 0 !important;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .pergola-glazing__cta-arrow {
+    display: inline-block;
+    flex: 0 0 auto;
+    font-size: 1.15em;
+    line-height: 1;
+    transition: transform var(--dur-fast) ease;
+  }
+
+  .pergola-glazing__cta-row .btn:hover .pergola-glazing__cta-arrow {
+    transform: translate(2px, -2px);
   }
 
   @media (max-width: 900px) {
@@ -280,6 +294,14 @@
       var systems = layout && layout.querySelector('.pergola-glazing__systems');
       var link = layout && layout.querySelector('.pergola-glazing__intro .btn');
       if (!layout || !systems || !link || layout.querySelector('.pergola-glazing__cta-row')) return;
+
+      if (!link.querySelector('.pergola-glazing__cta-arrow')) {
+        var arrow = document.createElement('span');
+        arrow.className = 'pergola-glazing__cta-arrow';
+        arrow.setAttribute('aria-hidden', 'true');
+        arrow.textContent = '↗';
+        link.appendChild(arrow);
+      }
 
       var row = document.createElement('div');
       row.className = 'pergola-glazing__cta-row';
