@@ -8,6 +8,7 @@ import MobileBottomCallBar from '../components/ui/MobileBottomCallBar.astro';
 import PergolaMobileV3 from '../components/ui/PergolaMobileV3.astro';
 import PergolaPageEnhancements from '../components/ui/PergolaPageEnhancements.astro';
 import PergolaRoofPhotosV7 from '../components/ui/PergolaRoofPhotosV7.astro';
+import PergolaRoofTitleResponsive from '../components/ui/PergolaRoofTitleResponsive.astro';
 
 interface Props {
   title?: string;
@@ -109,6 +110,7 @@ const isHomePage = Astro.url.pathname === '/';
     <PergolaMobileV3 />
     <PergolaPageEnhancements />
     <PergolaRoofPhotosV7 />
+    <PergolaRoofTitleResponsive />
 
     <!-- Scroll reveal: one shift, once per element, skipped entirely when the
          visitor asks for reduced motion. -->
