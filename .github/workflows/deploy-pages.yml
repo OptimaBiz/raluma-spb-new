@@ -28,18 +28,10 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Install dependencies
         run: npm ci
-      - name: Generate and validate three roof photos
-        run: |
-          python -m pip install --quiet pillow
-          python scripts/split_roof_states.py
       - name: Build
         run: npm run build
       - name: Upload Pages artifact
