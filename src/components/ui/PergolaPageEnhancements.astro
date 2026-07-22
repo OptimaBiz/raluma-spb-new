@@ -162,6 +162,21 @@
 
 <script is:inline>
   (function () {
+    function replaceSizeImage() {
+      var cards = Array.from(document.querySelectorAll('.pergola-sizes__grid .pergola-size'));
+      var card = cards.find(function (candidate) {
+        var label = candidate.querySelector('.pergola-size__body strong');
+        return label && (label.textContent || '').replace(/\s+/g, ' ').trim() === '4 × 5 м';
+      });
+      var image = card && card.querySelector('.pergola-size__media img');
+      if (!image) return;
+
+      image.src = '/images/pergolas/3.jpg.webp';
+      image.removeAttribute('srcset');
+      image.alt = 'Биоклиматическая пергола Raluma размером 4 × 5 м';
+      image.dataset.sizeImage = '4x5';
+    }
+
     function initRoofInteraction() {
       var section = document.querySelector('[data-roof-section]');
       if (!section || section.dataset.enhancedRoof === 'true') return;
@@ -310,6 +325,7 @@
     }
 
     function init() {
+      replaceSizeImage();
       initRoofInteraction();
       moveGlazingButton();
     }
