@@ -1,0 +1,19 @@
+captured_at=2026-07-22T21:57:05Z
+html_bytes=76860
+data-roof-real-photos="v7"=no
+data-roof-photo-v7=yes
+roof-closed.jpg?v=7=yes
+roof-half-open.jpg?v=7=yes
+roof-open.jpg?v=7=yes
+initRoofInteraction();=no
+PergolaRoofPhotosV7=yes
+closed_status=200
+half_status=200
+open_status=200
+
+roof-closed.jpg: decoded=yes size=(518, 338) range=0..254 mean=82.74 stddev=74.80
+roof-half-open.jpg: decoded=yes size=(520, 340) range=0..255 mean=98.00 stddev=96.36
+roof-open.jpg: decoded=yes size=(518, 336) range=0..255 mean=143.14 stddev=95.09
+difference_1_2_rms=75.55
+difference_1_3_rms=108.27
+difference_2_3_rms=103.42
