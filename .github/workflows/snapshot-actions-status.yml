@@ -43,3 +43,5 @@ jobs:
           git commit -m "chore: record workflow status snapshot" || exit 0
           git pull --rebase origin main
           git push origin HEAD:main
+
+      # Refreshed after Chromium roof verification.
