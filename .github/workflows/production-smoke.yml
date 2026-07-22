@@ -13,40 +13,11 @@ permissions:
 
 concurrency:
   group: production-smoke
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
-  apply-pending-patch:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 0
-
-      - name: Apply pending pergola patch
-        run: |
-          if [ -f scripts/apply_pergola_nowrap_v3.py ]; then
-            python3 scripts/apply_pergola_nowrap_v3.py
-          fi
-
-      - name: Commit applied patch
-        run: |
-          if git diff --quiet && git diff --cached --quiet; then
-            echo "No pending patch"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "fix: keep pergola headings single-line on mobile"
-          git pull --rebase origin main
-          git push origin HEAD:main
-
   smoke:
     runs-on: ubuntu-latest
-    needs: apply-pending-patch
     timeout-minutes: 12
     steps:
       - name: Checkout
@@ -54,24 +25,30 @@ jobs:
         with:
           ref: main
 
-      - name: Verify production pergolas page
+      - name: Verify production pergola pages
         run: |
           set -euo pipefail
+          home_url="https://raluma.com.ru/"
           url="https://raluma.com.ru/pergolas/"
           asset="https://raluma.com.ru/images/pergolas/project-hero.webp"
 
           for attempt in $(seq 1 60); do
+            home_html="$(curl -fsSL --connect-timeout 15 --max-time 30 "$home_url" || true)"
             html="$(curl -fsSL --connect-timeout 15 --max-time 30 "$url" || true)"
             asset_status="$(curl -sSIL --connect-timeout 15 --max-time 30 -o /dev/null -w '%{http_code}' "$asset" || true)"
 
-            if grep -q "Биоклиматические перголы" <<<"$html" \
+            if grep -q "nowrap-v3" <<<"$home_html" \
+              && grep -q "nowrap-v3" <<<"$html" \
+              && grep -q "Цвета, стекло и комфорт" <<<"$html" \
               && [ "$asset_status" = "200" ]; then
-              echo "Production deployment verified: $url"
+              echo "Production deployment verified: $home_url and $url"
               mkdir -p .deployment
               {
                 echo "status=success"
+                echo "home_url=$home_url"
                 echo "url=$url"
                 echo "asset=$asset"
+                echo "mobile_layout=nowrap-v3"
                 echo "source_commit=${GITHUB_SHA}"
                 echo "verified_at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
               } > .deployment/last-success.txt
