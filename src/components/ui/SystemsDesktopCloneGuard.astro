@@ -1,0 +1,63 @@
+<style is:global>
+  /* Infinite-loop clones are a mobile/tablet implementation detail.
+     They must never participate in the desktop selector layout. */
+  @media (min-width: 1121px) {
+    .systems-selector [data-loop-clone] {
+      display: none !important;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var desktopQuery = window.matchMedia('(min-width: 1121px)');
+    var observer = null;
+
+    function removeDesktopClones() {
+      if (!desktopQuery.matches) return;
+
+      var selector = document.querySelector('.systems-section .systems-selector');
+      if (!selector) return;
+
+      selector.querySelectorAll('[data-loop-clone]').forEach(function (clone) {
+        clone.remove();
+      });
+
+      /* Keep exactly the three real controls available to desktop users. */
+      selector.querySelectorAll('[data-loop-original]').forEach(function (button) {
+        button.removeAttribute('aria-hidden');
+        if (button.classList.contains('is-active')) {
+          button.setAttribute('tabindex', '0');
+        }
+      });
+    }
+
+    function watchDesktopSelector() {
+      if (observer) observer.disconnect();
+      observer = null;
+
+      if (!desktopQuery.matches) return;
+
+      var selector = document.querySelector('.systems-section .systems-selector');
+      if (!selector) return;
+
+      removeDesktopClones();
+
+      observer = new MutationObserver(function () {
+        removeDesktopClones();
+      });
+      observer.observe(selector, { childList: true });
+    }
+
+    function init() {
+      watchDesktopSelector();
+      desktopQuery.addEventListener('change', watchDesktopSelector);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init, { once: true });
+    } else {
+      init();
+    }
+  })();
+</script>
