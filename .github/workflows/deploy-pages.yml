@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths-ignore:
       - '.deployment/**'
+      - '.verification/**'
   workflow_dispatch:
 
 permissions:
