@@ -1,0 +1,16 @@
+status=failure
+source_commit=8c64ccd33f1c0761ee0d8094ea7b94949dcd39b4
+verified_widths=320,390,430
+typography_scale=unified-v4
+benefit_cards=failure
+verified_at=2026-07-22T15:46:31Z
+error<<EOF
+[stdin]:25
+      throw new Error(`Homepage typography failure at ${width}px: ${JSON.stringify(teaser)}`);
+            ^
+
+Error: Homepage typography failure at 320px: {"fontSize":20,"nowrap":true,"overflow":true}
+    at [stdin]:25:13
+
+Node.js v22.23.1
+EOF
