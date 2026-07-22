@@ -15,6 +15,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: pergolas-mobile-visual-v3
+  cancel-in-progress: true
+
 jobs:
   mobile-visual:
     runs-on: ubuntu-latest
@@ -129,7 +133,7 @@ jobs:
             }
 
             await browser.close();
-            fs.writeFileSync('.verification/pergolas-mobile-success.txt', [
+            fs.writeFileSync('.verification/pergolas-mobile-v3-success.txt', [
               'status=success',
               `source_commit=${process.env.GITHUB_SHA}`,
               `verified_widths=${widths.join(',')}`,
@@ -144,7 +148,7 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: pergolas-mobile-screenshots
+          name: pergolas-mobile-v3-screenshots
           path: screenshots/*.png
           retention-days: 7
 
@@ -152,7 +156,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .verification/pergolas-mobile-success.txt
-          git commit -m "chore: record pergola mobile verification" || exit 0
+          git add .verification/pergolas-mobile-v3-success.txt
+          git commit -m "chore: record pergola mobile v3 verification" || exit 0
           git pull --rebase origin main
           git push origin HEAD:main
