@@ -39,17 +39,17 @@ jobs:
           home_url="https://raluma.com.ru/"
           url="https://raluma.com.ru/pergolas/"
           hero_asset="https://raluma.com.ru/images/pergolas/project-hero.webp"
-          closed_asset="https://raluma.com.ru/images/pergolas/roof-closed.webp?v=6"
-          half_asset="https://raluma.com.ru/images/pergolas/roof-half-open.webp?v=6"
-          open_asset="https://raluma.com.ru/images/pergolas/roof-open.webp?v=6"
+          closed_asset="https://raluma.com.ru/images/pergolas/roof-closed.jpg?v=7"
+          half_asset="https://raluma.com.ru/images/pergolas/roof-half-open.jpg?v=7"
+          open_asset="https://raluma.com.ru/images/pergolas/roof-open.jpg?v=7"
 
           for attempt in $(seq 1 60); do
             home_html="$(curl -fsSL --connect-timeout 15 --max-time 30 "$home_url" || true)"
             html="$(curl -fsSL --connect-timeout 15 --max-time 30 "$url" || true)"
             hero_status="$(curl -sSIL --connect-timeout 15 --max-time 30 -o /dev/null -w '%{http_code}' "$hero_asset" || true)"
-            closed_status="$(curl -sSL --connect-timeout 15 --max-time 30 -o /tmp/roof-closed.webp -w '%{http_code}' "$closed_asset" || true)"
-            half_status="$(curl -sSL --connect-timeout 15 --max-time 30 -o /tmp/roof-half-open.webp -w '%{http_code}' "$half_asset" || true)"
-            open_status="$(curl -sSL --connect-timeout 15 --max-time 30 -o /tmp/roof-open.webp -w '%{http_code}' "$open_asset" || true)"
+            closed_status="$(curl -sSL --connect-timeout 15 --max-time 30 -o /tmp/roof-closed.jpg -w '%{http_code}' "$closed_asset" || true)"
+            half_status="$(curl -sSL --connect-timeout 15 --max-time 30 -o /tmp/roof-half-open.jpg -w '%{http_code}' "$half_asset" || true)"
+            open_status="$(curl -sSL --connect-timeout 15 --max-time 30 -o /tmp/roof-open.jpg -w '%{http_code}' "$open_asset" || true)"
 
             pixels_ok=false
             if [ "$closed_status" = "200" ] && [ "$half_status" = "200" ] && [ "$open_status" = "200" ]; then
@@ -58,16 +58,16 @@ jobs:
           from PIL import Image, ImageChops, ImageStat
 
           paths = [
-              Path('/tmp/roof-closed.webp'),
-              Path('/tmp/roof-half-open.webp'),
-              Path('/tmp/roof-open.webp'),
+              Path('/tmp/roof-closed.jpg'),
+              Path('/tmp/roof-half-open.jpg'),
+              Path('/tmp/roof-open.jpg'),
           ]
           images = []
           for path in paths:
               with Image.open(path) as source:
                   source.load()
                   image = source.convert('RGB')
-              if image.width < 320 or image.height < 200:
+              if image.width < 480 or image.height < 300:
                   raise SystemExit(f'{path.name}: invalid size {image.size}')
               gray = image.convert('L')
               low, high = gray.getextrema()
@@ -79,10 +79,7 @@ jobs:
                       f'{path.name}: blank/dark pixels range={low}..{high}, '
                       f'mean={mean:.2f}, stddev={deviation:.2f}'
                   )
-              images.append(image)
-
-          if len({image.size for image in images}) != 1:
-              raise SystemExit(f'roof photos have different dimensions: {[image.size for image in images]}')
+              images.append(image.resize((480, 312)))
 
           for left_index in range(len(images)):
               for right_index in range(left_index + 1, len(images)):
@@ -93,7 +90,7 @@ jobs:
                           f'roof modes {left_index + 1} and {right_index + 1} look identical: rms={rms:.2f}'
                       )
 
-          print('three roof photos decode, contain visible pixels, and differ from one another')
+          print('three official roof photos decode, contain visible pixels, and differ from one another')
           PY
               then
                 pixels_ok=true
@@ -102,18 +99,18 @@ jobs:
 
             if grep -q "adaptive-type-v6" <<<"$html" \
               && grep -q "fitHeading" <<<"$html" \
-              && grep -q "data-roof-real-photos=\"v6\"" <<<"$html" \
-              && grep -q "data-roof-photo-v6" <<<"$html" \
-              && grep -q "roof-closed.webp?v=6" <<<"$html" \
-              && grep -q "roof-half-open.webp?v=6" <<<"$html" \
-              && grep -q "roof-open.webp?v=6" <<<"$html" \
+              && grep -q "data-roof-real-photos=\"v7\"" <<<"$html" \
+              && grep -q "data-roof-photo-v7" <<<"$html" \
+              && grep -q "roof-closed.jpg?v=7" <<<"$html" \
+              && grep -q "roof-half-open.jpg?v=7" <<<"$html" \
+              && grep -q "roof-open.jpg?v=7" <<<"$html" \
               && grep -q "Полуоткрыта" <<<"$html" \
               && grep -q "3.jpg.webp" <<<"$html" \
               && grep -q "pergola-glazing__cta-row" <<<"$html" \
               && grep -q "horizontalIntentUntil" <<<"$home_html" \
               && [ "$hero_status" = "200" ] \
               && [ "$pixels_ok" = "true" ]; then
-              echo "Production deployment verified with three decoded roof photos: $url"
+              echo "Production deployment verified with three official decoded roof photos: $url"
               mkdir -p .deployment
               {
                 echo "status=success"
@@ -123,10 +120,12 @@ jobs:
                 echo "roof_closed_asset=$closed_asset"
                 echo "roof_half_open_asset=$half_asset"
                 echo "roof_open_asset=$open_asset"
+                echo "roof_source=https://raluma.ru/pergolas#rec894214390"
                 echo "mobile_layout=adaptive-type-v6"
-                echo "roof_controls=three-separate-photos-v6"
+                echo "roof_controls=three-official-photos-v7"
                 echo "roof_animation=continuous-crossfade-until-interaction"
                 echo "roof_pixel_validation=decoded-visible-distinct"
+                echo "roof_corrupted_webp=removed-from-runtime"
                 echo "roof_browser_sprite_cropping=removed"
                 echo "roof_legacy_css=disabled"
                 echo "size_cards=responsive-contain"
