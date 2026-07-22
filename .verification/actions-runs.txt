@@ -1,0 +1,43 @@
+captured_at=2026-07-22T21:55:32Z
+source_commit=9e1a742338279f3067939e7b64b339f04031054f
+
+29961010128	Snapshot workflow run statuses	9e1a74233827	in_progress	-	push	2026-07-22T21:55:26Z	2026-07-22T21:55:29Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29961010128
+29961010111	Roof V6 build diagnostic	9e1a74233827	in_progress	-	push	2026-07-22T21:55:26Z	2026-07-22T21:55:29Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29961010111
+29961010110	Deploy to GitHub Pages	9e1a74233827	in_progress	-	push	2026-07-22T21:55:26Z	2026-07-22T21:55:30Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29961010110
+29961010106	Deploy to GitHub Pages	9e1a74233827	completed	cancelled	push	2026-07-22T21:55:26Z	2026-07-22T21:55:28Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29961010106
+29961010058	Astro build	9e1a74233827	in_progress	-	push	2026-07-22T21:55:26Z	2026-07-22T21:55:29Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29961010058
+29961010049	Production smoke check	9e1a74233827	pending	-	push	2026-07-22T21:55:26Z	2026-07-22T21:55:27Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29961010049
+29960875335	Probe production roof viewer V7	1d051fa24c27	in_progress	-	push	2026-07-22T21:53:13Z	2026-07-22T21:53:17Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960875335
+29960874859	Production smoke check	1d051fa24c27	in_progress	-	push	2026-07-22T21:53:13Z	2026-07-22T21:53:32Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960874859
+29960874823	Roof V6 build diagnostic	1d051fa24c27	completed	failure	push	2026-07-22T21:53:13Z	2026-07-22T21:53:41Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960874823
+29960874784	Astro build	1d051fa24c27	completed	success	push	2026-07-22T21:53:13Z	2026-07-22T21:53:39Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960874784
+29960874781	Deploy to GitHub Pages	1d051fa24c27	completed	success	push	2026-07-22T21:53:13Z	2026-07-22T21:54:10Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960874781
+29960874747	Deploy to GitHub Pages	1d051fa24c27	completed	cancelled	push	2026-07-22T21:53:13Z	2026-07-22T21:53:14Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960874747
+29960769530	Deploy to GitHub Pages	eef9e2e3ebe7	completed	success	push	2026-07-22T21:51:30Z	2026-07-22T21:52:10Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960769530
+29960769476	Deploy to GitHub Pages	eef9e2e3ebe7	completed	cancelled	push	2026-07-22T21:51:30Z	2026-07-22T21:51:31Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960769476
+29960769439	Roof V6 build diagnostic	eef9e2e3ebe7	completed	failure	push	2026-07-22T21:51:30Z	2026-07-22T21:51:57Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960769439
+29960769430	Production smoke check	eef9e2e3ebe7	completed	cancelled	push	2026-07-22T21:51:30Z	2026-07-22T21:53:30Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960769430
+29960769402	Astro build	eef9e2e3ebe7	completed	success	push	2026-07-22T21:51:30Z	2026-07-22T21:51:48Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960769402
+29960644853	Astro build	146a6bb5d2d6	completed	success	push	2026-07-22T21:49:27Z	2026-07-22T21:49:42Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960644853
+29960644712	Production smoke check	146a6bb5d2d6	completed	cancelled	push	2026-07-22T21:49:27Z	2026-07-22T21:51:42Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960644712
+29960644677	Disable superseded roof viewer	146a6bb5d2d6	completed	success	push	2026-07-22T21:49:27Z	2026-07-22T21:49:39Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960644677
+29960644650	Deploy to GitHub Pages	146a6bb5d2d6	completed	success	push	2026-07-22T21:49:27Z	2026-07-22T21:49:56Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960644650
+29960644648	Roof V6 build diagnostic	146a6bb5d2d6	completed	failure	push	2026-07-22T21:49:27Z	2026-07-22T21:49:48Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960644648
+29960644647	Deploy to GitHub Pages	146a6bb5d2d6	completed	cancelled	push	2026-07-22T21:49:27Z	2026-07-22T21:49:28Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960644647
+29960549514	Deploy to GitHub Pages	b335e4ed010f	completed	cancelled	push	2026-07-22T21:47:48Z	2026-07-22T21:49:29Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960549514
+29960549441	Astro build	b335e4ed010f	completed	success	push	2026-07-22T21:47:48Z	2026-07-22T21:49:42Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960549441
+29960549440	Roof V6 build diagnostic	b335e4ed010f	completed	cancelled	push	2026-07-22T21:47:48Z	2026-07-22T21:49:29Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960549440
+29960549438	Production smoke check	b335e4ed010f	completed	cancelled	push	2026-07-22T21:47:48Z	2026-07-22T21:49:29Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960549438
+29960549436	Deploy to GitHub Pages	b335e4ed010f	completed	cancelled	push	2026-07-22T21:47:48Z	2026-07-22T21:47:49Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960549436
+29960549432	Disable superseded roof viewer	b335e4ed010f	completed	success	push	2026-07-22T21:47:48Z	2026-07-22T21:49:38Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960549432
+29960502180	Deploy to GitHub Pages	5a065618f956	completed	cancelled	push	2026-07-22T21:46:59Z	2026-07-22T21:47:50Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960502180
+29960502160	Astro build	5a065618f956	completed	success	push	2026-07-22T21:46:59Z	2026-07-22T21:49:49Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960502160
+29960502153	Deploy to GitHub Pages	5a065618f956	completed	cancelled	push	2026-07-22T21:46:59Z	2026-07-22T21:47:01Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960502153
+29960502145	Production smoke check	5a065618f956	completed	cancelled	push	2026-07-22T21:46:59Z	2026-07-22T21:47:50Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960502145
+29960502141	Roof V6 build diagnostic	5a065618f956	completed	cancelled	push	2026-07-22T21:46:59Z	2026-07-22T21:47:49Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960502141
+29960465967	Deploy to GitHub Pages	f82ef21100f9	completed	cancelled	push	2026-07-22T21:46:20Z	2026-07-22T21:47:01Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960465967
+29960465955	Production smoke check	f82ef21100f9	completed	cancelled	push	2026-07-22T21:46:20Z	2026-07-22T21:47:00Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960465955
+29960465935	Deploy to GitHub Pages	f82ef21100f9	completed	cancelled	push	2026-07-22T21:46:20Z	2026-07-22T21:46:21Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960465935
+29960465926	Astro build	f82ef21100f9	completed	success	push	2026-07-22T21:46:20Z	2026-07-22T21:46:46Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960465926
+29960465901	Roof V6 build diagnostic	f82ef21100f9	completed	failure	push	2026-07-22T21:46:20Z	2026-07-22T21:46:44Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960465901
+29960407457	Roof V6 build diagnostic	1333f0ab5257	completed	failure	push	2026-07-22T21:45:24Z	2026-07-22T21:46:00Z	https://github.com/OptimaBiz/raluma-spb-new/actions/runs/29960407457
