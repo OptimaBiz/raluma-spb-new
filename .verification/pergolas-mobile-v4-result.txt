@@ -1,9 +1,9 @@
 status=failure
-source_commit=8c64ccd33f1c0761ee0d8094ea7b94949dcd39b4
+source_commit=bd256fa3c4365b0d8d23a9405940bbaac671f52e
 verified_widths=320,390,430
 typography_scale=unified-v4
 benefit_cards=failure
-verified_at=2026-07-22T15:46:31Z
+verified_at=2026-07-22T15:49:37Z
 error<<EOF
 [stdin]:25
       throw new Error(`Homepage typography failure at ${width}px: ${JSON.stringify(teaser)}`);
