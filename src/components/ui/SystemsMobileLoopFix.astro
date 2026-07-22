@@ -14,7 +14,7 @@
       padding-right: 0 !important;
       overscroll-behavior-inline: contain;
       scroll-padding-inline: 18px;
-      touch-action: pan-x;
+      touch-action: pan-x pan-y;
     }
 
     .systems-selector__mobile-hint {
@@ -33,7 +33,7 @@
       grid-template-columns: none !important;
       gap: 14px !important;
       overflow: visible !important;
-      touch-action: pan-y;
+      touch-action: pan-y pinch-zoom;
     }
 
     .systems-detail__media,
@@ -142,11 +142,15 @@
       selector.insertBefore(leftFragment, originals[0]);
       selector.appendChild(rightFragment);
 
+      function getActiveOriginal() {
+        return originals.find(function (button) {
+          return button.classList.contains('is-active');
+        }) || originals[0];
+      }
+
       function syncCloneStates() {
-        var activeId = '';
-        originals.forEach(function (button) {
-          if (button.classList.contains('is-active')) activeId = button.dataset.systemTab || '';
-        });
+        var active = getActiveOriginal();
+        var activeId = active ? active.dataset.systemTab || '' : '';
         selector.querySelectorAll('[data-loop-clone]').forEach(function (clone) {
           clone.classList.toggle('is-active', clone.dataset.systemTab === activeId);
         });
@@ -162,8 +166,27 @@
       var span = 0;
       var leftBoundary = 0;
       var rightBoundary = 0;
+      var horizontalIntentUntil = 0;
+      var gestureStartX = 0;
+      var gestureStartY = 0;
+      var lastViewportWidth = window.innerWidth;
 
-      function measureAndCenter() {
+      function centerButton(button) {
+        if (!button) return;
+        resetting = true;
+        var snap = selector.style.scrollSnapType;
+        var behavior = selector.style.scrollBehavior;
+        selector.style.scrollSnapType = 'none';
+        selector.style.scrollBehavior = 'auto';
+        selector.scrollLeft = button.offsetLeft - (selector.clientWidth - button.offsetWidth) / 2;
+        window.requestAnimationFrame(function () {
+          selector.style.scrollSnapType = snap;
+          selector.style.scrollBehavior = behavior;
+          resetting = false;
+        });
+      }
+
+      function measureAndPreserveActive() {
         var firstOriginal = originals[0];
         var firstRight = rightClones[0];
         var lastLeft = leftClones[leftClones.length - 1];
@@ -173,8 +196,7 @@
         span = firstRight.offsetLeft - firstOriginal.offsetLeft;
         leftBoundary = (lastLeft.offsetLeft + lastLeft.offsetWidth + firstOriginal.offsetLeft) / 2;
         rightBoundary = (lastOriginal.offsetLeft + lastOriginal.offsetWidth + firstRight.offsetLeft) / 2;
-
-        selector.scrollLeft = firstOriginal.offsetLeft - (selector.clientWidth - firstOriginal.offsetWidth) / 2;
+        centerButton(getActiveOriginal());
       }
 
       function jumpBy(delta) {
@@ -192,52 +214,73 @@
         });
       }
 
-      selector.addEventListener('scroll', function () {
-        if (resetting || !span) return;
-        var center = selector.scrollLeft + selector.clientWidth / 2;
-        if (center < leftBoundary) jumpBy(span);
-        if (center > rightBoundary) jumpBy(-span);
+      selector.addEventListener('touchstart', function (event) {
+        if (event.touches.length !== 1) return;
+        gestureStartX = event.touches[0].clientX;
+        gestureStartY = event.touches[0].clientY;
+        horizontalIntentUntil = 0;
       }, { passive: true });
 
+      selector.addEventListener('touchmove', function (event) {
+        if (event.touches.length !== 1) return;
+        var dx = event.touches[0].clientX - gestureStartX;
+        var dy = event.touches[0].clientY - gestureStartY;
+        if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.25) {
+          horizontalIntentUntil = Date.now() + 700;
+        }
+      }, { passive: true });
+
+      selector.addEventListener('touchend', function () {
+        if (horizontalIntentUntil) horizontalIntentUntil = Date.now() + 350;
+      }, { passive: true });
+
+      selector.addEventListener('wheel', function (event) {
+        if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+          horizontalIntentUntil = Date.now() + 500;
+        }
+      }, { passive: true });
+
+      selector.addEventListener('scroll', function (event) {
+        var center = selector.scrollLeft + selector.clientWidth / 2;
+
+        if (!resetting && span) {
+          if (center < leftBoundary) jumpBy(span);
+          if (center > rightBoundary) jumpBy(-span);
+        }
+
+        if (resetting || Date.now() > horizontalIntentUntil) {
+          event.stopImmediatePropagation();
+        }
+      }, { capture: true, passive: true });
+
+      /* The original component also supports swiping the large detail card.
+         On a phone this conflicts with normal vertical page scrolling, so the
+         detail card is deliberately vertical-only. Systems are changed through
+         the selector above, where horizontal intent can be measured reliably. */
       var detail = section.querySelector('.systems-detail');
       if (detail) {
-        var gestureStartX = 0;
-        var gestureStartY = 0;
-        var verticalGesture = false;
-
-        detail.addEventListener('touchstart', function (event) {
-          if (event.touches.length !== 1) return;
-          gestureStartX = event.touches[0].clientX;
-          gestureStartY = event.touches[0].clientY;
-          verticalGesture = false;
-        }, { capture: true, passive: true });
-
-        detail.addEventListener('touchmove', function (event) {
-          if (event.touches.length !== 1) return;
-          var dx = event.touches[0].clientX - gestureStartX;
-          var dy = event.touches[0].clientY - gestureStartY;
-          if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx) * 1.1) {
-            verticalGesture = true;
+        ['touchmove', 'touchend', 'touchcancel'].forEach(function (type) {
+          detail.addEventListener(type, function (event) {
             event.stopImmediatePropagation();
-          }
-        }, { capture: true, passive: true });
-
-        detail.addEventListener('touchend', function (event) {
-          if (!verticalGesture) return;
-          verticalGesture = false;
-          event.stopImmediatePropagation();
-        }, { capture: true, passive: true });
-
-        detail.addEventListener('touchcancel', function () {
-          verticalGesture = false;
-        }, { capture: true, passive: true });
+          }, { capture: true, passive: true });
+        });
       }
 
-      window.requestAnimationFrame(measureAndCenter);
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureAndCenter);
+      window.requestAnimationFrame(measureAndPreserveActive);
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(measureAndPreserveActive);
+      }
+
       window.addEventListener('resize', function () {
+        var nextWidth = window.innerWidth;
+
+        /* Mobile browsers fire resize while their address bar opens and closes.
+           That changes only viewport height and must never move the carousel. */
+        if (Math.abs(nextWidth - lastViewportWidth) < 3) return;
+        lastViewportWidth = nextWidth;
+
         window.clearTimeout(selector._systemsLoopResizeTimer);
-        selector._systemsLoopResizeTimer = window.setTimeout(measureAndCenter, 120);
+        selector._systemsLoopResizeTimer = window.setTimeout(measureAndPreserveActive, 120);
       }, { passive: true });
     }
 
