@@ -1,0 +1,195 @@
+name: Verify roof V7 in Chromium
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-roof-v7-browser.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  browser-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Chromium verifier
+        run: |
+          python -m pip install --quiet playwright pillow
+          python -m playwright install --with-deps chromium
+
+      - name: Render and compare all three roof modes
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          import io
+          import os
+          from pathlib import Path
+
+          from PIL import Image, ImageChops, ImageStat
+          from playwright.sync_api import sync_playwright
+
+          url = f"https://raluma.com.ru/pergolas/?roof-browser-check={os.environ['SOURCE_SHA'][:12]}"
+          states = ('closed', 'shade', 'open')
+          report: list[str] = [
+              'status=running',
+              f'url={url}',
+              f'source_commit={os.environ["SOURCE_SHA"]}',
+          ]
+          console_errors: list[str] = []
+          failed_requests: list[str] = []
+          screenshots: dict[str, Image.Image] = {}
+
+          with sync_playwright() as playwright:
+              browser = playwright.chromium.launch()
+              page = browser.new_page(viewport={'width': 1440, 'height': 1000}, device_scale_factor=1)
+
+              page.on('console', lambda message: console_errors.append(message.text) if message.type == 'error' else None)
+              page.on('requestfailed', lambda request: failed_requests.append(f'{request.url} :: {request.failure}'))
+
+              response = page.goto(url, wait_until='domcontentloaded', timeout=60_000)
+              if response is None or not response.ok:
+                  raise RuntimeError(f'page response is not OK: {response.status if response else "none"}')
+
+              section = page.locator('[data-roof-section]')
+              section.wait_for(state='attached', timeout=30_000)
+              page.wait_for_function(
+                  "document.querySelector('[data-roof-section]')?.dataset.roofV7Ready === 'true'",
+                  timeout=30_000,
+              )
+              section.scroll_into_view_if_needed()
+
+              stack = page.locator('.pergola-roof__photos-v7')
+              stack.wait_for(state='visible', timeout=15_000)
+
+              for state in states:
+                  tab = page.locator(f'[data-roof-tab="{state}"]')
+                  tab.click()
+                  page.wait_for_function(
+                      "state => document.querySelector('[data-roof-visual]')?.getAttribute('data-roof-visual') === state",
+                      arg=state,
+                      timeout=10_000,
+                  )
+                  page.wait_for_timeout(900)
+
+                  active = page.locator(f'[data-roof-photo-v7="{state}"].is-active')
+                  if active.count() != 1:
+                      raise RuntimeError(f'{state}: expected one active photo, got {active.count()}')
+
+                  details = active.evaluate(
+                      """image => ({
+                          naturalWidth: image.naturalWidth,
+                          naturalHeight: image.naturalHeight,
+                          complete: image.complete,
+                          opacity: getComputedStyle(image).opacity,
+                          display: getComputedStyle(image).display,
+                          visibility: getComputedStyle(image).visibility,
+                          currentSrc: image.currentSrc
+                      })"""
+                  )
+                  if not details['complete'] or details['naturalWidth'] < 480 or details['naturalHeight'] < 300:
+                      raise RuntimeError(f'{state}: image not decoded: {details}')
+                  if float(details['opacity']) < 0.99 or details['display'] == 'none' or details['visibility'] != 'visible':
+                      raise RuntimeError(f'{state}: active image is not visible: {details}')
+
+                  screenshot_bytes = stack.screenshot(type='png')
+                  image = Image.open(io.BytesIO(screenshot_bytes)).convert('RGB')
+                  gray = image.convert('L')
+                  low, high = gray.getextrema()
+                  stats = ImageStat.Stat(gray)
+                  if high - low < 18 or stats.stddev[0] < 5 or stats.mean[0] < 8:
+                      raise RuntimeError(
+                          f'{state}: rendered panel is blank/dark '
+                          f'(range={low}..{high}, mean={stats.mean[0]:.2f}, stddev={stats.stddev[0]:.2f})'
+                      )
+
+                  screenshots[state] = image
+                  report.append(
+                      f'{state}=visible currentSrc={details["currentSrc"]} '
+                      f'natural={details["naturalWidth"]}x{details["naturalHeight"]} '
+                      f'rendered={image.width}x{image.height} range={low}..{high} '
+                      f'mean={stats.mean[0]:.2f} stddev={stats.stddev[0]:.2f}'
+                  )
+
+              for left_index, left_state in enumerate(states):
+                  for right_state in states[left_index + 1:]:
+                      left = screenshots[left_state]
+                      right = screenshots[right_state]
+                      if left.size != right.size:
+                          right = right.resize(left.size)
+                      difference = ImageChops.difference(left, right)
+                      rms = sum(ImageStat.Stat(difference).rms) / 3
+                      report.append(f'render_difference_{left_state}_{right_state}_rms={rms:.2f}')
+                      if rms < 10:
+                          raise RuntimeError(f'{left_state} and {right_state} render too similarly: rms={rms:.2f}')
+
+              # Mobile layout: verify the same decoded images remain visible and fit inside the viewport.
+              page.set_viewport_size({'width': 390, 'height': 844})
+              page.reload(wait_until='domcontentloaded', timeout=60_000)
+              page.wait_for_function(
+                  "document.querySelector('[data-roof-section]')?.dataset.roofV7Ready === 'true'",
+                  timeout=30_000,
+              )
+              mobile_stack = page.locator('.pergola-roof__photos-v7')
+              mobile_stack.scroll_into_view_if_needed()
+              mobile_box = mobile_stack.bounding_box()
+              if mobile_box is None or mobile_box['width'] < 320 or mobile_box['width'] > 390:
+                  raise RuntimeError(f'mobile roof panel has invalid geometry: {mobile_box}')
+
+              for state in states:
+                  page.locator(f'[data-roof-tab="{state}"]').click()
+                  page.wait_for_timeout(750)
+                  active = page.locator(f'[data-roof-photo-v7="{state}"].is-active')
+                  opacity = float(active.evaluate('image => getComputedStyle(image).opacity'))
+                  natural_width = int(active.evaluate('image => image.naturalWidth'))
+                  if opacity < 0.99 or natural_width < 480:
+                      raise RuntimeError(f'mobile {state}: opacity={opacity}, naturalWidth={natural_width}')
+              report.append(f'mobile_geometry=visible width={mobile_box["width"]:.1f} height={mobile_box["height"]:.1f}')
+
+              browser.close()
+
+          relevant_console_errors = [
+              error for error in console_errors
+              if 'roof' in error.lower() or 'image' in error.lower()
+          ]
+          relevant_failed_requests = [
+              failure for failure in failed_requests
+              if 'roof-' in failure.lower()
+          ]
+          if relevant_console_errors:
+              raise RuntimeError(f'roof-related console errors: {relevant_console_errors}')
+          if relevant_failed_requests:
+              raise RuntimeError(f'roof image requests failed: {relevant_failed_requests}')
+
+          report[0] = 'status=success'
+          report.append('console_roof_errors=0')
+          report.append('failed_roof_requests=0')
+          output = Path('.verification/roof-v7-browser.txt')
+          output.parent.mkdir(parents=True, exist_ok=True)
+          output.write_text('\n'.join(report) + '\n', encoding='utf-8')
+          print(output.read_text(encoding='utf-8'))
+          PY
+
+      - name: Record browser verification
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .verification/roof-v7-browser.txt
+          git commit -m "chore: record roof v7 chromium verification" || exit 0
+          git pull --rebase origin main
+          git push origin HEAD:main
