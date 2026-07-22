@@ -1,0 +1,96 @@
+name: Capture production roof V7 once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/probe-production-roof-v7-once.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Capture current production state
+        run: |
+          python -m pip install --quiet pillow
+          set +e
+          html="$(curl -fsSL --connect-timeout 15 --max-time 30 'https://raluma.com.ru/pergolas/' || true)"
+          printf '%s' "$html" > /tmp/pergolas.html
+          closed_status="$(curl -sSL --connect-timeout 15 --max-time 30 -o /tmp/roof-closed.jpg -w '%{http_code}' 'https://raluma.com.ru/images/pergolas/roof-closed.jpg?v=7' || true)"
+          half_status="$(curl -sSL --connect-timeout 15 --max-time 30 -o /tmp/roof-half-open.jpg -w '%{http_code}' 'https://raluma.com.ru/images/pergolas/roof-half-open.jpg?v=7' || true)"
+          open_status="$(curl -sSL --connect-timeout 15 --max-time 30 -o /tmp/roof-open.jpg -w '%{http_code}' 'https://raluma.com.ru/images/pergolas/roof-open.jpg?v=7' || true)"
+
+          mkdir -p .verification
+          {
+            echo "captured_at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo "html_bytes=${#html}"
+            for pattern in \
+              'data-roof-real-photos="v7"' \
+              'data-roof-photo-v7' \
+              'roof-closed.jpg?v=7' \
+              'roof-half-open.jpg?v=7' \
+              'roof-open.jpg?v=7' \
+              'initRoofInteraction();' \
+              'PergolaRoofPhotosV7'; do
+              if grep -Fq "$pattern" /tmp/pergolas.html; then
+                echo "$pattern=yes"
+              else
+                echo "$pattern=no"
+              fi
+            done
+            echo "closed_status=$closed_status"
+            echo "half_status=$half_status"
+            echo "open_status=$open_status"
+            echo
+            python - <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageChops, ImageStat
+
+          paths = [Path('/tmp/roof-closed.jpg'), Path('/tmp/roof-half-open.jpg'), Path('/tmp/roof-open.jpg')]
+          images = []
+          for path in paths:
+              try:
+                  with Image.open(path) as source:
+                      source.load()
+                      image = source.convert('RGB')
+                  gray = image.convert('L')
+                  stats = ImageStat.Stat(gray)
+                  low, high = gray.getextrema()
+                  print(f'{path.name}: decoded=yes size={image.size} range={low}..{high} mean={stats.mean[0]:.2f} stddev={stats.stddev[0]:.2f}')
+                  images.append(image.resize((480, 312)))
+              except Exception as exc:
+                  print(f'{path.name}: decoded=no error={type(exc).__name__}: {exc}')
+
+          if len(images) == 3:
+              for left in range(3):
+                  for right in range(left + 1, 3):
+                      diff = ImageChops.difference(images[left], images[right])
+                      rms = sum(ImageStat.Stat(diff).rms) / 3
+                      print(f'difference_{left + 1}_{right + 1}_rms={rms:.2f}')
+          PY
+          } > .verification/production-roof-v7-now.txt
+          cat .verification/production-roof-v7-now.txt
+
+      - name: Record immediate probe
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .verification/production-roof-v7-now.txt
+          git commit -m "chore: record immediate production roof v7 state" || exit 0
+          git pull --rebase origin main
+          git push origin HEAD:main
