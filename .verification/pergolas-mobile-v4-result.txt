@@ -1,15 +1,15 @@
 status=failure
-source_commit=f7aedc6861ffd02b81e7002608f55e1642e57414
+source_commit=c666c34fe7d503f36b5490828befa649cde94064
 verified_widths=320,390,430
 typography_scale=unified-v4
 benefit_cards=failure
-verified_at=2026-07-22T21:31:48Z
+verified_at=2026-07-22T23:03:47Z
 error<<EOF
 [stdin]:69
       throw new Error(`Mobile visual failure at ${width}px: ${JSON.stringify(result)}`);
             ^
 
-Error: Mobile visual failure at 320px: {"pageOverflow":false,"h1":["26.00"],"h2":["24.00","22.00","23.00","20.00","18.50"],"h3":["20.00"],"leads":["16.00"],"bodies":["16.00"],"headingFailures":[],"benefitFailures":[]}
+Error: Mobile visual failure at 320px: {"pageOverflow":false,"h1":["26.00"],"h2":["24.00","22.00","28.00","23.00","20.00","18.50"],"h3":["20.00"],"leads":["16.00"],"bodies":["16.00"],"headingFailures":[{"text":"Удобное управление ламелями","nowrap":false,"overflow":false}],"benefitFailures":[]}
     at [stdin]:69:13
 
 Node.js v22.23.1
