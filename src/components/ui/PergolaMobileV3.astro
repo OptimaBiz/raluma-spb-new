@@ -225,12 +225,8 @@
         var original = el.dataset.desktopTitle;
         var mobileTitle = replacements[original] || original;
 
-        if (original === 'Биоклиматические перголы под ключ' && el.matches('.pergolas-teaser__title')) {
-          mobileTitle = 'Перголы Raluma';
-        }
-        if (original === 'Биоклиматические перголы под ключ' && el.matches('.pergola-hero__title')) {
-          mobileTitle = 'Перголы под ключ';
-        }
+        if (el.matches('.pergolas-teaser__title')) mobileTitle = 'Перголы Raluma';
+        if (el.matches('.pergola-hero__title')) mobileTitle = 'Перголы под ключ';
 
         el.textContent = mobile ? mobileTitle : original;
       });
