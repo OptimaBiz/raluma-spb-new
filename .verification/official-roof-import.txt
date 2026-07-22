@@ -1,0 +1,10 @@
+status=success
+source_page=https://raluma.ru/pergolas
+source_record=rec894214390
+mapping=open:01,half-open:02,closed:03
+roof-open.jpg=https://static.tildacdn.com/tild6434-3131-4462-a533-623964346565/photo.jpg | size=518x336 bytes=59422 sha256=217fe9d23dffff97dcd6a4763f90f064aac6a970a0b4c127b83d2d5b7f4f5c42 mean=143.14 stddev=95.09
+roof-half-open.jpg=https://static.tildacdn.com/tild3536-6335-4261-a530-653466623464/photo.jpg | size=520x340 bytes=39147 sha256=3f2a78e590ad2f029074b36433c8cce021529e94828b8057907f5fada37da417 mean=98.00 stddev=96.36
+roof-closed.jpg=https://static.tildacdn.com/tild3435-6366-4536-a634-636362326534/photo.jpg | size=518x338 bytes=31082 sha256=43a58a635c0eb9a20e7c5552f8f770be83a99a6ea60017dc78355dd0b76a5fd4 mean=82.74 stddev=74.80
+difference_1_2_rms=103.42
+difference_1_3_rms=108.27
+difference_2_3_rms=75.55
