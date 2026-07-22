@@ -1,16 +1,16 @@
 status=failure
-source_commit=bd256fa3c4365b0d8d23a9405940bbaac671f52e
+source_commit=c5f8dcebbe2b1c94b0209eadffc972ca75467447
 verified_widths=320,390,430
 typography_scale=unified-v4
 benefit_cards=failure
-verified_at=2026-07-22T15:49:37Z
+verified_at=2026-07-22T15:51:44Z
 error<<EOF
-[stdin]:25
-      throw new Error(`Homepage typography failure at ${width}px: ${JSON.stringify(teaser)}`);
+[stdin]:69
+      throw new Error(`Mobile visual failure at ${width}px: ${JSON.stringify(result)}`);
             ^
 
-Error: Homepage typography failure at 320px: {"fontSize":20,"nowrap":true,"overflow":true}
-    at [stdin]:25:13
+Error: Mobile visual failure at 320px: {"pageOverflow":false,"h1":["20.00"],"h2":["18.00"],"h3":["16.00"],"leads":["15.00"],"bodies":["15.00"],"headingFailures":[{"text":"Естественная вентиляция","nowrap":true,"overflow":true},{"text":"Узнайте стоимость под ваш объект","nowrap":true,"overflow":true}],"benefitFailures":[]}
+    at [stdin]:69:13
 
 Node.js v22.23.1
 EOF
