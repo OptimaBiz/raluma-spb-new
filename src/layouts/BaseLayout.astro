@@ -5,6 +5,7 @@ import SchemaOrg from '../components/seo/SchemaOrg.astro';
 import SiteHeader from '../components/ui/SiteHeader.astro';
 import FloatingUi from '../components/ui/FloatingUi.astro';
 import MobileBottomCallBar from '../components/ui/MobileBottomCallBar.astro';
+import PergolaMobileV3 from '../components/ui/PergolaMobileV3.astro';
 
 interface Props {
   title?: string;
@@ -102,6 +103,7 @@ const isHomePage = Astro.url.pathname === '/';
     <slot />
     <MobileBottomCallBar />
     <FloatingUi />
+    <PergolaMobileV3 />
 
     <!-- Scroll reveal: one shift, once per element, skipped entirely when the
          visitor asks for reduced motion. -->
