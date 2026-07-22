@@ -1,0 +1,76 @@
+status=failure
+source_commit=c9e5fc829bf3aba6ab45802ef2431642bd430e6d
+pip_status=0
+split_status=1
+npm_status=0
+build_status=0
+marker_status=1
+pixel_status=1
+verified_at=2026-07-22T21:38:58Z
+
+--- diagnostic log tail ---
+roof-state generation failed: could not create decoder object
+Traceback (most recent call last):
+  File "/home/runner/work/raluma-spb-new/raluma-spb-new/scripts/split_roof_states.py", line 72, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/runner/work/raluma-spb-new/raluma-spb-new/scripts/split_roof_states.py", line 47, in main
+    with Image.open(SOURCE) as source:
+         ^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/PIL/Image.py", line 3689, in open
+    im = _open_core(fp, filename, prefix, formats)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/PIL/Image.py", line 3677, in _open_core
+    im = factory(fp, filename)
+         ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/PIL/ImageFile.py", line 150, in __init__
+    self._open()
+  File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/PIL/WebPImagePlugin.py", line 54, in _open
+    self._decoder = _webp.WebPAnimDecoder(s)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: could not create decoder object
+
+added 256 packages, and audited 257 packages in 6s
+
+138 packages are looking for funding
+  run `npm fund` for details
+
+7 vulnerabilities (1 low, 6 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+> raluma-spb-new@1.0.0 build
+> astro build
+
+[2m21:38:56[22m [34m[types][39m Generated [2m151ms[22m
+[2m21:38:56[22m [34m[build][39m output: [34m"static"[39m
+[2m21:38:56[22m [34m[build][39m mode: [34m"static"[39m
+[2m21:38:56[22m [34m[build][39m directory: [34m/home/runner/work/raluma-spb-new/raluma-spb-new/dist/[39m
+[2m21:38:56[22m [34m[build][39m Collecting build info...
+[2m21:38:56[22m [34m[build][39m [32m✓ Completed in 166ms.[39m
+[2m21:38:56[22m [34m[build][39m Building static entrypoints...
+[2m21:38:58[22m [34m[vite][39m [32m✓ built in 1.60s[39m
+[2m21:38:58[22m [34m[vite][39m [32m✓ built in 123ms[39m
+[2m21:38:58[22m [34m[build][39m Rearranging server assets...
+
+[42m[30m generating static routes [39m[49m
+[2m21:38:58[22m   [34m├─[39m [2m/pergolas/index.html[22m [2m(+16ms)[22m 
+[2m21:38:58[22m   [34m├─[39m [2m/thank-you/index.html[22m [2m(+4ms)[22m 
+[2m21:38:58[22m   [34m├─[39m [2m/index.html[22m [2m(+11ms)[22m 
+[2m21:38:58[22m [32m✓ Completed in 42ms.
+[39m
+[2m21:38:58[22m [34m[build][39m [32m✓ Completed in 1.82s.[39m
+[2m21:38:58[22m [34m[build][39m 3 page(s) built in [1m1.99s[22m
+[2m21:38:58[22m [34m[build][39m [1mComplete![22m
+Traceback (most recent call last):
+  File "<stdin>", line 11, in <module>
+  File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/PIL/Image.py", line 3639, in open
+    fp = builtins.open(filename, "rb")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'public/images/pergolas/roof-closed.webp'
