@@ -37,9 +37,11 @@ jobs:
             html="$(curl -fsSL --connect-timeout 15 --max-time 30 "$url" || true)"
             asset_status="$(curl -sSIL --connect-timeout 15 --max-time 30 -o /dev/null -w '%{http_code}' "$asset" || true)"
 
-            if grep -q "type-scale-v4" <<<"$home_html" \
-              && grep -q "type-scale-v4" <<<"$html" \
-              && grep -q "Цвета, стекло и комфорт" <<<"$html" \
+            if grep -q "main-type-v5" <<<"$home_html" \
+              && grep -q "main-type-v5" <<<"$html" \
+              && grep -q "Выберите состояние крыши" <<<"$html" \
+              && grep -q "pergola-glazing__cta-row" <<<"$html" \
+              && grep -q "verticalGesture" <<<"$home_html" \
               && [ "$asset_status" = "200" ]; then
               echo "Production deployment verified: $home_url and $url"
               mkdir -p .deployment
@@ -48,7 +50,9 @@ jobs:
                 echo "home_url=$home_url"
                 echo "url=$url"
                 echo "asset=$asset"
-                echo "mobile_layout=type-scale-v4"
+                echo "mobile_layout=main-type-v5"
+                echo "roof_controls=enhanced"
+                echo "systems_vertical_scroll=protected"
                 echo "source_commit=${GITHUB_SHA}"
                 echo "verified_at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
               } > .deployment/last-success.txt
