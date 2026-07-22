@@ -1,9 +1,9 @@
 status=failure
-source_commit=66d16f2f959e88d1937a4c50e652cf7a57e163e7
+source_commit=f7aedc6861ffd02b81e7002608f55e1642e57414
 verified_widths=320,390,430
 typography_scale=unified-v4
 benefit_cards=failure
-verified_at=2026-07-22T18:14:54Z
+verified_at=2026-07-22T21:31:48Z
 error<<EOF
 [stdin]:69
       throw new Error(`Mobile visual failure at ${width}px: ${JSON.stringify(result)}`);
