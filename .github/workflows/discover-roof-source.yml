@@ -1,0 +1,134 @@
+name: Discover official roof-state sources
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/discover-roof-source.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Extract image URLs from official Tilda state block
+        run: |
+          python -m pip install --quiet beautifulsoup4 requests pillow
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import html as html_module
+          import io
+          import re
+          from pathlib import Path
+          from urllib.parse import urljoin
+
+          import requests
+          from bs4 import BeautifulSoup
+          from PIL import Image, ImageStat
+
+          page_url = 'https://raluma.ru/pergolas'
+          response = requests.get(page_url, timeout=45)
+          response.raise_for_status()
+          markup = response.text
+          soup = BeautifulSoup(markup, 'html.parser')
+
+          target = soup.find(string=lambda value: value and 'Три состояния крыши' in value)
+          if target is None:
+              raise SystemExit('Could not find the roof-state heading on the official page')
+
+          record = target.find_parent(id=re.compile(r'^rec\d+$'))
+          if record is None:
+              record = target.find_parent(class_=re.compile(r't-rec'))
+          if record is None:
+              raise SystemExit('Could not resolve the Tilda record containing the roof states')
+
+          record_html = html_module.unescape(str(record))
+          candidates: list[str] = []
+
+          def add(value: str) -> None:
+              value = value.strip().strip('"\'')
+              value = value.replace('\\/', '/')
+              value = value.rstrip(');,')
+              if value.startswith('//'):
+                  value = 'https:' + value
+              if value.startswith('/'):
+                  value = urljoin(page_url, value)
+              if value.startswith('http') and value not in candidates:
+                  candidates.append(value)
+
+          for tag in record.find_all(True):
+              for attr, raw in tag.attrs.items():
+                  values = raw if isinstance(raw, list) else [raw]
+                  for value in values:
+                      if not isinstance(value, str):
+                          continue
+                      for match in re.findall(r'https?://[^\s"\'<>]+', html_module.unescape(value)):
+                          add(match)
+
+          for match in re.findall(r'https?://[^\s"\'<>]+', record_html):
+              add(match)
+
+          image_candidates = [
+              url for url in candidates
+              if any(token in url.lower() for token in ('.jpg', '.jpeg', '.png', '.webp', 'tildacdn'))
+          ]
+
+          output = Path('.verification/official-roof-sources.txt')
+          output.parent.mkdir(parents=True, exist_ok=True)
+          lines = [
+              'status=success',
+              f'page={page_url}',
+              f'record_id={record.get("id", "unknown")}',
+              f'candidate_count={len(image_candidates)}',
+              '',
+          ]
+
+          for index, url in enumerate(image_candidates, 1):
+              line = f'{index:02d}. {url}'
+              try:
+                  asset = requests.get(url, timeout=45)
+                  asset.raise_for_status()
+                  digest = hashlib.sha256(asset.content).hexdigest()[:16]
+                  with Image.open(io.BytesIO(asset.content)) as source:
+                      source.load()
+                      image = source.convert('RGB')
+                  gray = image.convert('L')
+                  stat = ImageStat.Stat(gray)
+                  line += (
+                      f' | status={asset.status_code} bytes={len(asset.content)} '
+                      f'size={image.width}x{image.height} sha256={digest} '
+                      f'mean={stat.mean[0]:.2f} stddev={stat.stddev[0]:.2f}'
+                  )
+              except Exception as exc:
+                  line += f' | error={type(exc).__name__}: {exc}'
+              lines.append(line)
+
+          lines.extend(['', '--- record text ---', record.get_text(' ', strip=True)])
+          output.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+          print(output.read_text(encoding='utf-8'))
+          PY
+
+      - name: Record discovered sources
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .verification/official-roof-sources.txt
+          git commit -m "chore: record official roof-state sources" || exit 0
+          git pull --rebase origin main
+          git push origin HEAD:main
