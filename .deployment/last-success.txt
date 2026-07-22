@@ -1,5 +1,5 @@
 status=success
 url=https://raluma.com.ru/pergolas/
 asset=https://raluma.com.ru/images/pergolas/project-hero.webp
-source_commit=6e597740ce95866f16b2bbfa0ba67dc489b69616
-verified_at=2026-07-22T14:10:53Z
+source_commit=aeb18f21a9c53427815e71419dc874eb6351b624
+verified_at=2026-07-22T14:11:48Z
