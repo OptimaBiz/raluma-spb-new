@@ -51,6 +51,7 @@ const images = [
         <button
           class={i === 0 ? "gs__thumb gs__thumb--active" : "gs__thumb"}
           data-i={i}
+          data-full-src={img.src}
           aria-label={img.alt}
         >
           <img data-thumb-src={img.src.replace(/\.(webp|jpe?g|png)$/i, '-thumb.webp')} alt={img.alt} loading="lazy" decoding="async" width="150" height="110" />
@@ -426,7 +427,11 @@ const images = [
   var lbNext   = document.getElementById('lbNext');
   var lbCount  = document.getElementById('lbCount');
 
-  var srcs  = thumbs.map(function(b){ return b.querySelector('img').getAttribute('src'); });
+  // Thumbnails are attached lazily, so their <img> has no src at init time.
+  // Keep the full-size URL on the button and never derive it from the thumb.
+  var srcs  = thumbs.map(function(b){
+    return b.dataset.fullSrc || b.querySelector('img').dataset.thumbSrc || b.querySelector('img').src;
+  });
   var alts  = thumbs.map(function(b){ return b.querySelector('img').getAttribute('alt'); });
   var total = srcs.length;
   var cur   = 0;
