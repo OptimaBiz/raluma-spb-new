@@ -544,26 +544,14 @@ const schema = {
   <FooterSection />
 
   <script>
-    const roofSection = document.querySelector('[data-roof-section]');
-    if (roofSection) {
-      const visual = roofSection.querySelector('[data-roof-visual]');
-      const angle = roofSection.querySelector('[data-roof-angle]');
-      const tabs = Array.from(roofSection.querySelectorAll('[data-roof-tab]'));
-
-      tabs.forEach((tab) => {
-        tab.addEventListener('click', () => {
-          const state = tab.getAttribute('data-roof-tab') || 'closed';
-          tabs.forEach((candidate) => {
-            const active = candidate === tab;
-            candidate.classList.toggle('is-active', active);
-            candidate.setAttribute('aria-selected', String(active));
-          });
-          visual?.setAttribute('data-roof-visual', state);
-          if (angle) angle.textContent = tab.getAttribute('data-angle') || '';
-          window.safeReachGoal?.('pergolas_roof_state_select');
-        });
-      });
-    }
+    /* Roof state interaction is owned by PergolaRoofPhotosV7.astro. Keeping
+       analytics and form wiring here avoids two competing click handlers on
+       the same mobile controls. */
+    document.addEventListener('click', (event) => {
+      if (event.target instanceof Element && event.target.closest('[data-roof-tab]')) {
+        window.safeReachGoal?.('pergolas_roof_state_select');
+      }
+    });
 
     document.querySelectorAll('[data-pergola-goal]').forEach((link) => {
       link.addEventListener('click', () => {
