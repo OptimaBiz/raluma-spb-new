@@ -1,14 +1,17 @@
 status=failure
-source_commit=c666c34fe7d503f36b5490828befa649cde94064
+source_commit=299958d899fbd9630e9f042fd566c469d3b91b4c
 pip_status=0
 split_status=1
 npm_status=0
 build_status=0
 marker_status=1
 pixel_status=1
-verified_at=2026-07-22T23:03:20Z
+verified_at=2026-08-02T09:00:28Z
 
 --- diagnostic log tail ---
+
+[notice] A new release of pip is available: 26.1.2 -> 26.2
+[notice] To update, run: pip install --upgrade pip
 roof-state generation failed: could not create decoder object
 Traceback (most recent call last):
   File "/home/runner/work/raluma-spb-new/raluma-spb-new/scripts/split_roof_states.py", line 72, in <module>
@@ -30,12 +33,12 @@ Traceback (most recent call last):
                     ^^^^^^^^^^^^^^^^^^^^^^^^
 OSError: could not create decoder object
 
-added 256 packages, and audited 257 packages in 3s
+added 256 packages, and audited 257 packages in 5s
 
 138 packages are looking for funding
   run `npm fund` for details
 
-7 vulnerabilities (1 low, 6 high)
+8 vulnerabilities (1 low, 7 high)
 
 To address issues that do not require attention, run:
   npm audit fix
@@ -48,26 +51,26 @@ Run `npm audit` for details.
 > raluma-spb-new@1.0.0 build
 > astro build
 
-[2m23:03:19[22m [34m[types][39m Generated [2m101ms[22m
-[2m23:03:19[22m [34m[build][39m output: [34m"static"[39m
-[2m23:03:19[22m [34m[build][39m mode: [34m"static"[39m
-[2m23:03:19[22m [34m[build][39m directory: [34m/home/runner/work/raluma-spb-new/raluma-spb-new/dist/[39m
-[2m23:03:19[22m [34m[build][39m Collecting build info...
-[2m23:03:19[22m [34m[build][39m [32m✓ Completed in 111ms.[39m
-[2m23:03:19[22m [34m[build][39m Building static entrypoints...
-[2m23:03:20[22m [34m[vite][39m [32m✓ built in 988ms[39m
-[2m23:03:20[22m [34m[vite][39m [32m✓ built in 71ms[39m
-[2m23:03:20[22m [34m[build][39m Rearranging server assets...
+[2m09:00:26[22m [34m[types][39m Generated [2m131ms[22m
+[2m09:00:26[22m [34m[build][39m output: [34m"static"[39m
+[2m09:00:26[22m [34m[build][39m mode: [34m"static"[39m
+[2m09:00:26[22m [34m[build][39m directory: [34m/home/runner/work/raluma-spb-new/raluma-spb-new/dist/[39m
+[2m09:00:26[22m [34m[build][39m Collecting build info...
+[2m09:00:26[22m [34m[build][39m [32m✓ Completed in 145ms.[39m
+[2m09:00:26[22m [34m[build][39m Building static entrypoints...
+[2m09:00:27[22m [34m[vite][39m [32m✓ built in 1.51s[39m
+[2m09:00:27[22m [34m[vite][39m [32m✓ built in 119ms[39m
+[2m09:00:27[22m [34m[build][39m Rearranging server assets...
 
 [42m[30m generating static routes [39m[49m
-[2m23:03:20[22m   [34m├─[39m [2m/pergolas/index.html[22m [2m(+10ms)[22m 
-[2m23:03:20[22m   [34m├─[39m [2m/thank-you/index.html[22m [2m(+2ms)[22m 
-[2m23:03:20[22m   [34m├─[39m [2m/index.html[22m [2m(+5ms)[22m 
-[2m23:03:20[22m [32m✓ Completed in 25ms.
+[2m09:00:27[22m   [34m├─[39m [2m/pergolas/index.html[22m [2m(+15ms)[22m 
+[2m09:00:27[22m   [34m├─[39m [2m/thank-you/index.html[22m [2m(+3ms)[22m 
+[2m09:00:27[22m   [34m├─[39m [2m/index.html[22m [2m(+7ms)[22m 
+[2m09:00:27[22m [32m✓ Completed in 35ms.
 [39m
-[2m23:03:20[22m [34m[build][39m [32m✓ Completed in 1.16s.[39m
-[2m23:03:20[22m [34m[build][39m 3 page(s) built in [1m1.27s[22m
-[2m23:03:20[22m [34m[build][39m [1mComplete![22m
+[2m09:00:27[22m [34m[build][39m [32m✓ Completed in 1.72s.[39m
+[2m09:00:27[22m [34m[build][39m 3 page(s) built in [1m1.87s[22m
+[2m09:00:27[22m [34m[build][39m [1mComplete![22m
 Traceback (most recent call last):
   File "<stdin>", line 11, in <module>
   File "/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/PIL/Image.py", line 3639, in open
