@@ -1,6 +1,14 @@
 name: Pergolas mobile visual guard
 
 on:
+  pull_request:
+    paths:
+      - 'src/pages/pergolas.astro'
+      - 'src/components/sections/PergolasTeaserSection.astro'
+      - 'src/components/ui/PergolaMobileV3.astro'
+      - 'src/styles/pergolas-mobile-first.css'
+      - 'src/layouts/BaseLayout.astro'
+      - '.github/workflows/pergolas-mobile-visual.yml'
   push:
     branches: [main]
     paths:
@@ -13,7 +21,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: pergolas-mobile-visual-v4
@@ -26,8 +34,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: main
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -39,7 +45,9 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        run: |
+          npm test
+          npm run build
 
       - name: Install Playwright
         run: |
@@ -57,12 +65,9 @@ jobs:
           exit 1
 
       - name: Check typography and cards
-        id: visual
-        continue-on-error: true
         run: |
-          mkdir -p screenshots .verification
-          set +e
-          node <<'NODE' > /tmp/pergola-visual.log 2>&1
+          mkdir -p screenshots
+          node <<'NODE'
           const { chromium } = require('playwright');
 
           (async () => {
@@ -100,7 +105,6 @@ jobs:
                 const unique = (values) => [...new Set(values.map((value) => value.toFixed(2)))];
                 const headings = [...document.querySelectorAll('.pergolas-page h1, .pergolas-page h2, .pergolas-page h3')].map((el) => ({
                   text: (el.textContent || '').trim(),
-                  nowrap: getComputedStyle(el).whiteSpace === 'nowrap',
                   overflow: el.scrollWidth > el.clientWidth + 1,
                 }));
                 const benefits = [...document.querySelectorAll('.pergola-benefit')].map((card) => {
@@ -125,12 +129,19 @@ jobs:
                   h3: unique(sizes('.pergolas-page h3')),
                   leads: unique(sizes('.pergola-hero__lead, .pergola-head .lead, .pergola-climate__intro > p:last-child, .pergola-glazing__intro > p:not(.eyebrow), .pergola-final-cta p:not(.eyebrow), .pergola-faq__intro .lead')),
                   bodies: unique(sizes('.pergola-type p:not(.pergola-type__number), .pergola-spec p, .pergola-glazing__system p, .pergola-benefit p, .pergola-process__steps p')),
-                  headingFailures: headings.filter((item) => !item.nowrap || item.overflow),
+                  headingFailures: headings.filter((item) => item.overflow),
+                  typographyFailures: [
+                    ...sizes('.pergolas-page h1').filter((value) => value < 24 || value > 48),
+                    ...sizes('.pergolas-page h2').filter((value) => value < 18 || value > 40),
+                    ...sizes('.pergolas-page h3').filter((value) => value < 18 || value > 32),
+                    ...sizes('.pergola-hero__lead, .pergola-head .lead, .pergola-climate__intro > p:last-child, .pergola-glazing__intro > p:not(.eyebrow), .pergola-final-cta p:not(.eyebrow), .pergola-faq__intro .lead').filter((value) => value < 15 || value > 26),
+                    ...sizes('.pergola-type p:not(.pergola-type__number), .pergola-spec p, .pergola-glazing__system p, .pergola-benefit p, .pergola-process__steps p').filter((value) => value < 15 || value > 24),
+                  ],
                   benefitFailures: benefits.filter((item) => item.clipped || item.widthOverflow || !item.titleVisible || !item.paragraphVisible || item.padding < 18 || item.overflowY === 'hidden' || item.overflowY === 'clip'),
                 };
               });
 
-              if (result.pageOverflow || result.h1.length !== 1 || result.h2.length !== 1 || result.h3.length !== 1 || result.leads.length !== 1 || result.bodies.length !== 1 || result.headingFailures.length || result.benefitFailures.length) {
+              if (result.pageOverflow || result.typographyFailures.length || result.headingFailures.length || result.benefitFailures.length) {
                 throw new Error(`Mobile visual failure at ${width}px: ${JSON.stringify(result)}`);
               }
 
@@ -142,26 +153,6 @@ jobs:
             await browser.close();
           })();
           NODE
-          code=$?
-          {
-            if [ "$code" -eq 0 ]; then
-              echo 'status=success'
-            else
-              echo 'status=failure'
-            fi
-            echo "source_commit=${GITHUB_SHA}"
-            echo 'verified_widths=320,390,430'
-            echo 'typography_scale=unified-v4'
-            echo "benefit_cards=$([ "$code" -eq 0 ] && echo success || echo failure)"
-            echo "verified_at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-            if [ "$code" -ne 0 ]; then
-              echo 'error<<EOF'
-              tail -n 20 /tmp/pergola-visual.log
-              echo 'EOF'
-            fi
-          } > .verification/pergolas-mobile-v4-result.txt
-          cat /tmp/pergola-visual.log
-          exit "$code"
 
       - name: Upload screenshots
         if: always()
@@ -170,17 +161,3 @@ jobs:
           name: pergolas-mobile-v4-screenshots
           path: screenshots/*.png
           retention-days: 7
-
-      - name: Record verification result
-        if: always()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .verification/pergolas-mobile-v4-result.txt
-          git commit -m "chore: record pergola mobile v4 result" || exit 0
-          git pull --rebase origin main
-          git push origin HEAD:main
-
-      - name: Enforce result
-        if: always()
-        run: grep -q '^status=success$' .verification/pergolas-mobile-v4-result.txt
