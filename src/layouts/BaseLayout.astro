@@ -37,20 +37,6 @@ const isHomePage = Astro.url.pathname === '/';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#111111" />
 
-    <!-- Top.Mail.Ru counter / VK Ads pixel -->
-    <script is:inline type="text/javascript">
-      var _tmr = window._tmr || (window._tmr = []);
-      _tmr.push({id: "3805017", type: "pageView", start: (new Date()).getTime()});
-      (function (d, w, id) {
-        if (d.getElementById(id)) return;
-        var ts = d.createElement("script"); ts.type = "text/javascript"; ts.async = true; ts.id = id;
-        ts.src = "https://top-fwz1.mail.ru/js/code.js";
-        var f = function () {var s = d.getElementsByTagName("script")[0]; s.parentNode.insertBefore(ts, s);};
-        if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
-      })(document, window, "tmr-code");
-    </script>
-    <!-- /Top.Mail.Ru counter / VK Ads pixel -->
-
     <title>{title}</title>
     <meta name="description" content={description} />
 
@@ -103,27 +89,14 @@ const isHomePage = Astro.url.pathname === '/';
     </script>
     <!-- /Yandex.Metrika counter -->
 
-    <!-- Safe goal helper — always available before any inline scripts -->
-    <script is:inline>
-      window.safeReachGoal = function(id) {
-        try { if (typeof ym === 'function') ym(108496902, 'reachGoal', id); } catch(_) {}
-      };
-    </script>
+    <!-- VK Pixel page view and shared Yandex/VK conversion goal helper -->
+    <script is:inline src="/js/analytics.js"></script>
   </head>
   <body>
     <noscript>
       <div>
-        <img
-          src="https://top-fwz1.mail.ru/counter?id=3805017;js=na"
-          style="position:absolute; left:-9999px;"
-          alt=""
-        />
-      </div>
-    </noscript>
-
-    <noscript>
-      <div>
         <img src="https://mc.yandex.ru/watch/108496902" style="position:absolute; left:-9999px;" alt="" />
+        <img src="https://top-fwz1.mail.ru/counter?id=3805017;js=na" style="position:absolute; left:-9999px;" alt="" />
       </div>
     </noscript>
 
@@ -173,7 +146,7 @@ const isHomePage = Astro.url.pathname === '/';
         document.addEventListener('click', function(e) {
           var phoneLink = e.target.closest('a[href^="tel:"]');
           if (!phoneLink) return;
-          window.safeReachGoal(phoneLink.dataset.goal || 'phone_click');
+          if (phoneLink.dataset.goal) window.safeReachGoal(phoneLink.dataset.goal);
           window.safeReachGoal('phone_click');
         });
 
