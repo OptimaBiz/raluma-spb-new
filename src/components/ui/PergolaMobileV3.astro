@@ -27,7 +27,7 @@
     /* Headings remain on one line, but are fitted to the real available width by JS. */
     .pergolas-teaser__title,
     .pergolas-page h1,
-    .pergolas-page h2,
+    .pergolas-page h2:not(.lead-form__title),
     .pergolas-page h3 {
       display: block !important;
       width: 100% !important;
@@ -50,7 +50,7 @@
       line-height: 1.03 !important;
     }
 
-    .pergolas-page h2 {
+    .pergolas-page h2:not(.lead-form__title) {
       font-size: var(--pg-section-title) !important;
       line-height: 1.08 !important;
     }
@@ -280,7 +280,7 @@
 
 <script is:inline>
   (function () {
-    var headingSelector = '.pergolas-teaser__title, .pergolas-page h1, .pergolas-page h2, .pergolas-page h3';
+    var headingSelector = '.pergolas-teaser__title, .pergolas-page h1, .pergolas-page h2:not(.lead-form__title), .pergolas-page h3';
     var replacements = {
       'Биоклиматические перголы под ключ': 'Биоклиматические перголы',
       'Два решения для разных сценариев': 'Два типа крыши',
