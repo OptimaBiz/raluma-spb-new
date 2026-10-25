@@ -1,0 +1,470 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LeadFormSection from './sections/LeadFormSection.astro';
+import FooterSection from './sections/FooterSection.astro';
+
+interface Props {
+  slug: 'terraces' | 'verandas' | 'gazebos';
+  title: string;
+  description: string;
+  eyebrow: string;
+  heading: string;
+  lead: string;
+  qualifier: string;
+  objectLabel: string;
+  heroImage: string;
+  detailImage: string;
+  detailAlt: string;
+  proofTitle: string;
+  proofPrice: string;
+  proofText: string;
+  scenarios: string[];
+}
+
+const {
+  slug,
+  title,
+  description,
+  eyebrow,
+  heading,
+  lead,
+  qualifier,
+  objectLabel,
+  heroImage,
+  detailImage,
+  detailAlt,
+  proofTitle,
+  proofPrice,
+  proofText,
+  scenarios,
+} = Astro.props;
+
+const phoneHref = 'tel:+78123307415';
+const phoneDisplay = '+7 (812) 330-74-15';
+const canonical = `https://raluma.com.ru/${slug}/`;
+const goalPrefix = slug;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: heading,
+  provider: {
+    '@type': 'Organization',
+    name: 'Raluma СПб',
+    telephone: '+7-812-330-74-15',
+  },
+  areaServed: ['Санкт-Петербург', 'Ленинградская область'],
+  serviceType: heading,
+  url: canonical,
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} ogImage={heroImage}>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
+
+  <main class="glazing-landing">
+    <section class="glazing-hero" aria-labelledby="glazing-hero-title">
+      <div class="glazing-hero__media" aria-hidden="true">
+        <img src={heroImage} alt="" width="1600" height="1100" loading="eager" decoding="async" fetchpriority="high" />
+      </div>
+
+      <div class="shell glazing-hero__inner">
+        <div class="glazing-hero__copy">
+          <p class="eyebrow glazing-hero__eyebrow">{eyebrow}</p>
+          <p class="glazing-hero__qualifier">{qualifier}</p>
+          <h1 class="glazing-hero__title" id="glazing-hero-title">{heading}</h1>
+          <p class="glazing-hero__lead">{lead}</p>
+
+          <div class="glazing-hero__actions">
+            <a class="btn glazing-hero__primary" href="#lead-form" data-landing-goal={`${goalPrefix}_hero_calculate`}>
+              Получить расчёт по фото
+            </a>
+            <a class="btn btn--on-deep" href={phoneHref} data-goal={`phone_click_${goalPrefix}_hero`}>
+              {phoneDisplay}
+            </a>
+          </div>
+
+          <dl class="glazing-hero__facts">
+            <div><dt>от 100 000 ₽</dt><dd>проекты по остеклению</dd></div>
+            <div><dt>12 лет</dt><dd>работаем с панорамными системами</dd></div>
+            <div><dt>4000+</dt><dd>реализованных проектов</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="glazing-fit seams" aria-labelledby="glazing-fit-title">
+      <div class="shell glazing-fit__layout">
+        <div class="glazing-fit__intro rise">
+          <p class="eyebrow eyebrow--edge">Проверьте задачу до заявки</p>
+          <h2 class="title" id="glazing-fit-title">Подойдёт, если {objectLabel} уже построена</h2>
+          <p class="lead">
+            Мы проектируем и монтируем безрамное остекление в готовые проёмы. Не строим
+            пристройки, фундаменты и кровлю — поэтому сразу отсеиваем неподходящие запросы.
+          </p>
+        </div>
+
+        <ul class="glazing-fit__list">
+          {scenarios.map((scenario, index) => (
+            <li class="rise">
+              <span class="figure">0{index + 1}</span>
+              <p>{scenario}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="glazing-proof" aria-labelledby="glazing-proof-title">
+      <div class="shell glazing-proof__layout">
+        <div class="glazing-proof__media rise">
+          <img src={detailImage} alt={detailAlt} width="1400" height="960" loading="lazy" decoding="async" />
+        </div>
+
+        <div class="glazing-proof__copy rise">
+          <p class="eyebrow eyebrow--edge">Реальный ориентир</p>
+          <h2 class="title" id="glazing-proof-title">{proofTitle}</h2>
+          <p class="glazing-proof__price figure">{proofPrice}</p>
+          <p class="lead">{proofText}</p>
+          <ul>
+            <li>Подберём систему под ширину проёмов и сценарий открывания</li>
+            <li>Учтём ветровую нагрузку, основание и узлы примыкания</li>
+            <li>Сохраним панорамный вид и аккуратную архитектуру объекта</li>
+          </ul>
+          <p class="glazing-proof__note">
+            Безрамная система защищает от ветра и осадков, но не заменяет тёплый контур дома.
+          </p>
+          <a class="btn btn--solid" href="#lead-form" data-landing-goal={`${goalPrefix}_proof_calculate`}>
+            Рассчитать мой объект
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <LeadFormSection
+      eyebrow="Предварительный расчёт"
+      title="Пришлите фото проёмов — оценим решение"
+      text="Ответим в течение рабочего дня: уточним размеры, предложим систему и дадим предварительный ориентир по стоимости."
+    />
+  </main>
+
+  <FooterSection />
+
+  <script define:vars={{ goalPrefix }}>
+    document.querySelectorAll('[data-landing-goal]').forEach((link) => {
+      link.addEventListener('click', () => {
+        const goal = link.getAttribute('data-landing-goal');
+        if (goal) window.safeReachGoal?.(goal);
+      });
+    });
+
+    const form = document.getElementById('lead-form-element');
+    form?.addEventListener('focusin', () => window.safeReachGoal?.(`${goalPrefix}_form_start`), { once: true });
+
+    const successPanel = document.getElementById('lead-form-success');
+    if (successPanel && typeof MutationObserver !== 'undefined') {
+      let sent = false;
+      const observer = new MutationObserver(() => {
+        if (sent || successPanel.hidden) return;
+        sent = true;
+        window.safeReachGoal?.(`${goalPrefix}_form_submit`);
+        observer.disconnect();
+      });
+      observer.observe(successPanel, { attributes: true, attributeFilter: ['hidden'] });
+    }
+  </script>
+</BaseLayout>
+
+<style>
+  .glazing-landing {
+    overflow: clip;
+    background: var(--c-light);
+  }
+
+  .glazing-hero {
+    position: relative;
+    min-height: calc(100svh - 64px);
+    overflow: hidden;
+    background: var(--c-deep);
+    color: var(--c-on-deep);
+  }
+
+  .glazing-hero__media,
+  .glazing-hero__media::after {
+    position: absolute;
+    inset: 0;
+  }
+
+  .glazing-hero__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .glazing-hero__media::after {
+    content: '';
+    background:
+      linear-gradient(90deg, rgba(14, 20, 19, 0.96) 0%, rgba(14, 20, 19, 0.74) 48%, rgba(14, 20, 19, 0.18) 82%),
+      linear-gradient(180deg, rgba(14, 20, 19, 0.04), rgba(14, 20, 19, 0.38));
+  }
+
+  .glazing-hero__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    min-height: calc(100svh - 64px);
+    padding-block: clamp(76px, 10vw, 148px);
+  }
+
+  .glazing-hero__copy {
+    max-width: 880px;
+  }
+
+  .glazing-hero__eyebrow {
+    margin-bottom: 18px;
+    color: var(--c-edge-on-deep);
+  }
+
+  .glazing-hero__qualifier {
+    display: inline-flex;
+    margin: 0 0 20px;
+    padding: 8px 12px;
+    border: 1px solid var(--c-seam-deep);
+    font-size: 13px;
+    color: var(--c-on-deep);
+    background: rgba(14, 20, 19, 0.44);
+  }
+
+  .glazing-hero__title {
+    max-width: 14ch;
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: clamp(40px, 5.6vw, 78px);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  .glazing-hero__lead {
+    max-width: 60ch;
+    margin: 28px 0 0;
+    font-size: clamp(18px, 1.55vw, 22px);
+    line-height: 1.6;
+    color: var(--c-on-deep-soft);
+  }
+
+  .glazing-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 34px;
+  }
+
+  .glazing-hero__primary {
+    background: var(--c-on-deep);
+    color: var(--c-deep);
+  }
+
+  .glazing-hero__primary:hover {
+    background: #fff;
+  }
+
+  .glazing-hero__facts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 840px;
+    margin: clamp(44px, 6vw, 76px) 0 0;
+    border-block: 1px solid var(--c-seam-deep);
+  }
+
+  .glazing-hero__facts div {
+    padding: 17px 20px 17px 0;
+  }
+
+  .glazing-hero__facts div + div {
+    padding-left: 20px;
+    border-left: 1px solid var(--c-seam-deep);
+  }
+
+  .glazing-hero__facts dt {
+    font-family: var(--f-mono);
+    font-size: clamp(18px, 2vw, 27px);
+    color: var(--c-on-deep);
+  }
+
+  .glazing-hero__facts dd {
+    margin: 5px 0 0;
+    font-size: 13px;
+    color: var(--c-on-deep-soft);
+  }
+
+  .glazing-fit,
+  .glazing-proof {
+    padding-block: var(--section-y);
+  }
+
+  .glazing-fit__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: clamp(48px, 8vw, 128px);
+    align-items: start;
+  }
+
+  .glazing-fit__intro {
+    display: grid;
+    gap: 20px;
+  }
+
+  .glazing-fit__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--c-seam);
+  }
+
+  .glazing-fit__list li {
+    display: grid;
+    grid-template-columns: 54px 1fr;
+    gap: 20px;
+    align-items: start;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--c-seam);
+  }
+
+  .glazing-fit__list span {
+    color: var(--c-edge);
+  }
+
+  .glazing-fit__list p {
+    margin: 0;
+    font-size: clamp(17px, 1.4vw, 20px);
+    line-height: 1.55;
+  }
+
+  .glazing-proof {
+    background: var(--c-light-raised);
+  }
+
+  .glazing-proof__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    gap: clamp(36px, 7vw, 104px);
+    align-items: center;
+  }
+
+  .glazing-proof__media {
+    aspect-ratio: 1.28;
+    overflow: hidden;
+    background: #d7dcda;
+  }
+
+  .glazing-proof__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .glazing-proof__copy {
+    display: grid;
+    justify-items: start;
+    gap: 20px;
+  }
+
+  .glazing-proof__price {
+    margin: 0;
+    font-size: clamp(28px, 3vw, 42px);
+    color: var(--c-edge-deep);
+  }
+
+  .glazing-proof__copy ul {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .glazing-proof__copy li {
+    position: relative;
+    padding-left: 24px;
+    line-height: 1.55;
+  }
+
+  .glazing-proof__copy li::before {
+    content: '';
+    position: absolute;
+    top: 0.7em;
+    left: 0;
+    width: 10px;
+    height: 1px;
+    background: var(--c-edge);
+  }
+
+  .glazing-proof__note {
+    margin: 0;
+    padding: 14px 16px;
+    border-left: 2px solid var(--c-warm);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--c-ink-soft);
+    background: rgba(255, 255, 255, 0.52);
+  }
+
+  @media (max-width: 820px) {
+    .glazing-hero__media::after {
+      background: linear-gradient(180deg, rgba(14, 20, 19, 0.22) 0%, rgba(14, 20, 19, 0.74) 46%, rgba(14, 20, 19, 0.98) 100%);
+    }
+
+    .glazing-hero__inner {
+      align-items: flex-end;
+      padding-top: 112px;
+      padding-bottom: 48px;
+    }
+
+    .glazing-hero__facts,
+    .glazing-fit__layout,
+    .glazing-proof__layout {
+      grid-template-columns: 1fr;
+    }
+
+    .glazing-hero__facts div,
+    .glazing-hero__facts div + div {
+      display: grid;
+      grid-template-columns: 118px 1fr;
+      gap: 14px;
+      align-items: baseline;
+      padding: 12px 0;
+      border-left: 0;
+      border-top: 1px solid var(--c-seam-deep);
+    }
+
+    .glazing-hero__facts div:first-child {
+      border-top: 0;
+    }
+
+    .glazing-proof__media {
+      aspect-ratio: 1.45;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .glazing-hero__title {
+      font-size: clamp(38px, 11vw, 54px);
+    }
+
+    .glazing-hero__actions {
+      display: grid;
+    }
+
+    .glazing-hero__actions .btn {
+      width: 100%;
+    }
+
+    .glazing-fit,
+    .glazing-proof {
+      padding-block: 76px;
+    }
+  }
+</style>

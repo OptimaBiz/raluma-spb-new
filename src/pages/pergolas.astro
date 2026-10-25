@@ -117,8 +117,12 @@ const schema = {
             Биоклиматические перголы под ключ
           </h1>
           <p class="pergola-hero__lead">
-            Создаём полноценное пространство с регулируемой или стеклянной крышей,
-            скрытым водоотводом, автоматикой и безрамным остеклением.
+            Алюминиевая конструкция с регулируемой ламельной или стеклянной крышей,
+            скрытым водоотводом, автоматикой и безрамным остеклением — не тентовый навес.
+          </p>
+
+          <p class="pergola-hero__qualifier">
+            Индивидуальный инженерный проект · предварительный расчёт по фото или плану
           </p>
 
           <div class="pergola-hero__actions">
@@ -127,7 +131,7 @@ const schema = {
               href="#lead-form"
               data-pergola-goal="pergolas_hero_calculate"
             >
-              Рассчитать стоимость
+              Получить расчёт по фото
             </a>
             <a
               class="btn btn--on-deep"
@@ -538,7 +542,11 @@ const schema = {
       </div>
     </section>
 
-    <LeadFormSection />
+    <LeadFormSection
+      eyebrow="Расчёт алюминиевой перголы"
+      title="Пришлите фото фасада или план участка"
+      text="В течение рабочего дня уточним конфигурацию и подготовим предварительный ориентир по стоимости."
+    />
   </main>
 
   <FooterSection />
@@ -660,6 +668,17 @@ const schema = {
     font-size: clamp(18px, 1.6vw, 23px);
     line-height: 1.6;
     color: var(--c-on-deep-soft);
+  }
+
+  .pergola-hero__qualifier {
+    display: inline-flex;
+    margin: 20px 0 0;
+    padding: 8px 12px;
+    border: 1px solid var(--c-seam-deep);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--c-on-deep);
+    background: rgba(14, 20, 19, 0.44);
   }
 
   .pergola-hero__actions {
