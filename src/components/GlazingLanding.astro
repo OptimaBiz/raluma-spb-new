@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import LeadFormSection from './sections/LeadFormSection.astro';
+import ProcessSection from './sections/ProcessSection.astro';
 import FooterSection from './sections/FooterSection.astro';
 
 interface Props {
@@ -18,6 +19,7 @@ interface Props {
   proofTitle: string;
   proofPrice: string;
   proofText: string;
+  selectionLead: string;
   scenarios: string[];
 }
 
@@ -36,8 +38,33 @@ const {
   proofTitle,
   proofPrice,
   proofText,
+  selectionLead,
   scenarios,
 } = Astro.props;
+
+const systems = [
+  {
+    name: 'Слайд',
+    label: 'Панорамное движение',
+    image: '/images/systems/slide/cover.webp',
+    description: 'Створки перемещаются по направляющим и собираются в выбранной части проёма.',
+    fit: 'Для широких проёмов, панорамного вида и понятного ежедневного открывания.',
+  },
+  {
+    name: 'Книжка',
+    label: 'Максимум открытого проёма',
+    image: '/images/systems/book/cover.webp',
+    description: 'Панели последовательно складываются к краю и освобождают почти весь проём.',
+    fit: 'Когда летом пространство важно раскрывать максимально широко.',
+  },
+  {
+    name: 'Лифт',
+    label: 'Больше защиты',
+    image: '/images/systems/lift/cover.webp',
+    description: 'Более собранный и защищённый контур для ветреных и открытых участков.',
+    fit: 'Когда приоритетом становится защита от переменчивой погоды.',
+  },
+];
 
 const phoneHref = 'tel:+78123307415';
 const phoneDisplay = '+7 (812) 330-74-15';
@@ -115,6 +142,40 @@ const schema = {
       </div>
     </section>
 
+    <section class="glazing-systems seams seams--deep" id="systems" aria-labelledby="glazing-systems-title">
+      <div class="shell">
+        <header class="glazing-systems__head rise">
+          <div>
+            <p class="eyebrow">Выбор системы</p>
+            <h2 class="glazing-systems__title" id="glazing-systems-title">Как будет открываться остекление</h2>
+          </div>
+          <div class="glazing-systems__intro">
+            <p>{selectionLead}</p>
+            <a href="#lead-form" data-landing-goal={`${goalPrefix}_systems_calculate`}>
+              Подобрать систему по фото <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </header>
+
+        <div class="glazing-systems__grid">
+          {systems.map((system, index) => (
+            <article class="glazing-system rise">
+              <div class="glazing-system__media">
+                <img src={system.image} alt={`Безрамная система «${system.name}»`} width="960" height="720" loading="lazy" decoding="async" />
+                <span class="figure">0{index + 1}</span>
+              </div>
+              <div class="glazing-system__body">
+                <p class="glazing-system__label">{system.label}</p>
+                <h3>{system.name}</h3>
+                <p>{system.description}</p>
+                <p class="glazing-system__fit"><strong>Подойдёт:</strong> {system.fit}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
     <section class="glazing-proof" aria-labelledby="glazing-proof-title">
       <div class="shell glazing-proof__layout">
         <div class="glazing-proof__media rise">
@@ -140,6 +201,8 @@ const schema = {
         </div>
       </div>
     </section>
+
+    <ProcessSection />
 
     <LeadFormSection
       eyebrow="Предварительный расчёт"
@@ -301,7 +364,8 @@ const schema = {
   }
 
   .glazing-fit,
-  .glazing-proof {
+  .glazing-proof,
+  .glazing-systems {
     padding-block: var(--section-y);
   }
 
@@ -345,6 +409,145 @@ const schema = {
 
   .glazing-proof {
     background: var(--c-light-raised);
+  }
+
+  .glazing-systems {
+    color: var(--c-on-deep);
+    background: var(--c-deep);
+  }
+
+  .glazing-systems__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 0.72fr);
+    gap: clamp(36px, 8vw, 128px);
+    align-items: end;
+    margin-bottom: clamp(42px, 6vw, 76px);
+  }
+
+  .glazing-systems__head > div:first-child {
+    display: grid;
+    gap: 18px;
+  }
+
+  .glazing-systems__head .eyebrow {
+    color: var(--c-edge-on-deep);
+  }
+
+  .glazing-systems__title {
+    max-width: 13ch;
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: var(--t-h2);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--c-on-deep);
+    text-wrap: balance;
+  }
+
+  .glazing-systems__intro {
+    display: grid;
+    gap: 24px;
+  }
+
+  .glazing-systems__intro p {
+    margin: 0;
+    font-size: var(--t-lead);
+    line-height: 1.6;
+    color: var(--c-on-deep-soft);
+  }
+
+  .glazing-systems__intro a {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px 0;
+    border-block: 1px solid var(--c-seam-deep);
+    color: var(--c-on-deep);
+    text-decoration: none;
+    font-size: var(--t-small);
+    font-weight: 500;
+  }
+
+  .glazing-systems__intro a span {
+    color: var(--c-edge-on-deep);
+  }
+
+  .glazing-systems__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--c-seam-deep);
+    border-left: 1px solid var(--c-seam-deep);
+  }
+
+  .glazing-system {
+    min-width: 0;
+    border-right: 1px solid var(--c-seam-deep);
+    border-bottom: 1px solid var(--c-seam-deep);
+  }
+
+  .glazing-system__media {
+    position: relative;
+    aspect-ratio: 1.32;
+    overflow: hidden;
+    background: var(--c-graphite);
+  }
+
+  .glazing-system__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 55%, rgba(14, 20, 19, 0.62));
+  }
+
+  .glazing-system__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .glazing-system__media span {
+    position: absolute;
+    z-index: 1;
+    right: 20px;
+    bottom: 16px;
+    color: var(--c-on-deep);
+  }
+
+  .glazing-system__body {
+    padding: clamp(24px, 3vw, 38px);
+  }
+
+  .glazing-system__label {
+    margin: 0 0 14px;
+    font-family: var(--f-mono);
+    font-size: var(--t-micro);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-edge-on-deep);
+  }
+
+  .glazing-system__body h3 {
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: var(--t-h3);
+    font-weight: 300;
+  }
+
+  .glazing-system__body > p:not(.glazing-system__label) {
+    margin: 18px 0 0;
+    line-height: 1.65;
+    color: var(--c-on-deep-soft);
+  }
+
+  .glazing-system__fit {
+    padding-top: 18px;
+    border-top: 1px solid var(--c-seam-deep);
+    font-size: var(--t-small);
+  }
+
+  .glazing-system__fit strong {
+    color: var(--c-on-deep);
   }
 
   .glazing-proof__layout {
@@ -425,8 +628,18 @@ const schema = {
 
     .glazing-hero__facts,
     .glazing-fit__layout,
-    .glazing-proof__layout {
+    .glazing-proof__layout,
+    .glazing-systems__head {
       grid-template-columns: 1fr;
+    }
+
+    .glazing-systems__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .glazing-system {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.85fr) minmax(0, 1.15fr);
     }
 
     .glazing-hero__facts div,
@@ -463,8 +676,13 @@ const schema = {
     }
 
     .glazing-fit,
-    .glazing-proof {
+    .glazing-proof,
+    .glazing-systems {
       padding-block: 76px;
+    }
+
+    .glazing-system {
+      grid-template-columns: 1fr;
     }
   }
 </style>

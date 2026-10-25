@@ -13,15 +13,16 @@ const hasLocalLeadForm = [
   '/gazebos',
   '/gazebos/',
 ].includes(Astro.url.pathname);
-const base = isHomePage ? '' : '/';
 const leadFormHref = isHomePage || isPergolasPage || hasLocalLeadForm ? '#lead-form' : '/#lead-form';
+const homeSectionHref = (id: string) => isHomePage ? `#${id}` : `/#${id}`;
+const systemsHref = isHomePage || hasLocalLeadForm ? '#systems' : '/#systems';
 
 const navLinks = [
-  { href: `${base}#systems`, label: 'Системы' },
+  { href: homeSectionHref('objects'), label: 'Объекты' },
+  { href: systemsHref, label: 'Системы' },
   { href: '/pergolas/', label: 'Перголы' },
-  { href: `${base}#cases`, label: 'Проекты' },
-  { href: `${base}#why-raluma`, label: 'О нас' },
-  { href: `${base}#faq`, label: 'Вопросы' },
+  { href: homeSectionHref('cases'), label: 'Проекты' },
+  { href: homeSectionHref('faq'), label: 'Вопросы' },
 ];
 ---
 
