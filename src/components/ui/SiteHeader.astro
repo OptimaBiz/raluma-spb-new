@@ -5,8 +5,16 @@ const phoneHref = 'tel:+78123307415';
 const phoneDisplay = '+7 (812) 330-74-15';
 const isHomePage = Astro.url.pathname === '/';
 const isPergolasPage = Astro.url.pathname === '/pergolas' || Astro.url.pathname === '/pergolas/';
+const hasLocalLeadForm = [
+  '/terraces',
+  '/terraces/',
+  '/verandas',
+  '/verandas/',
+  '/gazebos',
+  '/gazebos/',
+].includes(Astro.url.pathname);
 const base = isHomePage ? '' : '/';
-const leadFormHref = isHomePage || isPergolasPage ? '#lead-form' : '/#lead-form';
+const leadFormHref = isHomePage || isPergolasPage || hasLocalLeadForm ? '#lead-form' : '/#lead-form';
 
 const navLinks = [
   { href: `${base}#systems`, label: 'Системы' },

@@ -1,5 +1,17 @@
 ---
 import '../../styles/sections/lead-form.css';
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  text?: string;
+}
+
+const {
+  eyebrow = 'Форма для связи',
+  title = 'Узнайте стоимость под ваш объект',
+  text = 'Фото или чертёж помогут сделать расчёт точнее.',
+} = Astro.props;
 ---
 
 <section class="lead-form" id="lead-form">
@@ -8,12 +20,12 @@ import '../../styles/sections/lead-form.css';
 
   <div class="container lead-form__container">
     <div class="lead-form__card">
-      <p class="lead-form__eyebrow">Форма для связи</p>
+      <p class="lead-form__eyebrow">{eyebrow}</p>
 
-      <h2 class="lead-form__title">Узнайте стоимость под ваш объект</h2>
+      <h2 class="lead-form__title">{title}</h2>
 
       <p class="lead-form__text">
-        Фото или чертёж помогут сделать расчёт точнее.
+        {text}
       </p>
 
       <form
