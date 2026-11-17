@@ -224,17 +224,6 @@ const schema = {
     const form = document.getElementById('lead-form-element');
     form?.addEventListener('focusin', () => window.safeReachGoal?.(`${goalPrefix}_form_start`), { once: true });
 
-    const successPanel = document.getElementById('lead-form-success');
-    if (successPanel && typeof MutationObserver !== 'undefined') {
-      let sent = false;
-      const observer = new MutationObserver(() => {
-        if (sent || successPanel.hidden) return;
-        sent = true;
-        window.safeReachGoal?.(`${goalPrefix}_form_submit`);
-        observer.disconnect();
-      });
-      observer.observe(successPanel, { attributes: true, attributeFilter: ['hidden'] });
-    }
   </script>
 </BaseLayout>
 
