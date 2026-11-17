@@ -114,4 +114,15 @@ test('the site wires successful forms and phone clicks to conversion goals', () 
   assert.equal((layout.match(/top-fwz1\.mail\.ru\/counter/g) || []).length, 1);
   assert.match(layout, /window\.safeReachGoal\('phone_click'\)/);
   assert.match(leadForm, /await postToBackend\([\s\S]*?window\.safeReachGoal\?\.\('lead_form_submit'\)/);
+  assert.doesNotMatch(leadForm, /safeReachGoal\?\.\('form_success'\)/);
+  assert.match(leadForm, /event\.source !== frame\.contentWindow/);
+  assert.match(leadForm, /finish\(new Error\('SERVER_ERROR'\)\), 3000/);
+  assert.doesNotMatch(
+    readFileSync(new URL('src/pages/pergolas.astro', projectRoot), 'utf8'),
+    /pergolas_form_submit/,
+  );
+  assert.doesNotMatch(
+    readFileSync(new URL('src/components/GlazingLanding.astro', projectRoot), 'utf8'),
+    /_form_submit/,
+  );
 });

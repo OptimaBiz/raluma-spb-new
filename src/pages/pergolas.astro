@@ -68,7 +68,15 @@ const faq = [
   },
   {
     question: 'Сколько занимает изготовление и монтаж?',
-    answer: 'Срок зависит от размера, покрытия, автоматики и остекления. После замера и согласования конфигурации фиксируем этапы и срок в договоре.',
+    answer: 'Обычно изготовление и монтаж занимают 2–3 недели после согласования конфигурации. Точный срок фиксируем в договоре и уточняем для конкретного объекта.',
+  },
+  {
+    question: 'Сколько стоит алюминиевая пергола?',
+    answer: 'Стоимость перголы начинается от 250 000 ₽. Итоговая цена зависит от размера, типа крыши, автоматики, покрытия и остекления — предварительный расчёт подготовим по фото или плану.',
+  },
+  {
+    question: 'Какая гарантия и как проходит оплата?',
+    answer: 'Гарантия — 1 год. Условия оплаты согласовываем индивидуально и фиксируем в договоре до начала работ.',
   },
 ];
 
@@ -84,12 +92,18 @@ const schema = {
   areaServed: ['Санкт-Петербург', 'Ленинградская область'],
   serviceType: 'Проектирование, изготовление и монтаж алюминиевых пергол',
   url: 'https://raluma.com.ru/pergolas/',
+  offers: {
+    '@type': 'Offer',
+    priceCurrency: 'RUB',
+    price: '250000',
+    description: 'Алюминиевая пергола под ключ от 250 000 ₽',
+  },
 };
 ---
 
 <BaseLayout
   title="Биоклиматические перголы под ключ в Санкт-Петербурге — Raluma"
-  description="Алюминиевые биоклиматические перголы с поворотной или стеклянной крышей в Санкт-Петербурге и Ленинградской области. Проектирование, изготовление, монтаж и безрамное остекление."
+  description="Алюминиевые биоклиматические перголы под ключ от 250 000 ₽ в Санкт-Петербурге и Ленинградской области. Изготовление и монтаж за 2–3 недели, гарантия 1 год."
   canonical="https://raluma.com.ru/pergolas/"
   ogImage={images.hero}
 >
@@ -122,7 +136,7 @@ const schema = {
           </p>
 
           <p class="pergola-hero__qualifier">
-            Индивидуальный инженерный проект · предварительный расчёт по фото или плану
+            От 250 000 ₽ · изготовление и монтаж за 2–3 недели · гарантия 1 год
           </p>
 
           <div class="pergola-hero__actions">
@@ -140,20 +154,33 @@ const schema = {
             >
               +7 (812) 330-74-15
             </a>
+            <a
+              class="btn btn--on-deep"
+              href="https://t.me/+79650045566"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-contact-goal="telegram_click_pergolas_hero"
+            >
+              Написать в Telegram
+            </a>
           </div>
 
           <dl class="pergola-hero__facts">
             <div>
-              <dt>2</dt>
-              <dd>типа крыши</dd>
+              <dt>от 250 000 ₽</dt>
+              <dd>стоимость перголы</dd>
             </div>
             <div>
-              <dt>3</dt>
-              <dd>системы остекления</dd>
+              <dt>2–3 недели</dt>
+              <dd>изготовление и монтаж</dd>
             </div>
             <div>
-              <dt>RAL</dt>
-              <dd>индивидуальный цвет</dd>
+              <dt>1 год</dt>
+              <dd>гарантия</dd>
+            </div>
+            <div>
+              <dt>по договорённости</dt>
+              <dd>условия оплаты</dd>
             </div>
           </dl>
         </div>
@@ -545,7 +572,7 @@ const schema = {
     <LeadFormSection
       eyebrow="Расчёт алюминиевой перголы"
       title="Пришлите фото фасада или план участка"
-      text="В течение рабочего дня уточним конфигурацию и подготовим предварительный ориентир по стоимости."
+      text="Перголы от 250 000 ₽. В течение рабочего дня уточним конфигурацию и подготовим предварительный расчёт."
     />
   </main>
 
@@ -567,18 +594,6 @@ const schema = {
         if (goal) window.safeReachGoal?.(goal);
       });
     });
-
-    const successPanel = document.getElementById('lead-form-success');
-    if (successPanel && typeof MutationObserver !== 'undefined') {
-      let sent = false;
-      const observer = new MutationObserver(() => {
-        if (sent || successPanel.hidden) return;
-        sent = true;
-        window.safeReachGoal?.('pergolas_form_submit');
-        observer.disconnect();
-      });
-      observer.observe(successPanel, { attributes: true, attributeFilter: ['hidden'] });
-    }
 
     const form = document.getElementById('lead-form-element');
     form?.addEventListener('focusin', () => window.safeReachGoal?.('pergolas_form_start'), { once: true });
@@ -653,9 +668,9 @@ const schema = {
 
   .pergola-hero__title {
     margin: 0;
-    max-width: 13ch;
+    max-width: 16ch;
     font-family: var(--f-display);
-    font-size: clamp(44px, 6.3vw, 86px);
+    font-size: clamp(44px, 5.4vw, 74px);
     font-weight: 300;
     line-height: 1.02;
     letter-spacing: -0.04em;
@@ -664,7 +679,7 @@ const schema = {
 
   .pergola-hero__lead {
     max-width: 64ch;
-    margin: 30px 0 0;
+    margin: 22px 0 0;
     font-size: clamp(18px, 1.6vw, 23px);
     line-height: 1.6;
     color: var(--c-on-deep-soft);
@@ -672,7 +687,7 @@ const schema = {
 
   .pergola-hero__qualifier {
     display: inline-flex;
-    margin: 20px 0 0;
+    margin: 14px 0 0;
     padding: 8px 12px;
     border: 1px solid var(--c-seam-deep);
     font-size: 13px;
@@ -685,7 +700,7 @@ const schema = {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 36px;
+    margin-top: 22px;
   }
 
   .pergola-hero__primary,
@@ -701,8 +716,8 @@ const schema = {
 
   .pergola-hero__facts {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    max-width: 720px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    max-width: 980px;
     margin: clamp(50px, 7vw, 86px) 0 0;
     border-top: 1px solid var(--c-seam-deep);
     border-bottom: 1px solid var(--c-seam-deep);
@@ -719,7 +734,8 @@ const schema = {
 
   .pergola-hero__facts dt {
     font-family: var(--f-mono);
-    font-size: clamp(23px, 2.5vw, 34px);
+    font-size: clamp(17px, 1.7vw, 25px);
+    line-height: 1.2;
     color: var(--c-on-deep);
   }
 

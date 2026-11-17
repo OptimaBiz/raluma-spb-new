@@ -4,6 +4,7 @@ const phoneHref = 'tel:+78123307415';
 const address = 'Санкт-Петербург, Ленинский пр-т, д. 55, корп. 2';
 const hours = 'Ежедневно 9:00–21:00';
 const email = 'hello@raluma.com.ru';
+const telegram = 'https://t.me/+79650045566';
 const year = new Date().getFullYear();
 ---
 
@@ -23,6 +24,13 @@ const year = new Date().getFullYear();
         <p class="site-footer__hours">{hours}</p>
         <p class="site-footer__address">{address}</p>
         <a class="site-footer__email" href={`mailto:${email}`}>{email}</a>
+        <a
+          class="site-footer__email"
+          href={telegram}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-contact-goal="telegram_click_footer"
+        >Telegram +7 (965) 004-55-66</a>
       </div>
     </div>
 

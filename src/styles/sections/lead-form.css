@@ -638,6 +638,20 @@
   background: #0c1c33;
 }
 
+.lead-form__messenger {
+  margin: -4px 0 0;
+  color: #5c6564;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.lead-form__messenger a {
+  color: #2c4e85;
+  font-weight: 500;
+  text-underline-offset: 3px;
+}
+
 .lead-form__dialog {
   width: min(920px, calc(100% - 24px));
   padding: 0;

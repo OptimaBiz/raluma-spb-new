@@ -172,6 +172,12 @@ const isHomePage = Astro.url.pathname === '/';
           window.safeReachGoal('phone_click');
         });
 
+        document.addEventListener('click', function(e) {
+          var contactLink = e.target.closest('[data-contact-goal]');
+          if (!contactLink) return;
+          window.safeReachGoal(contactLink.dataset.contactGoal);
+        });
+
         // CTA → lead form (hero, selection-cta, cases, why-raluma sections)
         document.addEventListener('click', function(e) {
           if (!e.target.closest('a[href="#lead-form"]')) return;
