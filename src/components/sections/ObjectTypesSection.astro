@@ -5,7 +5,7 @@ const objects = [
     label: 'Терраса',
     title: 'Остекление готовой террасы',
     text: 'Защита от ветра и осадков с возможностью снова полностью открыть пространство.',
-    image: '/images/gallery/terrasy/slide-terrasy-2.webp',
+    image: '/images/objects/terrace.webp',
     alt: 'Безрамное остекление готовой террасы',
   },
   {
@@ -13,7 +13,7 @@ const objects = [
     label: 'Веранда',
     title: 'Панорамное остекление веранды',
     text: 'Подбор системы под архитектуру дома, ширину проёмов и сценарий открывания.',
-    image: '/images/gallery/verandy/slide-verandy-10.webp',
+    image: '/images/objects/veranda.webp',
     alt: 'Панорамное остекление готовой веранды',
   },
   {
@@ -21,7 +21,7 @@ const objects = [
     label: 'Беседка',
     title: 'Остекление беседки и зоны отдыха',
     text: 'Больше комфорта в непогоду без потери света и открытого вида на участок.',
-    image: '/images/cases/wooden-gazebo/main-1.webp',
+    image: '/images/objects/gazebo.webp',
     alt: 'Безрамное остекление деревянной беседки',
   },
 ];
@@ -44,7 +44,6 @@ const objects = [
         <a
           class="object-types__card rise"
           href={item.href}
-          aria-label={`${item.title}: открыть подробную страницу`}
         >
           <div class="object-types__media">
             <img src={item.image} alt={item.alt} width="900" height="720" loading="lazy" decoding="async" />

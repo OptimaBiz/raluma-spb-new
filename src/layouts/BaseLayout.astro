@@ -112,9 +112,10 @@ const isHomePage = Astro.url.pathname === '/';
     <!-- /Yandex.Metrika counter -->
 
     <!-- Shared Yandex/VK conversion goal helper -->
-    <script is:inline src="/js/analytics.js"></script>
+    <script is:inline src="/js/analytics.js" defer></script>
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Перейти к основному содержанию</a>
     <noscript>
       <div>
         <img src="https://mc.yandex.ru/watch/108496902" style="position:absolute; left:-9999px;" alt="" />

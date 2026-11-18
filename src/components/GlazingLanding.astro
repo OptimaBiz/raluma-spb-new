@@ -89,7 +89,7 @@ const schema = {
 <BaseLayout title={title} description={description} canonical={canonical} ogImage={heroImage}>
   <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
 
-  <main class="glazing-landing">
+  <main class="glazing-landing" id="main-content">
     <section class="glazing-hero" aria-labelledby="glazing-hero-title">
       <div class="glazing-hero__media" aria-hidden="true">
         <img src={heroImage} alt="" width="1600" height="1100" loading="eager" decoding="async" fetchpriority="high" />

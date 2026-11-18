@@ -305,40 +305,7 @@
       'Узнайте стоимость под ваш объект': 'Рассчитать стоимость'
     };
 
-    function fitHeading(el) {
-      if (!window.matchMedia('(max-width: 820px)').matches) {
-        el.style.removeProperty('font-size');
-        el.style.removeProperty('letter-spacing');
-        return;
-      }
-
-      el.style.removeProperty('font-size');
-      el.style.removeProperty('letter-spacing');
-
-      var available = Math.floor(el.getBoundingClientRect().width || el.parentElement?.clientWidth || 0);
-      if (!available) return;
-
-      var computed = window.getComputedStyle(el);
-      var start = Math.round(parseFloat(computed.fontSize) || 24);
-      var min = el.tagName === 'H1' ? 20 : el.tagName === 'H2' ? 18 : 16;
-      var size = start;
-
-      el.style.setProperty('font-size', size + 'px', 'important');
-      while (size > min && el.scrollWidth > available + 1) {
-        size -= 0.5;
-        el.style.setProperty('font-size', size + 'px', 'important');
-      }
-
-      if (el.scrollWidth > available + 1) {
-        el.style.setProperty('letter-spacing', '-0.055em', 'important');
-        while (size > 14 && el.scrollWidth > available + 1) {
-          size -= 0.5;
-          el.style.setProperty('font-size', size + 'px', 'important');
-        }
-      }
-    }
-
-    function applyMobileCopyAndFit() {
+    function applyMobileCopy() {
       var mobile = window.matchMedia('(max-width: 820px)').matches;
 
       document.querySelectorAll('.pergolas-teaser, .pergolas-page').forEach(function (el) {
@@ -354,7 +321,6 @@
         if (el.matches('.pergola-hero__title')) mobileTitle = 'Перголы под ключ';
 
         el.textContent = mobile ? mobileTitle : original;
-        fitHeading(el);
       });
 
       document.querySelectorAll('.pergola-option').forEach(function (card) {
@@ -382,16 +348,16 @@
     var timer;
     function schedule() {
       window.clearTimeout(timer);
-      timer = window.setTimeout(applyMobileCopyAndFit, 60);
+      timer = window.setTimeout(applyMobileCopy, 60);
     }
 
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', applyMobileCopyAndFit, { once: true });
+      document.addEventListener('DOMContentLoaded', applyMobileCopy, { once: true });
     } else {
-      applyMobileCopyAndFit();
+      applyMobileCopy();
     }
 
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyMobileCopyAndFit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(applyMobileCopy);
     window.addEventListener('resize', schedule, { passive: true });
 
     if (typeof ResizeObserver === 'function') {

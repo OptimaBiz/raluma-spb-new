@@ -4,7 +4,15 @@ import '../../styles/mobile-actionbar.css';
 const phoneHref = 'tel:+78123307415';
 const isHomePage = Astro.url.pathname === '/';
 const isPergolasPage = Astro.url.pathname === '/pergolas' || Astro.url.pathname === '/pergolas/';
-const hasLeadForm = isHomePage || isPergolasPage;
+const hasGlazingLeadForm = [
+  '/terraces',
+  '/terraces/',
+  '/verandas',
+  '/verandas/',
+  '/gazebos',
+  '/gazebos/',
+].includes(Astro.url.pathname);
+const hasLeadForm = isHomePage || isPergolasPage || hasGlazingLeadForm;
 ---
 
 <nav

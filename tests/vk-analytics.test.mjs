@@ -109,7 +109,7 @@ test('the site wires successful forms and phone clicks to conversion goals', () 
     'utf8',
   );
 
-  assert.match(layout, /<script is:inline src="\/js\/analytics\.js"><\/script>/);
+  assert.match(layout, /<script is:inline src="\/js\/analytics\.js" defer><\/script>/);
   assert.equal((layout.match(/type: "pageView"/g) || []).length, 1);
   assert.equal((layout.match(/top-fwz1\.mail\.ru\/counter/g) || []).length, 1);
   assert.match(layout, /window\.safeReachGoal\('phone_click'\)/);

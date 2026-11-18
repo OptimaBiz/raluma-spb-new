@@ -47,6 +47,25 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 10000;
+  padding: 12px 16px;
+  border-radius: 2px;
+  background: var(--c-light-raised);
+  color: var(--c-ink);
+  font-weight: 500;
+  text-decoration: none;
+  transform: translateY(calc(-100% - 24px));
+  transition: transform var(--dur-fast) ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 @view-transition {
   navigation: auto;
 }
